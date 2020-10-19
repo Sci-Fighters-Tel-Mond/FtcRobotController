@@ -86,3 +86,7 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+
+
+# ".DS_Store files you're the bane of my existence" - Daniel Shiffman 2020
+.DS_Store
