@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.vuforia.Rectangle;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -19,7 +20,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 public class EasyOpenCVExample extends LinearOpMode
 {
     OpenCvInternalCamera phoneCam;
-    SkystoneDeterminationPipeline pipeline;
+    RingsDeterminationPipeline pipeline;
 
     @Override
     public void runOpMode()
@@ -27,7 +28,7 @@ public class EasyOpenCVExample extends LinearOpMode
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
-        pipeline = new SkystoneDeterminationPipeline();
+        pipeline = new RingsDeterminationPipeline();
         phoneCam.setPipeline(pipeline);
 
         // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
@@ -57,7 +58,7 @@ public class EasyOpenCVExample extends LinearOpMode
         }
     }
 
-    public static class SkystoneDeterminationPipeline extends OpenCvPipeline
+    public static class RingsDeterminationPipeline extends OpenCvPipeline
     {
         /*
          * An enum to define the skystone position
@@ -72,6 +73,7 @@ public class EasyOpenCVExample extends LinearOpMode
         /*
          * Some color constants
          */
+        //                                    R,  G, B
         static final Scalar BLUE = new Scalar(0, 0, 255);
         static final Scalar GREEN = new Scalar(0, 255, 0);
 
@@ -118,8 +120,8 @@ public class EasyOpenCVExample extends LinearOpMode
         public void init(Mat firstFrame)
         {
             inputToCb(firstFrame);
-
-            region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
+            Rect rec = new Rect(region1_pointA, region1_pointB);
+            region1_Cb = Cb.submat(rec);
         }
 
         @Override
