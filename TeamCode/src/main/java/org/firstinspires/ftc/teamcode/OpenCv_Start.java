@@ -29,56 +29,7 @@ public class OpenCv_Start extends LinearOpMode {
     OpenCvInternalCamera phoneCam;
     BananaPipeline pipeline;
 
-    public static class BananaPipeline extends OpenCvPipeline {
 
-        private Random rng = new Random(12345);
-        Mat hsv;
-        Mat black;
-        Mat mask;
-
-        Mat hsvRegion;
-
-        static final Point A = new Point(100,100);
-        static final Point B = new Point(150, 150);
-
-        @Override
-        public void init(Mat firstFrame) {
-            super.init(firstFrame);
-
-            // black = new Mat.zeros(firstFrame.size(), firstFrame.type());
-            black = new Mat(firstFrame.rows(), firstFrame.cols(), firstFrame.type());
-            mask = new Mat();
-            hsv = new Mat();
-            Imgproc.cvtColor(firstFrame, hsv, Imgproc.COLOR_RGB2HSV);
-            hsvRegion = hsv.submat(new Rect(A, B));
-        }
-
-        @Override
-        public Mat processFrame(Mat frame) {
-            Imgproc.cvtColor(frame, hsv, Imgproc.COLOR_RGB2HSV);
-            Scalar lower_yellow = new Scalar(23, 100, 130);
-            Scalar upper_yellow = new Scalar(45, 255, 255);
-            Core.inRange(hsv, lower_yellow, upper_yellow, mask);
-
-            Core.bitwise_and(frame, black, frame, mask);
-
-            List<MatOfPoint> contours = new ArrayList<>();
-            Mat hierarchy = new Mat();
-            Imgproc.findContours(mask, contours, hierarchy,  Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-            for (int i=0; i < contours.size(); i++) {
-                // Scalar color = new Scalar(rng.nextInt(256), rng.nextInt(256), rng.nextInt(256));
-                // Imgproc.drawContours(frame, contours, i, color, 1);
-                Imgproc.drawContours(frame, contours, i, new Scalar(0,200,200), 1);
-            }
-
-
-            Imgproc.rectangle(frame, A, B, new Scalar(0,0,255), 1);
-            Scalar av = Core.mean(hsvRegion);
-            Imgproc.putText(frame, String.format("HSV: %3.0f, %3.0f, %3.0f", av.val[0], av.val[1], av.val[2]), new Point(20,20), Imgproc.FONT_HERSHEY_COMPLEX, 0.5, new Scalar(255, 200, 0));
-
-            return frame;
-        }
-    }
 
     private void setupCamera() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -114,6 +65,70 @@ public class OpenCv_Start extends LinearOpMode {
 
             // Don't burn CPU cycles busy-looping in this sample
             sleep(50);
+        }
+    }
+
+
+
+
+
+    public static class BananaPipeline extends OpenCvPipeline {
+
+        private Random rng = new Random(12345);
+        Mat hsv;
+        Mat black;
+        Mat mask;
+
+        Mat hsvRegion;
+
+        static final Point A = new Point(100,100);
+        static final Point B = new Point(150, 150);
+
+        @Override
+        public void init(Mat firstFrame) {
+            super.init(firstFrame);
+
+            // black = new Mat.zeros(firstFrame.size(), firstFrame.type());
+            black = new Mat(firstFrame.rows(), firstFrame.cols(), firstFrame.type());
+            mask = new Mat();
+            hsv = new Mat();
+            Imgproc.cvtColor(firstFrame, hsv, Imgproc.COLOR_RGB2HSV);
+            hsvRegion = hsv.submat(new Rect(A, B));
+        }
+
+        @Override
+        public Mat processFrame(Mat frame) {
+            Imgproc.cvtColor(frame, hsv, Imgproc.COLOR_RGB2HSV);
+            Scalar min_yellow = new Scalar(23, 100, 130);
+            Scalar max_yellow = new Scalar(45, 255, 255);
+            Core.inRange(hsv, min_yellow, max_yellow, mask);
+
+            Core.bitwise_and(frame, black, frame, mask);
+
+            List<MatOfPoint> contours = new ArrayList<>();
+            Mat hierarchy = new Mat();
+            Imgproc.findContours(mask, contours, hierarchy,  Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+            for (int i = 0; i < contours.size(); i++) {
+                // Scalar color = new Scalar(rng.nextInt(256), rng.nextInt(256), rng.nextInt(256));
+                // Imgproc.drawContours(frame, contours, i, color, 1);
+                Imgproc.drawContours(frame, contours, i, new Scalar(0,200,200), 1);
+            }
+
+
+            Imgproc.rectangle(frame, A, B, new Scalar(0,0,255), 1);
+            Scalar av = Core.mean(hsvRegion);
+            Imgproc.putText(frame, String.format("HSV: %3.0f, %3.0f, %3.0f", av.val[0], av.val[1], av.val[2]), new Point(20,20), Imgproc.FONT_HERSHEY_COMPLEX, 0.5, new Scalar(255, 200, 0));
+
+
+            // If you're wondering why it's int and not double width() and height() return an integer value
+            int width_height_ratio = mask.width() / mask.height();
+
+            if (width_height_ratio < 1 / 3) {
+                // width_height_ration is higher (but not bigger)
+            }
+
+
+            return frame;
         }
     }
 }
