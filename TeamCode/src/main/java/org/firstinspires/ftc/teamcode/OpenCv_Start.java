@@ -144,7 +144,7 @@ public class OpenCv_Start extends LinearOpMode {
             }
 
             int width = rects.get(biggestIndex).width;
-            int height = rects.get(biggestIndex).width;
+            int height = rects.get(biggestIndex).height;
 
 
             return frame;
