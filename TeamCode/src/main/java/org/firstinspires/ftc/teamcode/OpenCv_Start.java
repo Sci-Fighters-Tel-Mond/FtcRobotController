@@ -25,8 +25,7 @@ import java.util.ListIterator;
 import java.util.Random;
 
 @TeleOp
-public class OpenCv_Start extends LinearOpMode
-{
+public class OpenCv_Start extends LinearOpMode {
     OpenCvInternalCamera phoneCam;
     BananaPipeline pipeline;
 
@@ -92,8 +91,7 @@ public class OpenCv_Start extends LinearOpMode
         // landscape orientation, though.
         phoneCam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
 
-        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
+        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened()
             {
@@ -103,15 +101,13 @@ public class OpenCv_Start extends LinearOpMode
     }
 
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() {
 
         setupCamera();
 
         waitForStart();
 
-        while (opModeIsActive())
-        {
+        while (opModeIsActive()) {
 //            telemetry.addData("Analysis", pipeline.getAnalysis());
 //            telemetry.addData("Position", pipeline.position);
             telemetry.update();
