@@ -120,12 +120,31 @@ public class OpenCv_Start extends LinearOpMode {
             Imgproc.putText(frame, String.format("HSV: %3.0f, %3.0f, %3.0f", av.val[0], av.val[1], av.val[2]), new Point(20,20), Imgproc.FONT_HERSHEY_COMPLEX, 0.5, new Scalar(255, 200, 0));
 
 
-            // If you're wondering why it's int and not double width() and height() return an integer value
-            int width_height_ratio = mask.width() / mask.height();
 
-            if (width_height_ratio < 1 / 3) {
-                // width_height_ration is higher (but not bigger)
+            ArrayList<Rect> rects = new ArrayList<Rect>();
+            Rect rect = null;
+            double maxArea = 300;
+            for (int i = 0; i < contours.size(); i++) {
+                Mat contour = contours.get(i);
+                double contourArea = Imgproc.contourArea(contour);
+                if (contourArea > maxArea) {
+                    rect = Imgproc.boundingRect(contours.get(i));
+                    rects.add(rect);
+                }
             }
+
+            int biggestIndex = -1;
+            double biggestArea = 0;
+
+            for (int i = 0; i < rects.size(); i++) {
+                if (rects.get(i).area() > biggestArea) {
+                    biggestIndex = i;
+                    biggestArea = rects.get(i).area();
+                }
+            }
+
+            int width = rects.get(biggestIndex).width;
+            int height = rects.get(biggestIndex).width;
 
 
             return frame;
