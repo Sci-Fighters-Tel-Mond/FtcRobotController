@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.media.Image;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.vuforia.Rectangle;
@@ -21,6 +23,7 @@ public class EasyOpenCVExample extends LinearOpMode
 {
     OpenCvInternalCamera phoneCam;
     RingsDeterminationPipeline pipeline;
+
 
     @Override
     public void runOpMode()
@@ -140,20 +143,37 @@ public class EasyOpenCVExample extends LinearOpMode
 
             position = RingPosition.FOUR; // Record our analysis
             if(avg1 > FOUR_RING_THRESHOLD){
-                position = RingPosition.FOUR;
+                //position = RingPosition.FOUR;
+                Imgproc.rectangle(
+                        input, // Buffer to draw on
+                        region1_pointA, // First point which defines the rectangle
+                        region1_pointB, // Second point which defines the rectangle
+                        BLUE, // The color the rectangle is drawn in
+                        -1); // Negative thickness means solid fill
             }else if (avg1 > ONE_RING_THRESHOLD){
-                position = RingPosition.ONE;
+                //position = RingPosition.ONE;
+                Imgproc.rectangle(
+                        input, // Buffer to draw on
+                        region1_pointA, // First point which defines the rectangle
+                        region1_pointB, // Second point which defines the rectangle
+                        BLUE, // The color the rectangle is drawn in
+                        -1); // Negative thickness means solid fill
             }else{
-                position = RingPosition.NONE;
+                //position = RingPosition.NONE;
+                Imgproc.rectangle(
+                        input, // Buffer to draw on
+                        region1_pointA, // First point which defines the rectangle
+                        region1_pointB, // Second point which defines the rectangle
+                        BLUE, // The color the rectangle is drawn in
+                        -1); // Negative thickness means solid fill
             }
 
-            Imgproc.rectangle(
+            /*Imgproc.rectangle(
                     input, // Buffer to draw on
                     region1_pointA, // First point which defines the rectangle
                     region1_pointB, // Second point which defines the rectangle
                     GREEN, // The color the rectangle is drawn in
-                    -1); // Negative thickness means solid fill
-
+                    -1); // Negative thickness means solid fill */
             return input;
         }
 
