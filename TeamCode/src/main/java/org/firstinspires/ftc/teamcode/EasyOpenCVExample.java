@@ -4,7 +4,6 @@ import android.media.Image;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.vuforia.Rectangle;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -19,19 +18,17 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 @TeleOp
-public class EasyOpenCVExample extends LinearOpMode
-{
+public class EasyOpenCVExample extends LinearOpMode {
     OpenCvInternalCamera phoneCam;
-    RingsDeterminationPipeline pipeline;
+    SkystoneDeterminationPipeline pipeline;
 
 
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
-        pipeline = new RingsDeterminationPipeline();
+        pipeline = new SkystoneDeterminationPipeline();
         phoneCam.setPipeline(pipeline);
 
         // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
@@ -39,19 +36,16 @@ public class EasyOpenCVExample extends LinearOpMode
         // landscape orientation, though.
         phoneCam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
 
-        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
+        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened()
-            {
+            public void onOpened() {
                 phoneCam.startStreaming(320,240, OpenCvCameraRotation.SIDEWAYS_LEFT);
             }
         });
 
         waitForStart();
 
-        while (opModeIsActive())
-        {
+        while (opModeIsActive()) {
             telemetry.addData("Analysis", pipeline.getAnalysis());
             telemetry.addData("Position", pipeline.position);
             telemetry.update();
@@ -61,13 +55,11 @@ public class EasyOpenCVExample extends LinearOpMode
         }
     }
 
-    public static class RingsDeterminationPipeline extends OpenCvPipeline
-    {
+    private static class SkystoneDeterminationPipeline extends OpenCvPipeline {
         /*
          * An enum to define the skystone position
          */
-        public enum RingPosition
-        {
+        public enum RingPosition {
             FOUR,
             ONE,
             NONE
@@ -76,7 +68,6 @@ public class EasyOpenCVExample extends LinearOpMode
         /*
          * Some color constants
          */
-        //                                    R,  G, B
         static final Scalar BLUE = new Scalar(0, 0, 255);
         static final Scalar GREEN = new Scalar(0, 255, 0);
 
@@ -113,23 +104,20 @@ public class EasyOpenCVExample extends LinearOpMode
          * This function takes the RGB frame, converts to YCrCb,
          * and extracts the Cb channel to the 'Cb' variable
          */
-        void inputToCb(Mat input)
-        {
+        void inputToCb(Mat input) {
             Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
             Core.extractChannel(YCrCb, Cb, 1);
         }
 
         @Override
-        public void init(Mat firstFrame)
-        {
+        public void init(Mat firstFrame) {
             inputToCb(firstFrame);
-            Rect rec = new Rect(region1_pointA, region1_pointB);
-            region1_Cb = Cb.submat(rec);
+
+            region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
         }
 
         @Override
-        public Mat processFrame(Mat input)
-        {
+        public Mat processFrame(Mat input) {
             inputToCb(input);
 
             avg1 = (int) Core.mean(region1_Cb).val[0];
@@ -142,7 +130,7 @@ public class EasyOpenCVExample extends LinearOpMode
                     2); // Thickness of the rectangle lines
 
             position = RingPosition.FOUR; // Record our analysis
-            if(avg1 > FOUR_RING_THRESHOLD){
+            if (avg1 > FOUR_RING_THRESHOLD) {
                 //position = RingPosition.FOUR;
                 Imgproc.rectangle(
                         input, // Buffer to draw on
@@ -150,7 +138,7 @@ public class EasyOpenCVExample extends LinearOpMode
                         region1_pointB, // Second point which defines the rectangle
                         BLUE, // The color the rectangle is drawn in
                         -1); // Negative thickness means solid fill
-            }else if (avg1 > ONE_RING_THRESHOLD){
+            } else if (avg1 > ONE_RING_THRESHOLD) {
                 //position = RingPosition.ONE;
                 Imgproc.rectangle(
                         input, // Buffer to draw on
@@ -158,7 +146,7 @@ public class EasyOpenCVExample extends LinearOpMode
                         region1_pointB, // Second point which defines the rectangle
                         BLUE, // The color the rectangle is drawn in
                         -1); // Negative thickness means solid fill
-            }else{
+            } else {
                 //position = RingPosition.NONE;
                 Imgproc.rectangle(
                         input, // Buffer to draw on

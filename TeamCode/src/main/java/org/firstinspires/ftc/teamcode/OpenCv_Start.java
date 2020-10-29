@@ -25,12 +25,54 @@ import java.util.ListIterator;
 import java.util.Random;
 
 @TeleOp
-public class OpenCv_Start extends LinearOpMode
-{
+public class OpenCv_Start extends LinearOpMode {
     OpenCvInternalCamera phoneCam;
     BananaPipeline pipeline;
 
-    public static class BananaPipeline extends OpenCvPipeline {
+
+
+    private void setupCamera() {
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+        pipeline = new BananaPipeline();
+        phoneCam.setPipeline(pipeline);
+
+        // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
+        // out when the RC activity is in portrait. We do our actual image processing assuming
+        // landscape orientation, though.
+        phoneCam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
+
+        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened()
+            {
+                phoneCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
+            }
+        });
+    }
+
+    @Override
+    public void runOpMode() {
+
+        setupCamera();
+
+        waitForStart();
+
+        while (opModeIsActive()) {
+//            telemetry.addData("Analysis", pipeline.getAnalysis());
+//            telemetry.addData("Position", pipeline.position);
+            telemetry.update();
+
+            // Don't burn CPU cycles busy-looping in this sample
+            sleep(50);
+        }
+    }
+
+
+
+
+
+    private static class BananaPipeline extends OpenCvPipeline {
 
         private Random rng = new Random(12345);
         Mat hsv;
@@ -57,16 +99,16 @@ public class OpenCv_Start extends LinearOpMode
         @Override
         public Mat processFrame(Mat frame) {
             Imgproc.cvtColor(frame, hsv, Imgproc.COLOR_RGB2HSV);
-            Scalar lower_yellow = new Scalar(23, 100, 130);
-            Scalar upper_yellow = new Scalar(45, 255, 255);
-            Core.inRange(hsv, lower_yellow, upper_yellow, mask);
+            Scalar min_yellow = new Scalar(23, 100, 130);
+            Scalar max_yellow = new Scalar(45, 255, 255);
+            Core.inRange(hsv, min_yellow, max_yellow, mask);
 
             Core.bitwise_and(frame, black, frame, mask);
 
             List<MatOfPoint> contours = new ArrayList<>();
             Mat hierarchy = new Mat();
             Imgproc.findContours(mask, contours, hierarchy,  Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-            for (int i=0; i < contours.size(); i++) {
+            for (int i = 0; i < contours.size(); i++) {
                 // Scalar color = new Scalar(rng.nextInt(256), rng.nextInt(256), rng.nextInt(256));
                 // Imgproc.drawContours(frame, contours, i, color, 1);
                 Imgproc.drawContours(frame, contours, i, new Scalar(0,200,200), 1);
@@ -77,47 +119,35 @@ public class OpenCv_Start extends LinearOpMode
             Scalar av = Core.mean(hsvRegion);
             Imgproc.putText(frame, String.format("HSV: %3.0f, %3.0f, %3.0f", av.val[0], av.val[1], av.val[2]), new Point(20,20), Imgproc.FONT_HERSHEY_COMPLEX, 0.5, new Scalar(255, 200, 0));
 
-            return frame;
-        }
-    }
 
-    private void setupCamera() {
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
-        pipeline = new BananaPipeline();
-        phoneCam.setPipeline(pipeline);
 
-        // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
-        // out when the RC activity is in portrait. We do our actual image processing assuming
-        // landscape orientation, though.
-        phoneCam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
-
-        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                phoneCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
+            ArrayList<Rect> rects = new ArrayList<Rect>();
+            Rect rect = null;
+            double maxArea = 300;
+            for (int i = 0; i < contours.size(); i++) {
+                Mat contour = contours.get(i);
+                double contourArea = Imgproc.contourArea(contour);
+                if (contourArea > maxArea) {
+                    rect = Imgproc.boundingRect(contours.get(i));
+                    rects.add(rect);
+                }
             }
-        });
-    }
 
-    @Override
-    public void runOpMode()
-    {
+            int biggestIndex = -1;
+            double biggestArea = 0;
 
-        setupCamera();
+            for (int i = 0; i < rects.size(); i++) {
+                if (rects.get(i).area() > biggestArea) {
+                    biggestIndex = i;
+                    biggestArea = rects.get(i).area();
+                }
+            }
 
-        waitForStart();
+            int width = rects.get(biggestIndex).width;
+            int height = rects.get(biggestIndex).height;
 
-        while (opModeIsActive())
-        {
-//            telemetry.addData("Analysis", pipeline.getAnalysis());
-//            telemetry.addData("Position", pipeline.position);
-            telemetry.update();
 
-            // Don't burn CPU cycles busy-looping in this sample
-            sleep(50);
+            return frame;
         }
     }
 }
