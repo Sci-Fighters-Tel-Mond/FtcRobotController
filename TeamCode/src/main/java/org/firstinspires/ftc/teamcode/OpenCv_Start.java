@@ -72,7 +72,7 @@ public class OpenCv_Start extends LinearOpMode {
 
 
 
-    public static class BananaPipeline extends OpenCvPipeline {
+    private static class BananaPipeline extends OpenCvPipeline {
 
         private Random rng = new Random(12345);
         Mat hsv;
