@@ -24,13 +24,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @TeleOp
-public class EasyOpenCV_KAGAN extends LinearOpMode
-{
+public class EasyOpenCV_KAGAN extends LinearOpMode {
     OpenCvInternalCamera phoneCam;
     BananaPipeline pipeline;
 
-    static private class BananaPipeline extends OpenCvPipeline
-    {
+    static private class BananaPipeline extends OpenCvPipeline {
         Mat hsv = new Mat();
         Mat mask = new Mat();
         double ratio = -1;
@@ -98,11 +96,9 @@ public class EasyOpenCV_KAGAN extends LinearOpMode
         // landscape orientation, though.
         phoneCam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
 
-        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
+        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened()
-            {
+            public void onOpened() {
                 phoneCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
             }
         });
@@ -111,15 +107,13 @@ public class EasyOpenCV_KAGAN extends LinearOpMode
 
 
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() {
 
         setupCamera();
 
         waitForStart();
 
-        while (opModeIsActive())
-        {
+        while (opModeIsActive()) {
 //            telemetry.addData("Analysis", pipeline.getAnalysis());
 //            telemetry.addData("Position", pipeline.position);
             telemetry.update();
