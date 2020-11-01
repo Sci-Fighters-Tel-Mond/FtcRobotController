@@ -30,6 +30,8 @@ public class EasyOpenCV_KAGAN extends LinearOpMode {
 
     static private class BananaPipeline extends OpenCvPipeline {
         Mat hsv = new Mat();
+        Mat yellowMask = new Mat();
+        Mat greenMask = new Mat();
         Mat mask = new Mat();
         double ratio = -1;
 
@@ -48,14 +50,14 @@ public class EasyOpenCV_KAGAN extends LinearOpMode {
                                         //  H    S    V
             Scalar yellow_min = new Scalar(23, 100, 130);
             Scalar yellow_max = new Scalar(55, 255, 255);
-            Scalar blue_min = new Scalar(170, 100, 100);
-            Scalar blue_max = new Scalar(198, 100, 100);
-            Scalar red_min = new Scalar(0, 255, 255);
-            Scalar red_max = new Scalar(12, 255, 255);
             Scalar green_min = new Scalar(80, 255, 255);
             Scalar green_max = new Scalar(103, 223, 255);
 
-            Core.inRange(hsv, yellow_min, yellow_max, mask);
+            Core.inRange(hsv, yellow_min, yellow_max, yellowMask);
+            Core.inRange(hsv, green_min, green_max, greenMask);
+
+            Core.bitwise_or(yellowMask, greenMask, mask);
+
             frame.setTo(new Scalar(255,123,132), mask);
 
             ArrayList<MatOfPoint> contours = new ArrayList<MatOfPoint>();
