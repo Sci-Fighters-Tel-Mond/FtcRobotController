@@ -133,7 +133,7 @@ public class OpenCv_Start extends LinearOpMode {
                 }
             }
 
-            int biggestIndex = -1;
+            int biggestIndex = 0;
             double biggestArea = 0;
 
             for (int i = 0; i < rects.size(); i++) {
@@ -143,9 +143,13 @@ public class OpenCv_Start extends LinearOpMode {
                 }
             }
 
-            int width = rects.get(biggestIndex).width;
-            int height = rects.get(biggestIndex).height;
-
+            if (rects.size() > 0) {
+                int width = rects.get(biggestIndex).width;
+                int height = rects.get(biggestIndex).height;
+                Point pt1 = new Point(rects.get(biggestIndex).x, rects.get(biggestIndex).y);
+                Point pt2 = new Point(rects.get(biggestIndex).x + width, rects.get(biggestIndex).y + height);
+                Imgproc.rectangle(frame, pt1, pt2, new Scalar(255, 0, 0), 2);
+            }
 
             return frame;
         }
