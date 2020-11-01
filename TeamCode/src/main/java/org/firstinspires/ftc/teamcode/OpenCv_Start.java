@@ -79,10 +79,10 @@ public class OpenCv_Start extends LinearOpMode {
         Mat black;
         Mat mask;
 
-        Mat hsvRegion;
+//        Mat hsvRegion;
 
-        static final Point A = new Point(100,100);
-        static final Point B = new Point(150, 150);
+//        static final Point A = new Point(100,100);
+//        static final Point B = new Point(150, 150);
 
         @Override
         public void init(Mat firstFrame) {
@@ -93,7 +93,7 @@ public class OpenCv_Start extends LinearOpMode {
             mask = new Mat();
             hsv = new Mat();
             Imgproc.cvtColor(firstFrame, hsv, Imgproc.COLOR_RGB2HSV);
-            hsvRegion = hsv.submat(new Rect(A, B));
+//            hsvRegion = hsv.submat(new Rect(A, B));
         }
 
         @Override
@@ -115,9 +115,9 @@ public class OpenCv_Start extends LinearOpMode {
             }
 
 
-            Imgproc.rectangle(frame, A, B, new Scalar(0,0,255), 1);
-            Scalar av = Core.mean(hsvRegion);
-            Imgproc.putText(frame, String.format("HSV: %3.0f, %3.0f, %3.0f", av.val[0], av.val[1], av.val[2]), new Point(20,20), Imgproc.FONT_HERSHEY_COMPLEX, 0.5, new Scalar(255, 200, 0));
+//            Imgproc.rectangle(frame, A, B, new Scalar(0,0,255), 1);
+//            Scalar av = Core.mean(hsvRegion);
+//            Imgproc.putText(frame, String.format("HSV: %3.0f, %3.0f, %3.0f", av.val[0], av.val[1], av.val[2]), new Point(20,20), Imgproc.FONT_HERSHEY_COMPLEX, 0.5, new Scalar(255, 200, 0));
 
 
 
