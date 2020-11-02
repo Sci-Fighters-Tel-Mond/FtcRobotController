@@ -16,7 +16,7 @@ public class BananaPipeline extends OpenCvPipeline {
     Mat hsv;
     Mat mask;
 
-    volatile private Point targetPos = new Point();
+    volatile private Point targetPos = null;
 
     public Point getTargetPos() {
         return targetPos;
@@ -81,6 +81,8 @@ public class BananaPipeline extends OpenCvPipeline {
             int x = rects.get(biggestIndex).x + width / 2;
             int y = rects.get(biggestIndex).y + height / 2;
             targetPos = new Point(x, y);
+        } else {
+            targetPos = null;
         }
 
         return frame;

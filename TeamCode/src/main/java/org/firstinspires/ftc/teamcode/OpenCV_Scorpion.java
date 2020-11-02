@@ -113,8 +113,10 @@ public class OpenCV_Scorpion extends LinearOpMode {
 
         phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened()
-            {phoneCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);}});
+            public void onOpened() {
+                phoneCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+            }
+        });
     }
 
     public void stopPower() {
@@ -292,13 +294,20 @@ public class OpenCV_Scorpion extends LinearOpMode {
         stopPower();
     }
 
-    public double turnToTarget(){
+    public double turnToTarget() {
+
         Point target = pipeline.getTargetPos();
-        int center = 240/2;
-        double deltaFromCenter = target.x - center;
-        double gain = deltaFromCenter / center;
-        return gain;
+        if (target != null) {
+            int center = 240 / 2;
+            double deltaFromCenter = target.x - center;
+            double gain = 0.4;
+            double turn = (deltaFromCenter / center) * gain;
+            return turn;
+        } else {
+            return 0;
+        }
     }
+
 
 
 
@@ -440,28 +449,6 @@ public class OpenCV_Scorpion extends LinearOpMode {
             telemetry.addData("Acceleration", imu.getAcceleration());
             telemetry.addData("Heading", getHeading());
             telemetry.update();
-
-            // game Pad Actions
-            // game Pad Actions
-            // game Pad Actions
-            // game Pad Actions
-            // game Pad Actions
-
-
-            if (gamepad1.b) {
-                driveForward(4, 1);
-            }
-            if (gamepad1.x) {
-                driveForward(-4, 1);
-            }
-
-            if (gamepad1.left_bumper) {
-
-                strafeSquare();
-            }
-            if (gamepad1.right_bumper) {
-                fieldOriented.toggle();
-            }
 
 
         }
