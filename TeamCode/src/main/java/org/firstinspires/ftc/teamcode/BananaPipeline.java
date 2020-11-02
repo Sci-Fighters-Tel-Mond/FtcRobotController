@@ -16,10 +16,8 @@ public class BananaPipeline extends OpenCvPipeline {
     Mat hsv;
     Mat mask;
 
-//        Mat hsvRegion;
+    volatile private Point targetPos = new Point();
 
-//        static final Point A = new Point(100,100);
-//        static final Point B = new Point(150, 150);
 
     @Override
     public void init(Mat firstFrame) {
@@ -76,8 +74,16 @@ public class BananaPipeline extends OpenCvPipeline {
             Point pt1 = new Point(rects.get(biggestIndex).x, rects.get(biggestIndex).y);
             Point pt2 = new Point(rects.get(biggestIndex).x + width, rects.get(biggestIndex).y + height);
             Imgproc.rectangle(frame, pt1, pt2, new Scalar(255, 0, 0), 2);
+
+            int x = rects.get(biggestIndex).x + width / 2;
+            int y = rects.get(biggestIndex).y + height / 2;
+            targetPos = new Point(x, y);
         }
 
         return frame;
+    }
+
+    public Point getTargetPos() {
+        return targetPos;
     }
 }
