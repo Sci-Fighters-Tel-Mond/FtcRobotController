@@ -39,25 +39,18 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+import org.opencv.core.Point;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvInternalCamera;
 
-/**
- * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
- * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
- * of the FTC Driver Station. When an selection is made from the menu, the corresponding OpMode
- * class is instantiated on the Robot Controller and executed.
- *
- * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
- * It includes all the skeletal structure that all linear OpModes contain.
- *
- * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- */
-
-@TeleOp(name="Roy Auto Scorpion", group="Linear Opmode")
+@TeleOp(group = "Linear Opmode")
 //@Disabled
 
 public class OpenCV_Scorpion extends LinearOpMode {
-
+    BananaPipeline pipeline;
+    OpenCvInternalCamera phoneCam;
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -80,8 +73,8 @@ public class OpenCV_Scorpion extends LinearOpMode {
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         // parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = false;
-        parameters.loggingTag          = "IMU";
+        parameters.loggingEnabled = false;
+        parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = null; // new JustLogginngAccelerationIntegrator();
 
         imu.initialize(parameters);
@@ -110,9 +103,22 @@ public class OpenCV_Scorpion extends LinearOpMode {
 
     }
 
+    private void initCamera() {
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+        pipeline = new BananaPipeline();
+        phoneCam.setPipeline(pipeline);
+
+        phoneCam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
+
+        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened()
+            {phoneCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);}});
+    }
 
     public void stopPower() {
-        setPower(0,0,0);
+        setPower(0, 0, 0);
     }
 
 
@@ -137,9 +143,7 @@ public class OpenCV_Scorpion extends LinearOpMode {
 //    }
 
 
-
-
-    public void resetPosition(){
+    public void resetPosition() {
         leftBackStartPos = leftBackDrive.getCurrentPosition();
         rightBackStartPos = rightBackDrive.getCurrentPosition();
         leftFrontStartPos = leftFrontDrive.getCurrentPosition();
@@ -154,11 +158,11 @@ public class OpenCV_Scorpion extends LinearOpMode {
 
 
     public void strafe(double meter, double power, double targetAngle) {
-        double s = (meter<0) ? -1 : 1;
+        double s = (meter < 0) ? -1 : 1;
 
         resetPosition();
 
-        while ((getStrafeDistance() * s < meter * s) && opModeIsActive()){
+        while ((getStrafeDistance() * s < meter * s) && opModeIsActive()) {
             double currentAngle = getHeading();
             double err = getDeltaHeading(targetAngle);
             double gain = 0.035;
@@ -175,35 +179,36 @@ public class OpenCV_Scorpion extends LinearOpMode {
         stopPower();
     }
 
-    public double getForwardDistance(){
+    public double getForwardDistance() {
         double polsMeter = 1150;
         int leftBack_tick = leftBackDrive.getCurrentPosition() - leftBackStartPos;
         int rightBack_tick = rightBackDrive.getCurrentPosition() - rightBackStartPos;
         int leftFront_tick = leftFrontDrive.getCurrentPosition() - leftFrontStartPos;
         int rightFront_tick = rightFrontDrive.getCurrentPosition() - rightFrontStartPos;
-        double leftFrontDist = leftFront_tick/polsMeter;
-        double rightFrontDist = rightFront_tick/polsMeter;
-        double leftBackDist = leftBack_tick/polsMeter;
-        double rightBackDist = rightBack_tick/polsMeter;
+        double leftFrontDist = leftFront_tick / polsMeter;
+        double rightFrontDist = rightFront_tick / polsMeter;
+        double leftBackDist = leftBack_tick / polsMeter;
+        double rightBackDist = rightBack_tick / polsMeter;
         double evgPols = (leftBackDist + rightBackDist + rightFrontDist + leftFrontDist) / 4;
         return evgPols;
     }
-    public double getStrafeDistance(){
+
+    public double getStrafeDistance() {
         double polsMeter = 1000;
         int leftBack_tick = leftBackDrive.getCurrentPosition() - leftBackStartPos;
         int rightBack_tick = rightBackDrive.getCurrentPosition() - rightBackStartPos;
         int leftFront_tick = leftFrontDrive.getCurrentPosition() - leftFrontStartPos;
         int rightFront_tick = rightFrontDrive.getCurrentPosition() - rightFrontStartPos;
-        double leftFrontDist = leftFront_tick/polsMeter;
-        double rightFrontDist = rightFront_tick/polsMeter;
-        double leftBackDist = leftBack_tick/polsMeter;
-        double rightBackDist = rightBack_tick/polsMeter;
+        double leftFrontDist = leftFront_tick / polsMeter;
+        double rightFrontDist = rightFront_tick / polsMeter;
+        double leftBackDist = leftBack_tick / polsMeter;
+        double rightBackDist = rightBack_tick / polsMeter;
         // double forwardDistance = (leftBackDist + rightBackDist + rightFrontDist + leftFrontDist) / 4;
         double strafeDistance = (leftBackDist + rightBackDist - rightFrontDist + leftFrontDist) / 4;
         return strafeDistance;
     }
 
-    public void setPower(double forward, double turn, double strafe){
+    public void setPower(double forward, double turn, double strafe) {
         leftFrontDrive.setPower(forward + turn + strafe);
         rightFrontDrive.setPower(forward - turn - strafe);
 
@@ -212,11 +217,11 @@ public class OpenCV_Scorpion extends LinearOpMode {
     }
 
 
-    public double getImuDistance(Position target){
+    public double getImuDistance(Position target) {
         Position current = imu.getPosition();
         double dx = current.x - target.x;
         double dy = current.y - target.y;
-        double sqrt = Math.pow(dy,2) + Math.pow(dx,2);
+        double sqrt = Math.pow(dy, 2) + Math.pow(dx, 2);
         double distance = Math.sqrt(sqrt);
         return distance;
     }
@@ -224,12 +229,12 @@ public class OpenCV_Scorpion extends LinearOpMode {
 
     public double getDeltaHeading(double target) {
         double currentAngle = getHeading();
-        double delta = target - currentAngle ;
+        double delta = target - currentAngle;
 
-        if (delta < 180){
+        if (delta < 180) {
             delta = delta + 360;
         }
-        if (delta > 180){
+        if (delta > 180) {
             delta = delta - 360;
         }
 
@@ -250,21 +255,21 @@ public class OpenCV_Scorpion extends LinearOpMode {
     }
 
 
-    public void driveForward(double meter, double targetPower, double targetAngle ) {
-        double s = (meter<0) ? -1 : 1;
+    public void driveForward(double meter, double targetPower, double targetAngle) {
+        double s = (meter < 0) ? -1 : 1;
         resetPosition();
 
-        while ((getForwardDistance() * s < meter * s) && opModeIsActive()){
+        while ((getForwardDistance() * s < meter * s) && opModeIsActive()) {
             double power = targetPower;
             double acclGain = 2;
             double acclPower = Math.abs(getForwardDistance()) * acclGain + 0.2;
-            if (acclPower < power )
+            if (acclPower < power)
                 power = acclPower;
 
             double breakgain = 1;
             double deltaForward = Math.abs(meter - getForwardDistance());
             double breakpower = deltaForward * breakgain;
-            if(breakpower < power)
+            if (breakpower < power)
                 power = breakpower;
 
             double currentAngle = getHeading();
@@ -287,6 +292,15 @@ public class OpenCV_Scorpion extends LinearOpMode {
         stopPower();
     }
 
+    public double turnToTarget(){
+        Point target = pipeline.getTargetPos();
+        int center = 240/2;
+        double deltaFromCenter = target.x - center;
+        double gain = deltaFromCenter / center;
+        return gain;
+    }
+
+
 
     public void turn(double deg, double power) {
         double targetAngle = getHeading() + deg; // zeroAngle
@@ -296,7 +310,7 @@ public class OpenCV_Scorpion extends LinearOpMode {
     public void turnTo(double targetAngle, double targetPower) {
         double delta = getDeltaHeading(targetAngle);
         double s = (delta < 0) ? -1 : 1;
-        while ((delta *s > 5 * s) && opModeIsActive()) {
+        while ((delta * s > 5 * s) && opModeIsActive()) {
 
             delta = getDeltaHeading(targetAngle);
             double gain = 0.04;
@@ -304,7 +318,7 @@ public class OpenCV_Scorpion extends LinearOpMode {
             if (Math.abs(power) < 0.1)
                 power = 0.1 * Math.signum(power);
 
-            setPower(0, power,0);
+            setPower(0, power, 0);
 
             telemetry.addData("target", targetAngle);
             telemetry.addData("current", getHeading());
@@ -318,7 +332,7 @@ public class OpenCV_Scorpion extends LinearOpMode {
 
     public void square() {
         double heading = getHeading();
-        for (int i = 0; i<4; i++) {
+        for (int i = 0; i < 4; i++) {
             driveForward(1, heading);
             heading += 90;
             turnTo(heading, 0.5);
@@ -340,11 +354,10 @@ public class OpenCV_Scorpion extends LinearOpMode {
     public void strafeSquare() {
         double heading = getHeading();
         driveForward(2, 0.5, heading);
-        strafe(2, 0.5, heading );
+        strafe(2, 0.5, heading);
         driveForward(-2, 0.5, heading);
-        strafe(-2, 0.5,  heading);
+        strafe(-2, 0.5, heading);
     }
-
 
 
     // main functions
@@ -381,6 +394,7 @@ public class OpenCV_Scorpion extends LinearOpMode {
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         initIMU();
+        initCamera();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -404,6 +418,10 @@ public class OpenCV_Scorpion extends LinearOpMode {
             double drive = -gamepad1.left_stick_y * boost;
             double turn = gamepad1.right_stick_x * boost;
             double strafe = gamepad1.left_stick_x * boost;
+
+            if (gamepad1.y) {
+                turn = turnToTarget();
+            }
 
             double alpha = getHeading();
             double forward = Math.cos(alpha) * drive;
@@ -430,22 +448,18 @@ public class OpenCV_Scorpion extends LinearOpMode {
             // game Pad Actions
 
 
-            if (gamepad1.y) {
-                driveForward(4 , 1);
+            if (gamepad1.b) {
+                driveForward(4, 1);
             }
             if (gamepad1.x) {
-                driveForward(-4 , 1);
+                driveForward(-4, 1);
             }
-            if (gamepad1.a) {
-                square();
-            }
-            if (gamepad1.b) {
-                strafe(1, 0.5);
-            }
+
             if (gamepad1.left_bumper) {
+
                 strafeSquare();
             }
-            if (gamepad1.right_bumper){
+            if (gamepad1.right_bumper) {
                 fieldOriented.toggle();
             }
 

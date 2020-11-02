@@ -18,6 +18,9 @@ public class BananaPipeline extends OpenCvPipeline {
 
     volatile private Point targetPos = new Point();
 
+    public Point getTargetPos() {
+        return targetPos;
+    }
 
     @Override
     public void init(Mat firstFrame) {
@@ -83,7 +86,4 @@ public class BananaPipeline extends OpenCvPipeline {
         return frame;
     }
 
-    public Point getTargetPos() {
-        return targetPos;
-    }
 }
