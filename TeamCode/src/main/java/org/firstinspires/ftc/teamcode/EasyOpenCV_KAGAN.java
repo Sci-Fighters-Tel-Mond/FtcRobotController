@@ -34,6 +34,8 @@ public class EasyOpenCV_KAGAN extends LinearOpMode {
         Mat greenMask = new Mat();
         Mat mask = new Mat();
         double ratio = -1;
+        public volatile int x;
+        public volatile int y;
 
         public double get_ratio() {return ratio;}
 
@@ -50,37 +52,53 @@ public class EasyOpenCV_KAGAN extends LinearOpMode {
                                         //  H    S    V
             Scalar yellow_min = new Scalar(23, 100, 130);
             Scalar yellow_max = new Scalar(55, 255, 255);
-            Scalar green_min = new Scalar(80, 255, 255);
-            Scalar green_max = new Scalar(103, 223, 255);
+            Scalar blue_min = new Scalar(75, 100, 124);
+            Scalar blue_max = new Scalar(103, 255, 255);
+            Scalar red_min = new Scalar(137, 140, 185);
+            Scalar red_max = new Scalar(159, 222, 255);
+
 
             Core.inRange(hsv, yellow_min, yellow_max, yellowMask);
-            Core.inRange(hsv, green_min, green_max, greenMask);
+            Core.inRange(hsv, red_min, red_max, greenMask);
 
             Core.bitwise_or(yellowMask, greenMask, mask);
+            frame.setTo(new Scalar(0,0,0), mask);
 
-            frame.setTo(new Scalar(255,123,132), mask);
 
             ArrayList<MatOfPoint> contours = new ArrayList<MatOfPoint>();
             Mat her = new Mat();
             Imgproc.findContours(mask, contours, her, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-            //Core.bitwise_not(mask, mask);
-            //frame.setTo(new Scalar(123, 32, 45), mask);
+            Core.bitwise_not(mask, mask);
+            frame.setTo(new Scalar(0, 0, 0), mask);
 
-            for (int num = 0; num < contours.size(); num++) {
+            int maxAreaIndex = -1;
+            double maxArea = 0;
 
-                Mat cnt =  contours.get(num);
+            Rect rect = null;
+            for (int i = 0; i < contours.size(); i++) {
+
+                Mat cnt =  contours.get(i);
                 double area = Imgproc.contourArea(cnt);
 
-                if (1000 < area){
-                    Imgproc.drawContours(frame, contours, num, new Scalar(2, 100, 150), 3);
-                    Rect rect = Imgproc.boundingRect(cnt);
+                Imgproc.drawContours(frame, contours, i, new Scalar(197,123, 170), 1);
 
-                    ratio = rect.height / rect.width;
-                    Imgproc.rectangle(frame,rect,new Scalar(95,100,150),1);
-                    break;
+                if (1000 < area) {
+                    if (area > maxArea) {
+                        maxArea = area;
+                        maxAreaIndex = i;
+                        rect = Imgproc.boundingRect(cnt);
+                        ratio = rect.height / rect.width;
+                        x = rect.x + rect.width /2;
+                        y = rect.y + rect.height /2;
+
+                    }
                 }
             }
+            if(rect != null) {
+                Imgproc.rectangle(frame, rect, new Scalar(95, 100, 150), 1);
+            }
+
             return frame;
         }
 
@@ -93,17 +111,12 @@ public class EasyOpenCV_KAGAN extends LinearOpMode {
         pipeline = new EasyOpenCV_KAGAN.BananaPipeline();
         phoneCam.setPipeline(pipeline);
 
-        // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
-        // out when the RC activity is in portrait. We do our actual image processing assuming
-        // landscape orientation, though.
         phoneCam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
 
         phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened() {
-                phoneCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
-            }
-        });
+            public void onOpened()
+            {phoneCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);}});
     }
 
 
@@ -116,8 +129,9 @@ public class EasyOpenCV_KAGAN extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-//            telemetry.addData("Analysis", pipeline.getAnalysis());
-//            telemetry.addData("Position", pipeline.position);
+
+            //telemetry.addData("Analysis", pipeline.getAnalysis());
+            //telemetry.addData("Position", pipeline.position);
             telemetry.update();
 
             // Don't burn CPU cycles busy-looping in this sample
