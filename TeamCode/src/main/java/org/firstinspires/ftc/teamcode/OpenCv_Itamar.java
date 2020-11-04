@@ -20,8 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @TeleOp
-public class OpenCv_Itamar extends LinearOpMode
-{
+public class OpenCv_Itamar extends LinearOpMode {
     OpenCvInternalCamera phoneCam;
     BananaPipeline pipeline;
 
@@ -29,27 +28,52 @@ public class OpenCv_Itamar extends LinearOpMode
 
         Mat hsv = new Mat();
         Mat mask = new Mat();
-        Mat blank ;
+
 
         @Override
         public void init(Mat firstFrame) {
             super.init(firstFrame);
-
-            blank = Mat.zeros(firstFrame.size(), firstFrame.type());
         }
 
         @Override
         public Mat processFrame(Mat frame) {
 
-            Imgproc.cvtColor(frame, hsv, Imgproc.COLOR_RGB2HLS);
+            Imgproc.cvtColor(frame, hsv, Imgproc.COLOR_RGB2HSV);
 
-            Core.inRange(hsv, new Scalar(25,100,100), new Scalar(45,255,255), mask);
+            Core.inRange(hsv, new Scalar(25, 100, 100), new Scalar(45, 255, 255), mask);
 
-            Core.bitwise_and(frame, blank, frame, mask);
+            frame.setTo(new Scalar(0, 0, 0), mask);
+
+            ArrayList<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+            Mat moti = new Mat();
+            Imgproc.findContours(frame, contours, moti, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+            double biggestArea = 0;
+            Rect rectang = new Rect();
+
+            for (int i = 0; i < contours.size(); i++) {
+                Mat cnt = contours.get(i);
+                double area = Imgproc.contourArea(cnt);
+
+                if (area > 1000) {
+                    if (biggestArea < area) {
+                        biggestArea = area;
+                        Imgproc.drawContours(frame, contours, i, new Scalar(0, 0, 255), 2);
+                        rectang = Imgproc.boundingRect(contours.get(i));
+                    }
+                }
+
+                Imgproc.rectangle(frame, rectang, new Scalar(255, 0, 0));
+ 
+            }
+
+
+
 
             return frame;
         }
     }
+
 
     private void setupCamera() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -62,26 +86,22 @@ public class OpenCv_Itamar extends LinearOpMode
         // landscape orientation, though.
         phoneCam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
 
-        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
+        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened()
-            {
-                phoneCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
+            public void onOpened() {
+                phoneCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
             }
         });
     }
 
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() {
 
         setupCamera();
 
         waitForStart();
 
-        while (opModeIsActive())
-        {
+        while (opModeIsActive()) {
 //            telemetry.addData("Analysis", pipeline.getAnalysis());
 //            telemetry.addData("Position", pipeline.position);
             telemetry.update();
