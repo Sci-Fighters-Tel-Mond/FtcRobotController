@@ -18,14 +18,9 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Random;
 
 @TeleOp
-public class OpenCv_Start extends LinearOpMode {
+public class OpenCv_Itay extends LinearOpMode {
     OpenCvInternalCamera phoneCam;
     BananaPipeline pipeline;
 
@@ -74,26 +69,21 @@ public class OpenCv_Start extends LinearOpMode {
 
     private static class BananaPipeline extends OpenCvPipeline {
 
-        private Random rng = new Random(12345);
         Mat hsv;
-        Mat black;
         Mat mask;
 
-        Mat hsvRegion;
+//        Mat hsvRegion;
 
-        static final Point A = new Point(100,100);
-        static final Point B = new Point(150, 150);
+//        static final Point A = new Point(100,100);
+//        static final Point B = new Point(150, 150);
 
         @Override
         public void init(Mat firstFrame) {
             super.init(firstFrame);
 
-            // black = new Mat.zeros(firstFrame.size(), firstFrame.type());
-            black = new Mat(firstFrame.rows(), firstFrame.cols(), firstFrame.type());
             mask = new Mat();
             hsv = new Mat();
             Imgproc.cvtColor(firstFrame, hsv, Imgproc.COLOR_RGB2HSV);
-            hsvRegion = hsv.submat(new Rect(A, B));
         }
 
         @Override
@@ -103,21 +93,16 @@ public class OpenCv_Start extends LinearOpMode {
             Scalar max_yellow = new Scalar(45, 255, 255);
             Core.inRange(hsv, min_yellow, max_yellow, mask);
 
-            Core.bitwise_and(frame, black, frame, mask);
+            frame.setTo(new Scalar(0,0,0), mask);
 
-            List<MatOfPoint> contours = new ArrayList<>();
+
+            ArrayList<MatOfPoint> contours = new ArrayList<>();
             Mat hierarchy = new Mat();
             Imgproc.findContours(mask, contours, hierarchy,  Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
             for (int i = 0; i < contours.size(); i++) {
-                // Scalar color = new Scalar(rng.nextInt(256), rng.nextInt(256), rng.nextInt(256));
-                // Imgproc.drawContours(frame, contours, i, color, 1);
                 Imgproc.drawContours(frame, contours, i, new Scalar(0,200,200), 1);
             }
 
-
-            Imgproc.rectangle(frame, A, B, new Scalar(0,0,255), 1);
-            Scalar av = Core.mean(hsvRegion);
-            Imgproc.putText(frame, String.format("HSV: %3.0f, %3.0f, %3.0f", av.val[0], av.val[1], av.val[2]), new Point(20,20), Imgproc.FONT_HERSHEY_COMPLEX, 0.5, new Scalar(255, 200, 0));
 
 
 
@@ -133,7 +118,7 @@ public class OpenCv_Start extends LinearOpMode {
                 }
             }
 
-            int biggestIndex = -1;
+            int biggestIndex = 0;
             double biggestArea = 0;
 
             for (int i = 0; i < rects.size(); i++) {
@@ -143,9 +128,13 @@ public class OpenCv_Start extends LinearOpMode {
                 }
             }
 
-            int width = rects.get(biggestIndex).width;
-            int height = rects.get(biggestIndex).height;
-
+            if (rects.size() > 0) {
+                int width = rects.get(biggestIndex).width;
+                int height = rects.get(biggestIndex).height;
+                Point pt1 = new Point(rects.get(biggestIndex).x, rects.get(biggestIndex).y);
+                Point pt2 = new Point(rects.get(biggestIndex).x + width, rects.get(biggestIndex).y + height);
+                Imgproc.rectangle(frame, pt1, pt2, new Scalar(255, 0, 0), 2);
+            }
 
             return frame;
         }
