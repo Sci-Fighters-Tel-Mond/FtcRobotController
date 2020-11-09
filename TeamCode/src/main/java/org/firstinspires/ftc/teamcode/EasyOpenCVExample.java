@@ -55,7 +55,7 @@ public class EasyOpenCVExample extends LinearOpMode {
         }
     }
 
-    public static class SkystoneDeterminationPipeline extends OpenCvPipeline {
+    private static class SkystoneDeterminationPipeline extends OpenCvPipeline {
         /*
          * An enum to define the skystone position
          */
@@ -170,4 +170,7 @@ public class EasyOpenCVExample extends LinearOpMode {
             return avg1;
         }
     }
-}
+
+
+    }
+
