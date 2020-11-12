@@ -30,9 +30,11 @@ public class EasyOpenCV_KAGAN extends LinearOpMode {
 
     static private class BananaPipeline extends OpenCvPipeline {
         Mat hsv = new Mat();
+        Mat mask = new Mat();
+
         Mat yellowMask = new Mat();
         Mat greenMask = new Mat();
-        Mat mask = new Mat();
+
         double ratio = -1;
         public volatile int x;
         public volatile int y;
@@ -61,9 +63,9 @@ public class EasyOpenCV_KAGAN extends LinearOpMode {
             Core.inRange(hsv, yellow_min, yellow_max, yellowMask);
             Core.inRange(hsv, red_min, red_max, greenMask);
 
+
             Core.bitwise_or(yellowMask, greenMask, mask);
             frame.setTo(new Scalar(0,0,0), mask);
-
 
             ArrayList<MatOfPoint> contours = new ArrayList<MatOfPoint>();
             Mat her = new Mat();

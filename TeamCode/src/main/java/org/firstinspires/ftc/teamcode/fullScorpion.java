@@ -56,7 +56,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 @TeleOp(name="Roy Auto Scorpion", group="Linear Opmode")
 //@Disabled
 
-public class RoyAuto_Scorpion extends LinearOpMode {
+public class fullScorpion extends LinearOpMode {
 
 
     // Declare OpMode members.
