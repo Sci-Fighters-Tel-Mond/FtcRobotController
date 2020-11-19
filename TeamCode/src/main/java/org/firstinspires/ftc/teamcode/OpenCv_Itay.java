@@ -39,8 +39,7 @@ public class OpenCv_Itay extends LinearOpMode {
 
         phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened()
-            {
+            public void onOpened() {
                 phoneCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
             }
         });
