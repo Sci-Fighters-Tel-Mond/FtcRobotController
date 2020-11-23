@@ -1,7 +1,8 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.study;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -19,16 +20,18 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-@TeleOp
-public class OpenCv_Itamar extends LinearOpMode {
-    OpenCvInternalCamera phoneCam;
-    BananaPipeline pipeline;
 
-    public static class BananaPipeline extends OpenCvPipeline {
+@TeleOp
+public class OpenCV_orri extends LinearOpMode {
+    OpenCvInternalCamera phoneCam;
+    BananaPipline pipeline;
+    volatile private Point point = new Point();
+
+    private class BananaPipline extends OpenCvPipeline {
+
 
         Mat hsv = new Mat();
         Mat mask = new Mat();
-
 
         @Override
         public void init(Mat firstFrame) {
@@ -64,21 +67,21 @@ public class OpenCv_Itamar extends LinearOpMode {
                 }
 
                 Imgproc.rectangle(frame, rectang, new Scalar(255, 0, 0));
- 
+
             }
-
-
-
-
+ 
             return frame;
         }
     }
 
+    public void getTarget() {
+        Point point = new Point();
+    }
 
     private void setupCamera() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
-        pipeline = new BananaPipeline();
+        pipeline = new BananaPipline();
         phoneCam.setPipeline(pipeline);
 
         // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
