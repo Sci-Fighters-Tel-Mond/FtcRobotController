@@ -54,7 +54,7 @@ public class Shooter extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        shooting1  = hardwareMap.get(DcMotor.class, "shooting1");
+        shooting1  = hardwareMap.get(DcMotor.class, "shooter");
         shooting1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Most robots need the motor on one side to be reversed to drive forward
@@ -76,15 +76,15 @@ public class Shooter extends LinearOpMode {
             }
 
             if (gamepad1.b) {
-                shooterPower = 0.5;
+                shooterPower = 0.8;
             }
 
             if (gamepad1.x){
-                shooterPower = 0.75;
+                shooterPower = 0.5;
             }
 
             if (gamepad1.y){
-                shooterPower = 1;
+                shooterPower = 0.75;
             }
 
 
