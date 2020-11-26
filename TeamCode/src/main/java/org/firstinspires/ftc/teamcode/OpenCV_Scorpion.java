@@ -432,6 +432,7 @@ public class OpenCV_Scorpion extends LinearOpMode {
                 turn = turnToTarget();
             }
 
+
             double alpha = getHeading();
             double forward = Math.cos(alpha) * drive;
             double side = Math.sin(alpha) * strafe;

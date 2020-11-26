@@ -33,18 +33,21 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name="First: Shooter EK", group="Tests")
 //@Disabled
 
-public class Shooter extends LinearOpMode {
+public class ShootingSystem extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor shooting1 = null;
     double shooterPower;
+    private Servo shirly = null;
+    private Toggle shirlyState = new Toggle(false);
 
     @Override
     public void runOpMode() {
@@ -56,6 +59,12 @@ public class Shooter extends LinearOpMode {
         // step (using the FTC Robot Controller app on the phone).
         shooting1  = hardwareMap.get(DcMotor.class, "shooter");
         shooting1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        shirly  = hardwareMap.get(Servo.class, "name_config");
+
+        shirly.setPosition(0);
+        shirlyState.update(false);
+
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -85,6 +94,23 @@ public class Shooter extends LinearOpMode {
 
             if (gamepad1.y){
                 shooterPower = 0.75;
+            }
+
+            shirlyState.update(gamepad1.right_bumper);
+
+            if (shirlyState.isPressed())
+            {
+                if (shirlyState.getState())
+                {
+                    shirly.setPosition(1);
+                    shirlyState.set(true);
+                }
+                else {
+                    shirly.setPosition(0);
+                    shirlyState.set(false);
+                }
+
+
             }
 
 
