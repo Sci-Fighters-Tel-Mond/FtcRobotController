@@ -29,13 +29,11 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name="First: Shooter EK", group="Tests")
 //@Disabled
@@ -46,8 +44,8 @@ public class ShootingSystem extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor shooting1 = null;
     double shooterPower;
-    private Servo shirly = null;
-    private Toggle shirlyState = new Toggle(false);
+    private Servo ring_mover = null;
+    private Toggle ring_mover_state = new Toggle(false);
 
     @Override
     public void runOpMode() {
@@ -60,10 +58,10 @@ public class ShootingSystem extends LinearOpMode {
         shooting1  = hardwareMap.get(DcMotor.class, "shooter");
         shooting1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        shirly  = hardwareMap.get(Servo.class, "name_config");
+        ring_mover = hardwareMap.get(Servo.class, "ring_mover");
 
-        shirly.setPosition(0);
-        shirlyState.update(false);
+        ring_mover.setPosition(0);
+        ring_mover_state.update(false);
 
 
         // Most robots need the motor on one side to be reversed to drive forward
@@ -96,18 +94,18 @@ public class ShootingSystem extends LinearOpMode {
                 shooterPower = 0.75;
             }
 
-            shirlyState.update(gamepad1.right_bumper);
+            ring_mover_state.update(gamepad1.right_bumper);
 
-            if (shirlyState.isPressed())
+            if (ring_mover_state.isPressed())
             {
-                if (shirlyState.getState())
+                if (ring_mover_state.getState())
                 {
-                    shirly.setPosition(1);
-                    shirlyState.set(true);
+                    ring_mover.setPosition(1);
+                    ring_mover_state.set(true);
                 }
                 else {
-                    shirly.setPosition(0);
-                    shirlyState.set(false);
+                    ring_mover.setPosition(0);
+                    ring_mover_state.set(false);
                 }
 
 
