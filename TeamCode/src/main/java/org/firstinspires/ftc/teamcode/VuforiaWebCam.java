@@ -84,7 +84,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
  */
 
 
-@TeleOp(name="ULTIMATEGOAL Vuforia Nav Webcam", group ="Concept")
+@TeleOp(group ="Concept")
 //@Disabled
 public class VuforiaWebCam extends LinearOpMode {
 
@@ -106,7 +106,7 @@ public class VuforiaWebCam extends LinearOpMode {
      * and paste it in to your code on the next line, between the double quotes.
      */
     private static final String VUFORIA_KEY =
-            " --- YOUR NEW VUFORIA KEY GOES HERE  --- ";
+            "AYdxBST/////AAABmTcyVOAt1kY2jTHzWKWDIqAK4JWjw5QccKG+8QR3cANxr2umqVCMsGWc3Zdg23dAv1QG4TWZ32hzz3A5bcpb+kT4WRFn43XRe+7NiBlNOCUR1HqdB7WTtH/o0tc7IOov4y1uVBrlSIYs5tOeMzhjd2f772qzonPa2bb2lJvZkgPf0km9/v7QZtgcojYtDpOxWGK0fSimVINL5uxVpJ/cpmSYZlXUxAb1/xDsED8wEIs1AKyQCn/edfYxPVxDTpJ9j7kW0lMhvmfgTaheel5Rn5qK5oL33ES6WvavRQuIGlW+lCSjEGbKg/D3pbvTYX9H74nPpXTKhbWIsBUekVfHzvJFseY2MJj5zhIVKS0Ev608";
 
     // Since ImageTarget trackables use mm to specifiy their dimensions, we must use mm for all the physical dimension.
     // We will define some constants and conversions here
@@ -136,7 +136,7 @@ public class VuforiaWebCam extends LinearOpMode {
         /*
          * Retrieve the camera we are to use.
          */
-        webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        webcamName = hardwareMap.get(WebcamName.class, "WebCam 1");
 
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.

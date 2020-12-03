@@ -53,9 +53,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Roy Auto Scorpion", group="Linear Opmode")
+@TeleOp(name="Scorpion", group="Linear Opmode")
 //@Disabled
-
 public class fullScorpion extends LinearOpMode {
 
 
@@ -203,14 +202,6 @@ public class fullScorpion extends LinearOpMode {
         return strafeDistance;
     }
 
-    public void setPower(double forward, double turn, double strafe){
-        leftFrontDrive.setPower(forward + turn + strafe);
-        rightFrontDrive.setPower(forward - turn - strafe);
-
-        leftBackDrive.setPower(forward + turn - strafe);
-        rightBackDrive.setPower(forward - turn + strafe);
-    }
-
 
     public double getImuDistance(Position target){
         Position current = imu.getPosition();
@@ -234,6 +225,14 @@ public class fullScorpion extends LinearOpMode {
         }
 
         return delta;
+    }
+
+    public void setPower(double forward, double turn, double strafe){
+        leftFrontDrive.setPower(forward + turn + strafe);
+        rightFrontDrive.setPower(forward - turn - strafe);
+
+        leftBackDrive.setPower(forward + turn - strafe);
+        rightBackDrive.setPower(forward - turn + strafe);
     }
 
 
@@ -400,21 +399,21 @@ public class fullScorpion extends LinearOpMode {
             // POV Mode uses left stick to go forward, and right stick to turn.
             // - This uses basic math to combine motions and is easier to drive straight.\
 
-            double boost = gamepad1.left_trigger * 0.5 + 0.5;
-            double drive = -gamepad1.left_stick_y * boost;
-            double turn = gamepad1.right_stick_x * boost;
+            double boost  = gamepad1.right_trigger * 0.4 + 0.6;
+            double drive  = -gamepad1.left_stick_y * boost;
+            double turn   = gamepad1.right_stick_x * boost;
             double strafe = gamepad1.left_stick_x * boost;
 
-            double alpha = getHeading();
-            double forward = Math.cos(alpha) * drive;
-            double side = Math.sin(alpha) * strafe;
-
-
-            if (fieldOriented.getState() == true)
-                setPower(forward, turn, side);
-            else
+            if (gamepad1.right_bumper == true) {
                 setPower(drive, turn, strafe);
-
+            } else{
+                // calculate field oriented
+                // change to radian
+                double alpha = - getHeading() / 180 * Math.PI;
+                double forward =   drive * Math.cos(alpha) - strafe * Math.sin(alpha);
+                double side    =   drive * Math.sin(alpha) + strafe * Math.cos(alpha);
+                setPower(forward, turn, side);
+            }
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("StrafePos", getStrafeDistance());
@@ -423,33 +422,7 @@ public class fullScorpion extends LinearOpMode {
             telemetry.addData("Heading", getHeading());
             telemetry.update();
 
-            // game Pad Actions
-            // game Pad Actions
-            // game Pad Actions
-            // game Pad Actions
-            // game Pad Actions
 
-
-            if (gamepad1.y) {
-                driveForward(4 , 1);
-            }
-            if (gamepad1.x) {
-                driveForward(-4 , 1);
-            }
-            if (gamepad1.a) {
-                square();
-            }
-            if (gamepad1.b) {
-                strafe(1, 0.5);
-            }
-            if (gamepad1.left_bumper) {
-                strafeSquare();
-            }
-            if (gamepad1.right_bumper){
-                fieldOriented.toggle();
-            }
-
-
-        }
+         }
     }
 }

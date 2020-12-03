@@ -34,8 +34,8 @@ public class BananaPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat frame) {
         Imgproc.cvtColor(frame, hsv, Imgproc.COLOR_RGB2HSV);
-        Scalar min_yellow = new Scalar(23, 100, 130);
-        Scalar max_yellow = new Scalar(45, 255, 255);
+        Scalar min_yellow = new Scalar(15, 100, 130);
+        Scalar max_yellow = new Scalar(35, 255, 255);
         Core.inRange(hsv, min_yellow, max_yellow, mask);
 
         frame.setTo(new Scalar(0, 0, 0), mask);
