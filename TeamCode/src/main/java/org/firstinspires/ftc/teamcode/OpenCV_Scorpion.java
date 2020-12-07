@@ -85,8 +85,8 @@ public class OpenCV_Scorpion extends LinearOpMode {
         telemetry.update();
         ElapsedTime timer = new ElapsedTime();
         timer.reset();
-        while (!imu.isGyroCalibrated() && !isStopRequested() && timer.seconds() < 12) {
-            sleep(1100);
+        while (!imu.isGyroCalibrated() && !isStopRequested() && timer.seconds() < 2) {
+            sleep(50);
         }
         if (imu.isGyroCalibrated())
             telemetry.addData("Gyro", "IMU Ready");
@@ -115,6 +115,7 @@ public class OpenCV_Scorpion extends LinearOpMode {
             @Override
             public void onOpened() {
                 phoneCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                phoneCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
             }
         });
     }
