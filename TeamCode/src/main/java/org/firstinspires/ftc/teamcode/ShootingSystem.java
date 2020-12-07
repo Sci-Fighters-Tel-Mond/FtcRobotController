@@ -35,9 +35,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="First: Shooter EK", group="Tests")
+@TeleOp(name="First: Shooter EK", group="Test")
 //@Disabled
-
 public class ShootingSystem extends LinearOpMode {
 
     // Declare OpMode members.
