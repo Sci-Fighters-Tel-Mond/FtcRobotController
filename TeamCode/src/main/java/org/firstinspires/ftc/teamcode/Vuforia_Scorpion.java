@@ -16,7 +16,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
-@TeleOp(group = "Linear Opmode")
+@TeleOp(group = "Test")
 //@Disabled
 public class Vuforia_Scorpion extends LinearOpMode {
     BananaPipeline pipeline;

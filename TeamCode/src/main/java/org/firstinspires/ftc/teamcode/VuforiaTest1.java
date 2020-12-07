@@ -23,7 +23,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 
 
-@TeleOp
+@TeleOp(group = "Test")
 //@Disabled
 public class VuforiaTest1 extends LinearOpMode {
 

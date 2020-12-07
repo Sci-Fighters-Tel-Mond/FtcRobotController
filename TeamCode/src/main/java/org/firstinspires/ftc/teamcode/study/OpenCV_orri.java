@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.study;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -21,7 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@TeleOp
+@TeleOp(group = "Study")
+@Disabled
 public class OpenCV_orri extends LinearOpMode {
     OpenCvInternalCamera phoneCam;
     BananaPipline pipeline;
