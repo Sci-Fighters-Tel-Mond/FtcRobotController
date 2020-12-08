@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -40,12 +41,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
-@TeleOp(group = "Linear Opmode")
+@Autonomous(group = "Linear Opmode")
 //@Disabled
 
 public class OpenCV_Scorpion extends LinearOpMode {
@@ -64,6 +66,7 @@ public class OpenCV_Scorpion extends LinearOpMode {
     private int leftFrontStartPos = 0;
     private int rightFrontStartPos = 0;
     private Toggle fieldOriented = new Toggle(false);
+    final double tile = 0.57785000000000004;
 
     public void initIMU() {
         // Set up the parameters with which we will use our IMU. Note that integration
@@ -369,6 +372,26 @@ public class OpenCV_Scorpion extends LinearOpMode {
         strafe(-2, 0.5, heading);
     }
 
+    // 0 - a
+    // 1 -b
+    // 4 - c
+    enum ABC {A, B, C};
+    public ABC getRingNum(BananaPipeline pipeline){
+        if (pipeline.getTargetRect() == null){
+            return (ABC.A);
+
+        }else{
+            Rect rect = pipeline.getTargetRect();
+            if (rect.height < rect.width/2){
+                return (ABC.B);
+            }
+
+            else{
+                return (ABC.C);
+            }
+        }
+    }
+
 
     // main functions
     // main functions
@@ -410,6 +433,8 @@ public class OpenCV_Scorpion extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
+        ABC abc = getRingNum(pipeline);
+
         // run until the end of the match (driver presses STOP)
         // START
 
@@ -417,6 +442,23 @@ public class OpenCV_Scorpion extends LinearOpMode {
             // Setup a variable for each drive wheel to save power level for telemetry
             double leftPower;
             double rightPower;
+
+
+            strafe(tile, 1);
+
+            if (abc == ABC.A){
+                driveForward(tile * 3, 1);
+            }
+
+            if (abc == ABC.B){
+                driveForward(tile * 4, 1);
+                strafe(-tile, 1);
+            }
+
+            if (abc == ABC.C){
+                driveForward(tile * 5, 1);
+            }
+
 
             // Choose to drive using either Tank Mode, or POV Mode
             // Comment out the method that's not used.  The default below is POV.

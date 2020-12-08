@@ -20,9 +20,14 @@ public class BananaPipeline extends OpenCvPipeline {
     Rect subRect;
 
     volatile private Point targetPos = null;
+    volatile private Rect targetRect = null;
 
     public Point getTargetPos() {
         return targetPos;
+    }
+
+    public Rect getTargetRect() {
+        return targetRect;
     }
 
     @Override
@@ -95,8 +100,10 @@ public class BananaPipeline extends OpenCvPipeline {
             int x = rects.get(biggestIndex).x + width / 2;
             int y = rects.get(biggestIndex).y + height / 2;
             targetPos = new Point(x, y);
+            targetRect = rects.get(biggestIndex);
         } else {
             targetPos = null;
+            targetRect = null;
         }
 
         // show the sub Rect for color testing

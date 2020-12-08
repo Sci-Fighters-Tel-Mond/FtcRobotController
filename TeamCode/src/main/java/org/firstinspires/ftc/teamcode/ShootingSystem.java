@@ -44,7 +44,6 @@ public class ShootingSystem extends LinearOpMode {
     private DcMotor shooting1 = null;
     double shooterPower;
     private Servo ring_mover = null;
-    private Toggle ring_mover_state = new Toggle(false);
 
     @Override
     public void runOpMode() {
@@ -60,7 +59,6 @@ public class ShootingSystem extends LinearOpMode {
         ring_mover = hardwareMap.get(Servo.class, "ring_mover");
 
         ring_mover.setPosition(0);
-        ring_mover_state.update(false);
 
 
         // Most robots need the motor on one side to be reversed to drive forward
@@ -71,12 +69,9 @@ public class ShootingSystem extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-        // run until the end of the match (driver presses STOP)
+
         while (opModeIsActive()) {
 
-            // Setup a variable for each drive wheel to save power level for telemetry
-
-            // Send calculated power to wheels
             if (gamepad1.a){
                  shooterPower = 0;
             }
@@ -93,22 +88,11 @@ public class ShootingSystem extends LinearOpMode {
                 shooterPower = 0.75;
             }
 
-            ring_mover_state.update(gamepad1.right_bumper);
-
-            if (ring_mover_state.isPressed())
-            {
-                if (ring_mover_state.getState())
-                {
-                    ring_mover.setPosition(1);
-                    ring_mover_state.set(true);
-                }
-                else {
-                    ring_mover.setPosition(0);
-                    ring_mover_state.set(false);
-                }
-
-
+            if (gamepad1.left_bumper){
+                ring_mover.setPosition(0.8);
             }
+
+            ring_mover.setPosition(gamepad1.right_trigger);
 
 
             shooting1.setPower(shooterPower);
@@ -116,6 +100,9 @@ public class ShootingSystem extends LinearOpMode {
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Servos", "right_trigger", gamepad1.right_trigger);
+            telemetry.addData("Servos", "left_trigger", gamepad1.left_trigger);
+
             telemetry.addData("Motors", "Speed:", shooterPower);
             telemetry.update();
         }
