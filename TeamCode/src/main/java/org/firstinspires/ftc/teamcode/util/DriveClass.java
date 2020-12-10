@@ -136,7 +136,7 @@ public class DriveClass {
 		setPower(0, 0, 0);
 	}
 
-	double getHeading() {
+	public double getHeading() {
 		Orientation orientation = imu.getAngularOrientation();
 		return -orientation.firstAngle;
 	}
