@@ -1,6 +1,5 @@
 // Drive Class 2
 // Ultimate Goal 2020 - 2021
-// Credits: Itay, Zeev
 
 package org.firstinspires.ftc.teamcode.util;
 
