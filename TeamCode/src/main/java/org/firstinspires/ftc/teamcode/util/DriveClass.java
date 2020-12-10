@@ -117,11 +117,11 @@ public class DriveClass {
 		RobotLog.d("IMU calibration status: %s", imu.getCalibrationStatus().toString());
 	}
 
-	public double getImuDistance(Position target){
+	public double getImuDistance(Position target) {
 		Position current = imu.getPosition();
 		double dx = current.x - target.x;
 		double dy = current.y - target.y;
-		double sqrt = Math.pow(dy,2) + Math.pow(dx,2);
+		double sqrt = Math.pow(dy, 2) + Math.pow(dx, 2);
 		return Math.sqrt(sqrt);
 	}
 
@@ -269,7 +269,7 @@ public class DriveClass {
 	public void turnTo(double targetAngle, double targetPower) {
 		double delta = getDeltaHeading(targetAngle);
 		double s = (delta < 0) ? -1 : 1;
-		while ((delta *s > 5 * s) && opMode.opModeIsActive()) {
+		while ((delta * s > 5 * s) && opMode.opModeIsActive()) {
 
 			delta = getDeltaHeading(targetAngle);
 			double gain = 0.04;
@@ -277,7 +277,7 @@ public class DriveClass {
 			if (Math.abs(power) < 0.1)
 				power = 0.1 * Math.signum(power);
 
-			setPower(0, power,0);
+			setPower(0, power, 0);
 
 			opMode.telemetry.addData("target", targetAngle);
 			opMode.telemetry.addData("current", getHeading());
