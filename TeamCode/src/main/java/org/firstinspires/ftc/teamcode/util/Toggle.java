@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.util;
 
 public class Toggle {
 
@@ -7,8 +7,8 @@ public class Toggle {
     private boolean changed = false;
     private boolean state = false;
 
-    Toggle( ) { }
-    Toggle( boolean initialState ) { this.state = initialState; }
+    public Toggle( ) { }
+    public Toggle( boolean initialState ) { this.state = initialState; }
 
     public void update(boolean input) {
         if (lastInput != input) {
