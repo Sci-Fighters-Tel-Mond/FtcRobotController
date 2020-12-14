@@ -86,9 +86,13 @@ public class DriveClass {
 			br_Drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		}
 		//endregion setZeroPowerBehavior
+
+		initIMU(hw);
 	}
 
-	private void initIMU() {
+	private void initIMU(HardwareMap hw) {
+		imu = hw.get(BNO055IMU.class, "imu");
+
 		BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 		parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
 		parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -100,8 +104,8 @@ public class DriveClass {
 
 		ElapsedTime timer = new ElapsedTime();
 		timer.reset();
-		while (!imu.isGyroCalibrated() && !opMode.isStopRequested() && timer.seconds() < 12) {
-			opMode.sleep(1100);
+		while (!imu.isGyroCalibrated() && !opMode.isStopRequested() && timer.seconds() < 5) {
+			opMode.sleep(50);
 		}
 		if (imu.isGyroCalibrated()) {
 			opMode.telemetry.addData("Gyro", "Done Calibrating");
@@ -163,7 +167,7 @@ public class DriveClass {
 	}
 
 	public double getForwardDistance() {
-		final double polsMeter = 1150;
+		final double polsMeter = 2185;
 		int fl_tick = fl_Drive.getCurrentPosition() - fl_startPos;
 		int fr_tick = fr_Drive.getCurrentPosition() - fr_startPos;
 		int bl_tick = bl_Drive.getCurrentPosition() - bl_startPos;
@@ -195,7 +199,7 @@ public class DriveClass {
 			double breakgain = 1;
 			double deltaForward = Math.abs(meter - getForwardDistance());
 			double breakpower = deltaForward * breakgain;
-			if (breakpower < power)
+			if ( (breakpower < power) && (breakgain > 0.2) )
 				power = breakpower;
 
 			double currentAngle = getHeading();
@@ -219,7 +223,7 @@ public class DriveClass {
 	}
 
 	public double getStrafeDistance() {
-		double polsMeter = 1000;
+		double polsMeter = 900;
 
 		int fl_tick = fl_Drive.getCurrentPosition() - fl_startPos;
 		int fr_tick = fr_Drive.getCurrentPosition() - fr_startPos;
