@@ -31,14 +31,14 @@ public class DriveClass {
 	}
 	//endregion DON'T TOUCH
 
-	private LinearOpMode opMode; // TODO: maybe volatile?, Firs I declared it as OpMode now its LinearOpMode
+	private LinearOpMode opMode; // First I declared it as OpMode now its LinearOpMode
 
 	volatile private DcMotorEx fl_Drive = null;
 	volatile private DcMotorEx fr_Drive = null;
 	volatile private DcMotorEx bl_Drive = null;
 	volatile private DcMotorEx br_Drive = null;
 
-	private BNO055IMU imu = null; // TODO: maybe volatile?
+	private BNO055IMU imu = null;
 
 	private int fl_startPos = 0;
 	private int fr_startPos = 0;
