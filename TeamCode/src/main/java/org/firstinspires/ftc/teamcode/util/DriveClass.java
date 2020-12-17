@@ -121,6 +121,8 @@ public class DriveClass {
 		RobotLog.d("IMU calibration status: %s", imu.getCalibrationStatus().toString());
 	}
 
+
+
 	public double getImuDistance(Position target) {
 		Position current = imu.getPosition();
 		double dx = current.x - target.x;
@@ -167,7 +169,7 @@ public class DriveClass {
 	}
 
 	public double getForwardDistance() {
-		final double polsMeter = 2185;
+		final double polsMeter = 2410;
 		int fl_tick = fl_Drive.getCurrentPosition() - fl_startPos;
 		int fr_tick = fr_Drive.getCurrentPosition() - fr_startPos;
 		int bl_tick = bl_Drive.getCurrentPosition() - bl_startPos;
@@ -193,14 +195,59 @@ public class DriveClass {
 			double power = targetPower;
 			double acclGain = 2;
 			double acclPower = Math.abs(getForwardDistance()) * acclGain + 0.2;
-			if (acclPower < power)
+			if (acclPower < power) {
 				power = acclPower;
-
+		    }
 			double breakgain = 1;
 			double deltaForward = Math.abs(meter - getForwardDistance());
 			double breakpower = deltaForward * breakgain;
-			if ( (breakpower < power) && (breakgain > 0.2) )
+			if (breakpower < power)  {
 				power = breakpower;
+			}
+			if (power < 0.25) {
+				power = 0.25;
+			}
+
+			double currentAngle = getHeading();
+			double err = getDeltaHeading(targetAngle);
+			double gain = 0.040;
+			double correction = gain * err;
+
+			setPower(power * s, correction, 0);
+
+			opMode.telemetry.addData("deltaForward", deltaForward);
+			opMode.telemetry.addData("acclPower", acclPower);
+			opMode.telemetry.addData("breakPower", breakpower);
+			opMode.telemetry.addData("power", power);
+
+			opMode.telemetry.addData("target", targetAngle);
+			opMode.telemetry.addData("current", currentAngle);
+			opMode.telemetry.addData("Error", err);
+			opMode.telemetry.update();
+		}
+		stopPower();
+	}
+
+	public void alahson(double forward, double sideward, double targetPower, double targetAngle) {
+		double s = (forward < 0) ? -1 : 1;
+		resetPosition();
+
+		while ((getForwardDistance() * s < forward * s) && opMode.opModeIsActive()) {
+			double power = targetPower;
+			double acclGain = 2;
+			double acclPower = Math.abs(getForwardDistance()) * acclGain + 0.2;
+			if (acclPower < power) {
+				power = acclPower;
+			}
+			double breakgain = 1;
+			double deltaForward = Math.abs(forward - getForwardDistance());
+			double breakpower = deltaForward * breakgain;
+			if (breakpower < power)  {
+				power = breakpower;
+			}
+			if (power < 0.25) {
+				power = 0.25;
+			}
 
 			double currentAngle = getHeading();
 			double err = getDeltaHeading(targetAngle);
