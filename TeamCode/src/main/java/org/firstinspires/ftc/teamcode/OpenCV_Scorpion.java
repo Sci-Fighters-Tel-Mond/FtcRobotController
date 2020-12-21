@@ -138,5 +138,18 @@ public class OpenCV_Scorpion extends LinearOpMode {
         if (abc == ABC.C) {
             robot.driveForward(tile * 5, 1,heading);
         }
+
+        while (opModeIsActive()){
+            double boost  = gamepad1.right_trigger * 0.4 + 0.6;
+            double drive  = -gamepad1.left_stick_y * boost;
+            double turn   = gamepad1.right_stick_x * boost;
+            double strafe = gamepad1.left_stick_x * boost;
+
+            robot.setPower(drive, turn, strafe);
+        }
     }
+
+
+
+
 }
