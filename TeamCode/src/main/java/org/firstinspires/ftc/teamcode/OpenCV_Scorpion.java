@@ -59,6 +59,8 @@ public class OpenCV_Scorpion extends LinearOpMode {
 
     private Toggle fieldOriented = new Toggle(false);
     final double tile = 0.6;
+    final int left = -1;
+    final int right = 1;
 
     private void initCamera() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -80,14 +82,16 @@ public class OpenCV_Scorpion extends LinearOpMode {
     // 0 - a
     // 1 -b
     // 4 - c
-    enum ABC { A, B, C };
-    
-    public ABC getRingNum(BananaPipeline pipeline){
-        if (pipeline.getTargetRect() == null){
+    enum ABC {A, B, C}
+
+    ;
+
+    public ABC getRingNum(BananaPipeline pipeline) {
+        if (pipeline.getTargetRect() == null) {
             return (ABC.A);
         } else {
             Rect rect = pipeline.getTargetRect();
-            if (rect.height < rect.width/2){
+            if (rect.height < rect.width / 2) {
                 return (ABC.B);
             } else {
                 return (ABC.C);
@@ -125,9 +129,12 @@ public class OpenCV_Scorpion extends LinearOpMode {
 
         double heading = robot.getHeading();
 
-        robot.strafe(-tile / 2, 1, heading);
+        //robot.strafe(-tile / 2, 1, heading);
         if (abc == ABC.A) {
-            robot.driveForward(tile * 3, 1, heading);
+            robot.diagonal(0, tile / 3 * left, 0.8, heading);
+            robot.diagonal(tile * 2.5,  0 * left, 0.8, heading);
+//            robot.diagonal(tile * 2.5, tile / 3 * left, 0.8, heading);
+
         }
 
         if (abc == ABC.B) {
@@ -136,20 +143,8 @@ public class OpenCV_Scorpion extends LinearOpMode {
         }
 
         if (abc == ABC.C) {
-            robot.driveForward(tile * 5, 1,heading);
+            robot.driveForward(tile * 5, 1, heading);
         }
 
-        while (opModeIsActive()){
-            double boost  = gamepad1.right_trigger * 0.4 + 0.6;
-            double drive  = -gamepad1.left_stick_y * boost;
-            double turn   = gamepad1.right_stick_x * boost;
-            double strafe = gamepad1.left_stick_x * boost;
-
-            robot.setPower(drive, turn, strafe);
-        }
     }
-
-
-
-
 }

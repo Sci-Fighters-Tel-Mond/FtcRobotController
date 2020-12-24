@@ -121,8 +121,6 @@ public class DriveClass {
 		RobotLog.d("IMU calibration status: %s", imu.getCalibrationStatus().toString());
 	}
 
-
-
 	public double getImuDistance(Position target) {
 		Position current = imu.getPosition();
 		double dx = current.x - target.x;
@@ -201,6 +199,8 @@ public class DriveClass {
 			double breakgain = 1;
 			double deltaForward = Math.abs(meter - getForwardDistance());
 			double breakpower = deltaForward * breakgain;
+
+			if ( (breakpower < power) && (breakgain > 0.2) )
 			if (breakpower < power)  {
 				power = breakpower;
 			}
@@ -228,42 +228,64 @@ public class DriveClass {
 		stopPower();
 	}
 
-	public void alahson(double forward, double sideward, double targetPower, double targetAngle) {
-		double s = (forward < 0) ? -1 : 1;
+	public void diagonal(double forward, double sideward, double targetPower, double targetAngle) {
+		double sf = (forward < 0) ? -1 : 1;
+		double ss = (sideward < 0) ? -1 : 1;
 		resetPosition();
 
-		while ((getForwardDistance() * s < forward * s) && opMode.opModeIsActive()) {
-			double power = targetPower;
+		double currentAngle = getHeading();
+		while ((getForwardDistance() * sf < forward * sf ||
+				getStrafeDistance()* ss < sideward * ss) &&
+				opMode.opModeIsActive()) {
+			double power_F = targetPower * (30/34);
+			double power_S = targetPower * (6/51);
+
 			double acclGain = 2;
 			double acclPower = Math.abs(getForwardDistance()) * acclGain + 0.2;
-			if (acclPower < power) {
-				power = acclPower;
-			}
-			double breakgain = 1;
-			double deltaForward = Math.abs(forward - getForwardDistance());
-			double breakpower = deltaForward * breakgain;
-			if (breakpower < power)  {
-				power = breakpower;
-			}
-			if (power < 0.25) {
-				power = 0.25;
+
+			if (acclPower < power_F) {
+				power_F = acclPower;
 			}
 
-			double currentAngle = getHeading();
+			double breakgain = 1;
+			double deltaForward = Math.abs(forward - getForwardDistance());
+			double deltaStrafe = Math.abs(sideward - getStrafeDistance());
+			double breakPower_F = deltaForward * breakgain;
+			double breakPower_S = deltaStrafe * breakgain;
+
+			if (breakPower_F < power_F)  {
+				power_F = breakPower_F;
+			}
+
+			if (breakPower_S < power_S)  {
+				power_S = breakPower_S;
+			}
+
+			if (0 < power_S && power_S < 0.2) {
+				power_S = 0.2;
+			}
+
+			if (0 < power_F && power_F < 0.2) {
+				power_F = 0.2;
+			}
+
+
 			double err = getDeltaHeading(targetAngle);
 			double gain = 0.040;
 			double correction = gain * err;
 
-			setPower(power * s, correction, 0);
+			setPower(power_F * sf, correction, power_S * ss);
 
-			opMode.telemetry.addData("deltaForward", deltaForward);
-			opMode.telemetry.addData("acclPower", acclPower);
-			opMode.telemetry.addData("breakPower", breakpower);
-			opMode.telemetry.addData("power", power);
+			opMode.telemetry.addData("delta forward", deltaForward);
+			opMode.telemetry.addData("accl power", acclPower);
+			opMode.telemetry.addData("break power forward:", breakPower_F);
+			opMode.telemetry.addData("power forward:", power_F);
 
-			opMode.telemetry.addData("target", targetAngle);
-			opMode.telemetry.addData("current", currentAngle);
-			opMode.telemetry.addData("Error", err);
+			opMode.telemetry.addData("delta strafe", deltaStrafe);
+			opMode.telemetry.addData("accl power", acclPower);
+			opMode.telemetry.addData("break power strafe:", breakPower_S);
+			opMode.telemetry.addData("power strafe:", power_S);
+
 			opMode.telemetry.update();
 		}
 		stopPower();

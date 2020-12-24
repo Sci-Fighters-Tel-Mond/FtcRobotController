@@ -203,6 +203,47 @@ public class fullScorpion extends LinearOpMode {
         return strafeDistance;
     }
 
+    public void diagonal(double forward, double sideward, double targetPower, double targetAngle) {
+        double s = (forward < 0) ? -1 : 1;
+        resetPosition();
+
+        double currentAngle = getHeading();
+        while ((getForwardDistance() * s < forward * s) && opModeIsActive()) {
+            double power = targetPower;
+            double acclGain = 2;
+            double acclPower = Math.abs(getForwardDistance()) * acclGain + 0.2;
+            if (acclPower < power) {
+                power = acclPower;
+            }
+            double breakgain = 1;
+            double deltaForward = Math.abs(forward - getForwardDistance());
+            double breakpower = deltaForward * breakgain;
+            if (breakpower < power)  {
+                power = breakpower;
+            }
+            if (power < 0.25) {
+                power = 0.25;
+            }
+
+            double err = getDeltaHeading(targetAngle);
+            double gain = 0.040;
+            double correction = gain * err;
+
+            setPower(power * s, correction, 0);
+
+            telemetry.addData("deltaForward", deltaForward);
+            telemetry.addData("acclPower", acclPower);
+            telemetry.addData("breakPower", breakpower);
+            telemetry.addData("power", power);
+
+            telemetry.addData("target", targetAngle);
+            telemetry.addData("current angle:", currentAngle);
+            telemetry.addData("Error", err);
+            telemetry.update();
+        }
+        stopPower();
+    }
+
 
     public double getImuDistance(Position target){
         Position current = imu.getPosition();
@@ -415,6 +456,9 @@ public class fullScorpion extends LinearOpMode {
                 double side    =   drive * Math.sin(alpha) + strafe * Math.cos(alpha);
                 setPower(forward, turn, side);
             }
+
+
+
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("StrafePos", getStrafeDistance());
