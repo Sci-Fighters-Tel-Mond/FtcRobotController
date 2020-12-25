@@ -131,9 +131,9 @@ public class OpenCV_Scorpion extends LinearOpMode {
 
         //robot.strafe(-tile / 2, 1, heading);
         if (abc == ABC.A) {
-            robot.diagonal(0, tile / 3 * left, 0.8, heading);
-            robot.diagonal(tile * 2.5,  0 * left, 0.8, heading);
-//            robot.diagonal(tile * 2.5, tile / 3 * left, 0.8, heading);
+//            robot.diagonal(0, tile / 3 * left, 0.8, heading);
+//            robot.diagonal(tile * 2.5,  0 * left, 0.8, heading);
+            robot.diagonal(tile * 2.5, tile / 3 * left, 0.8, heading);
 
         }
 

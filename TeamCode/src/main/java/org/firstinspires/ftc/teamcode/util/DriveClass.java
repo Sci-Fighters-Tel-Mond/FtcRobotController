@@ -231,60 +231,59 @@ public class DriveClass {
 	public void diagonal(double forward, double sideward, double targetPower, double targetAngle) {
 		double sf = (forward < 0) ? -1 : 1;
 		double ss = (sideward < 0) ? -1 : 1;
+		double c = Math.sqrt(sideward * sideward + forward * forward);
+		double RVf = forward / c;
+		double RVs = sideward / c;
+
 		resetPosition();
 
 		double currentAngle = getHeading();
-		while ((getForwardDistance() * sf < forward * sf ||
-				getStrafeDistance()* ss < sideward * ss) &&
-				opMode.opModeIsActive()) {
-			double power_F = targetPower * (30/34);
-			double power_S = targetPower * (6/51);
+		while (opMode.opModeIsActive() && (RVf != 0) ||  (RVs != 0)) {
+
+			if (getForwardDistance() * sf > forward * sf) {
+				RVf = 0;
+			}
+			if (getStrafeDistance() * ss > sideward * ss) {
+				RVs = 0;
+			}
+			double power = targetPower ;
 
 			double acclGain = 2;
 			double acclPower = Math.abs(getForwardDistance()) * acclGain + 0.2;
 
-			if (acclPower < power_F) {
-				power_F = acclPower;
+			if (acclPower < power) {
+				power = acclPower;
 			}
+
+			double deltaForward = forward - getForwardDistance();
+			double deltaStrafe  = sideward - getStrafeDistance();
+
+			double deltaC = Math.sqrt(deltaStrafe * deltaStrafe + deltaForward * deltaForward);
 
 			double breakgain = 1;
-			double deltaForward = Math.abs(forward - getForwardDistance());
-			double deltaStrafe = Math.abs(sideward - getStrafeDistance());
-			double breakPower_F = deltaForward * breakgain;
-			double breakPower_S = deltaStrafe * breakgain;
+			double breakPower = deltaC * breakgain;
 
-			if (breakPower_F < power_F)  {
-				power_F = breakPower_F;
+			if (breakPower < power)  {
+				power = breakPower;
 			}
 
-			if (breakPower_S < power_S)  {
-				power_S = breakPower_S;
+			if (power < 0.25) {
+				power = 0.25;
 			}
-
-			if (0 < power_S && power_S < 0.2) {
-				power_S = 0.2;
-			}
-
-			if (0 < power_F && power_F < 0.2) {
-				power_F = 0.2;
-			}
-
 
 			double err = getDeltaHeading(targetAngle);
 			double gain = 0.040;
 			double correction = gain * err;
+			double Vf = RVf * power;
+			double Vs = RVs * power;
 
-			setPower(power_F * sf, correction, power_S * ss);
+			setPower(Vf, correction, Vs);
 
-			opMode.telemetry.addData("delta forward", deltaForward);
-			opMode.telemetry.addData("accl power", acclPower);
-			opMode.telemetry.addData("break power forward:", breakPower_F);
-			opMode.telemetry.addData("power forward:", power_F);
-
-			opMode.telemetry.addData("delta strafe", deltaStrafe);
-			opMode.telemetry.addData("accl power", acclPower);
-			opMode.telemetry.addData("break power strafe:", breakPower_S);
-			opMode.telemetry.addData("power strafe:", power_S);
+			opMode.telemetry.addData("delta forward:", deltaForward);
+			opMode.telemetry.addData("delta strafe:", deltaStrafe);
+			opMode.telemetry.addData("speed strafe:", RVs);
+			opMode.telemetry.addData("speed forward:", RVf);
+			opMode.telemetry.addData("power:", power);
 
 			opMode.telemetry.update();
 		}
@@ -304,7 +303,7 @@ public class DriveClass {
 		double leftBackDist = bl_tick / polsMeter;
 		double rightBackDist = br_tick / polsMeter;
 		// double forwardDistance = (leftBackDist + rightBackDist + rightFrontDist + leftFrontDist) / 4;
-		return (leftBackDist + rightBackDist - rightFrontDist + leftFrontDist) / 4;
+		return (-leftBackDist + rightBackDist - rightFrontDist + leftFrontDist) / 4;
 	}
 
 	public void strafe(double meter, double power) {
