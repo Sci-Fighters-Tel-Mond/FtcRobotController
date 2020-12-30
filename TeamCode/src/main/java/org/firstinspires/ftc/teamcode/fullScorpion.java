@@ -199,7 +199,7 @@ public class fullScorpion extends LinearOpMode {
         double leftBackDist = leftBack_tick/polsMeter;
         double rightBackDist = rightBack_tick/polsMeter;
         // double forwardDistance = (leftBackDist + rightBackDist + rightFrontDist + leftFrontDist) / 4;
-        double strafeDistance = (leftBackDist + rightBackDist - rightFrontDist + leftFrontDist) / 4;
+        double strafeDistance = (-leftBackDist + rightBackDist - rightFrontDist + leftFrontDist) / 4;
         return strafeDistance;
     }
 
@@ -402,10 +402,10 @@ public class fullScorpion extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        leftBackDrive = hardwareMap.get(DcMotor.class, "bl_drive");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "br_drive");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "fr_drive");
-        leftFrontDrive = hardwareMap.get(DcMotor.class, "fl_drive");
+        leftBackDrive = hardwareMap.get(DcMotor.class, "bl");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "br");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "fr");
+        leftFrontDrive = hardwareMap.get(DcMotor.class, "fl");
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 

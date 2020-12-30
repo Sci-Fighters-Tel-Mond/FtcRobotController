@@ -29,28 +29,22 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.teamcode.util.DriveClass;
 import org.firstinspires.ftc.teamcode.util.Toggle;
-import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
-@Autonomous(group = "Linear Opmode")
+@TeleOp(group = "Linear Opmode")
 //@Disabled
-public class OpenCV_Scorpion extends LinearOpMode {
+public class DrivingTest extends LinearOpMode {
     BananaPipeline pipeline;
     OpenCvInternalCamera phoneCam;
     private DriveClass robot = new DriveClass(this).useEncoders();
@@ -82,10 +76,7 @@ public class OpenCV_Scorpion extends LinearOpMode {
     // 0 - a
     // 1 -b
     // 4 - c
-    enum ABC {A, B, C}
-
-    ;
-
+    enum ABC {A, B, C};
     public ABC getRingNum(BananaPipeline pipeline) {
         if (pipeline.getTargetRect() == null) {
             return (ABC.A);
@@ -114,38 +105,9 @@ public class OpenCV_Scorpion extends LinearOpMode {
 
         initCamera();
         robot.init(hardwareMap);
+        robot.resetPosition();
 
-        ABC abc = getRingNum(pipeline);
-        telemetry.addData("Rings", abc);
-        telemetry.update();
-
-        // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        runtime.reset();
-
-        abc = getRingNum(pipeline);
-        telemetry.addData("Rings", abc);
-        telemetry.update();
-
-        double heading = robot.getHeading();
-
-        if (abc == ABC.A) {
-//            robot.diagonal(tile * 2.5, tile / 3 * left, 0.8, heading);
-            robot.diagonal(5 * tile, 3 * tile * left - 0.2, 0.8, heading);
-
-        }
-
-        if (abc == ABC.B) {
-//            robot.driveForward(tile * 4, 1, heading);
-//            robot.strafe(tile, 1);
-            robot.diagonal(5 * tile,0, 0.8, heading);
-
-        }
-
-        if (abc == ABC.C) {
-            robot.diagonal(0,3 * tile * left, 0.8, heading);
-//            robot.driveForward(tile * 5, 1, heading);
-        }
 
         while(opModeIsActive()) {
 
@@ -165,10 +127,18 @@ public class OpenCV_Scorpion extends LinearOpMode {
                 double side = drive * Math.sin(alpha) + strafe * Math.cos(alpha);
                 robot.setPower(forward, turn, side);
             }
-            telemetry.addData("X", robot.getForwardDistance());
-            telemetry.addData("Y", robot.getStrafeDistance());
-            telemetry.update();
 
+            if (gamepad1.x){
+                robot.diagonal(0, 3 * tile, 0.8, robot.getHeading());
+            }
+
+            if (gamepad1.y){
+                robot.resetPosition();
+            }
+
+            telemetry.addData("Y: ", robot.getForwardDistance());
+            telemetry.addData("X:", robot.getStrafeDistance());
+            telemetry.update();
         }
 
     }

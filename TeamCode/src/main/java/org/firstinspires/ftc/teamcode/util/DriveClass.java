@@ -33,10 +33,10 @@ public class DriveClass {
 
 	private LinearOpMode opMode; // First I declared it as OpMode now its LinearOpMode
 
-	volatile private DcMotorEx fl_Drive = null;
-	volatile private DcMotorEx fr_Drive = null;
-	volatile private DcMotorEx bl_Drive = null;
-	volatile private DcMotorEx br_Drive = null;
+	volatile private DcMotorEx fl = null;
+	volatile private DcMotorEx fr = null;
+	volatile private DcMotorEx bl = null;
+	volatile private DcMotorEx br = null;
 
 	private BNO055IMU imu = null;
 
@@ -51,39 +51,44 @@ public class DriveClass {
 
 	public void init(HardwareMap hw) {
 		//region get from hw
-		fl_Drive = hw.get(DcMotorEx.class, "fl_drive");
-		fr_Drive = hw.get(DcMotorEx.class, "fr_drive");
-		bl_Drive = hw.get(DcMotorEx.class, "bl_drive");
-		br_Drive = hw.get(DcMotorEx.class, "br_drive");
+		fl = hw.get(DcMotorEx.class, "fl");
+		fr = hw.get(DcMotorEx.class, "fr");
+		bl = hw.get(DcMotorEx.class, "bl");
+		br = hw.get(DcMotorEx.class, "br");
 		//endregion get from hw
 
 		//region setDirection
-		fl_Drive.setDirection(DcMotorEx.Direction.REVERSE);
-		fr_Drive.setDirection(DcMotorEx.Direction.FORWARD);
-		bl_Drive.setDirection(DcMotorEx.Direction.REVERSE);
-		br_Drive.setDirection(DcMotorEx.Direction.FORWARD);
+		fl.setDirection(DcMotorEx.Direction.REVERSE);
+		fr.setDirection(DcMotorEx.Direction.FORWARD);
+		bl.setDirection(DcMotorEx.Direction.REVERSE);
+		br.setDirection(DcMotorEx.Direction.FORWARD);
 		//endregion setDirection
+
+		fl.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+		fr.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+		bl.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+		br.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
 		//region setMode
 		if (useEncoders) {
-			fl_Drive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-			fr_Drive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-			bl_Drive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-			br_Drive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+			fl.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+			fr.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+			bl.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+			br.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 		} else {
-			fl_Drive.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-			fr_Drive.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-			bl_Drive.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-			br_Drive.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+			fl.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+			fr.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+			bl.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+			br.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 		}
 		//endregion setMode
 
 		//region setZeroPowerBehavior
 		if (useBrake) {
-			fl_Drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-			fr_Drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-			bl_Drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-			br_Drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+			fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+			fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+			bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+			br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		}
 		//endregion setZeroPowerBehavior
 
@@ -130,10 +135,10 @@ public class DriveClass {
 	}
 
 	public void setPower(double forward, double turn, double strafe) {
-		fl_Drive.setPower(forward + turn + strafe);
-		fr_Drive.setPower(forward - turn - strafe);
-		bl_Drive.setPower(forward + turn - strafe);
-		br_Drive.setPower(forward - turn + strafe);
+		fl.setPower(forward + turn + strafe);
+		fr.setPower(forward - turn - strafe);
+		bl.setPower(forward + turn - strafe);
+		br.setPower(forward - turn + strafe);
 	}
 
 	public void stopPower() {
@@ -160,18 +165,18 @@ public class DriveClass {
 	}
 
 	public void resetPosition() {
-		fl_startPos = fl_Drive.getCurrentPosition();
-		fr_startPos = fr_Drive.getCurrentPosition();
-		bl_startPos = bl_Drive.getCurrentPosition();
-		br_startPos = br_Drive.getCurrentPosition();
+		fl_startPos = fl.getCurrentPosition();
+		fr_startPos = fr.getCurrentPosition();
+		bl_startPos = bl.getCurrentPosition();
+		br_startPos = br.getCurrentPosition();
 	}
 
 	public double getForwardDistance() {
-		final double polsMeter = 2410;
-		int fl_tick = fl_Drive.getCurrentPosition() - fl_startPos;
-		int fr_tick = fr_Drive.getCurrentPosition() - fr_startPos;
-		int bl_tick = bl_Drive.getCurrentPosition() - bl_startPos;
-		int br_tick = br_Drive.getCurrentPosition() - br_startPos;
+		final double polsMeter = 2455;
+		int fl_tick = fl.getCurrentPosition() - fl_startPos;
+		int fr_tick = fr.getCurrentPosition() - fr_startPos;
+		int bl_tick = bl.getCurrentPosition() - bl_startPos;
+		int br_tick = br.getCurrentPosition() - br_startPos;
 		double fl_dist = fl_tick / polsMeter;
 		double fr_dist = fr_tick / polsMeter;
 		double bl_dist = bl_tick / polsMeter;
@@ -248,19 +253,20 @@ public class DriveClass {
 			}
 			double power = targetPower ;
 
+			double deltaForward = forward - getForwardDistance();
+			double deltaStrafe  = sideward - getStrafeDistance();
+
+			double deltaC = Math.sqrt(deltaStrafe * deltaStrafe + deltaForward * deltaForward);
+			double lengthC = c - deltaC ;
+
 			double acclGain = 2;
-			double acclPower = Math.abs(getForwardDistance()) * acclGain + 0.2;
+			double acclPower = lengthC * acclGain;
 
 			if (acclPower < power) {
 				power = acclPower;
 			}
 
-			double deltaForward = forward - getForwardDistance();
-			double deltaStrafe  = sideward - getStrafeDistance();
-
-			double deltaC = Math.sqrt(deltaStrafe * deltaStrafe + deltaForward * deltaForward);
-
-			double breakgain = 1;
+			double breakgain = 2;
 			double breakPower = deltaC * breakgain;
 
 			if (breakPower < power)  {
@@ -280,9 +286,9 @@ public class DriveClass {
 			setPower(Vf, correction, Vs);
 
 			opMode.telemetry.addData("delta forward:", deltaForward);
+			opMode.telemetry.addData("speed forward:", Vf);
 			opMode.telemetry.addData("delta strafe:", deltaStrafe);
-			opMode.telemetry.addData("speed strafe:", RVs);
-			opMode.telemetry.addData("speed forward:", RVf);
+			opMode.telemetry.addData("speed strafe:", Vs);
 			opMode.telemetry.addData("power:", power);
 
 			opMode.telemetry.update();
@@ -291,12 +297,12 @@ public class DriveClass {
 	}
 
 	public double getStrafeDistance() {
-		double polsMeter = 900;
+		double polsMeter = 2587;
 
-		int fl_tick = fl_Drive.getCurrentPosition() - fl_startPos;
-		int fr_tick = fr_Drive.getCurrentPosition() - fr_startPos;
-		int bl_tick = bl_Drive.getCurrentPosition() - bl_startPos;
-		int br_tick = br_Drive.getCurrentPosition() - br_startPos;
+		int fl_tick = fl.getCurrentPosition() - fl_startPos;
+		int fr_tick = fr.getCurrentPosition() - fr_startPos;
+		int bl_tick = bl.getCurrentPosition() - bl_startPos;
+		int br_tick = br.getCurrentPosition() - br_startPos;
 
 		double leftFrontDist = fl_tick / polsMeter;
 		double rightFrontDist = fr_tick / polsMeter;
