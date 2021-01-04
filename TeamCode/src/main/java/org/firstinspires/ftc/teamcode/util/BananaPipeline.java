@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.util;
 
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -18,8 +18,11 @@ public class BananaPipeline extends OpenCvPipeline {
     Mat mask;
     Mat subMat;
     Rect subRect;
+    public int width;
+    public int height;
 
     volatile private Point targetPos = null;
+    //Rect(x, y, width, height)             x, y - position. width, height - dimensions.
     volatile private Rect targetRect = null;
 
     public Point getTargetPos() {
@@ -38,8 +41,8 @@ public class BananaPipeline extends OpenCvPipeline {
         hsv = new Mat();
         Imgproc.cvtColor(firstFrame, hsv, Imgproc.COLOR_RGB2HSV);
 
-        int width = hsv.width();
-        int height = hsv.height();
+        width = hsv.width();
+        height = hsv.height();
         subRect = new Rect(new Point(width*2/5,height*5/12), new Point(width*3/5, height*6/12));
         subMat = hsv.submat(subRect);
     }

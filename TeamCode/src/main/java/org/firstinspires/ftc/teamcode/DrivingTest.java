@@ -29,13 +29,14 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.util.BananaPipeline;
 import org.firstinspires.ftc.teamcode.util.DriveClass;
 import org.firstinspires.ftc.teamcode.util.Toggle;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -47,7 +48,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 public class DrivingTest extends LinearOpMode {
     BananaPipeline pipeline;
     OpenCvInternalCamera phoneCam;
-    private DriveClass robot = new DriveClass(this).useEncoders();
+    private DriveClass drive = new DriveClass(this).useEncoders();
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -67,7 +68,7 @@ public class DrivingTest extends LinearOpMode {
         phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                phoneCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                //phoneCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                 phoneCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
             }
         });
@@ -89,12 +90,17 @@ public class DrivingTest extends LinearOpMode {
             }
         }
     }
+    //limits the max and min of a certain value
+    private double minmax(double max, double min, double value) {
+        if(value > max) {
+            value = max;
+        }
+        if(value < min) {
+            value = min;
+        }
+        return value;
+    }
 
-
-    // main functions
-    // main functions
-    // main functions
-    // main functions
     // main functions
 
     @Override
@@ -104,8 +110,8 @@ public class DrivingTest extends LinearOpMode {
 
 
         initCamera();
-        robot.init(hardwareMap);
-        robot.resetPosition();
+        drive.init(hardwareMap);
+        drive.resetPosition();
 
         waitForStart();
 
@@ -115,33 +121,43 @@ public class DrivingTest extends LinearOpMode {
             double rightPower;
 
             double boost = gamepad1.right_trigger * 0.4 + 0.6;
-            double drive = -gamepad1.left_stick_y * boost;
+            double forward = -gamepad1.left_stick_y * boost;
             double turn = gamepad1.right_stick_x * boost;
             double strafe = gamepad1.left_stick_x * boost;
 
             if (gamepad1.right_bumper == true) {
-                robot.setPower(drive, turn, strafe);
+                this.drive.setPower(forward, turn, strafe);
             } else {
-                double alpha = -robot.getHeading() / 180 * Math.PI;
-                double forward = drive * Math.cos(alpha) - strafe * Math.sin(alpha);
-                double side = drive * Math.sin(alpha) + strafe * Math.cos(alpha);
-                robot.setPower(forward, turn, side);
+                double alpha = -drive.getHeading() / 180 * Math.PI;
+                double strait = forward * Math.cos(alpha) - strafe * Math.sin(alpha);
+                double side = forward * Math.sin(alpha) + strafe * Math.cos(alpha);
+                drive.setPower(strait, turn, side);
             }
 
             if (gamepad1.x){
-                robot.diagonal(0, 3 * tile, 0.8, robot.getHeading());
+                this.drive.diagonal(0, 3 * tile, 0.8, this.drive.getHeading());
             }
 
             if (gamepad1.y){
-                robot.resetPosition();
+                this.drive.resetPosition();
             }
 
-            telemetry.addData("Y: ", robot.getForwardDistance());
-            telemetry.addData("X:", robot.getStrafeDistance());
+            if(gamepad1.a){
+                if(pipeline.getTargetRect() != null) {
+                    Rect rect = pipeline.getTargetRect();
+                    int rectx = rect.x + rect.width/2;
+                    int center = pipeline.width/2;
+                    int deltacenter = rectx - center;
+                    double gain = 0.1;
+                    double k = 30 / pipeline.width * 0.1;
+                    double deg = k * deltacenter * gain;
+                    this.drive.turn(deg, 0.8);
+                }
+            }
+
+            telemetry.addData("Y: ", drive.getForwardDistance());
+            telemetry.addData("X:", drive.getStrafeDistance());
             telemetry.update();
         }
-
     }
-
-
 }
