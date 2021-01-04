@@ -50,9 +50,6 @@ public class ShootingSystem extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
         shooting1  = hardwareMap.get(DcMotor.class, "shooter");
         shooting1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
