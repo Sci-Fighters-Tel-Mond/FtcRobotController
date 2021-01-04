@@ -1,4 +1,4 @@
-// Drive Class 2
+// Drive Class
 // Ultimate Goal 2020 - 2021
 
 package org.firstinspires.ftc.teamcode.util;
@@ -164,13 +164,6 @@ public class DriveClass {
 		return delta;
 	}
 
-	public void resetPosition() {
-		fl_startPos = fl.getCurrentPosition();
-		fr_startPos = fr.getCurrentPosition();
-		bl_startPos = bl.getCurrentPosition();
-		br_startPos = br.getCurrentPosition();
-	}
-
 	public double getForwardDistance() {
 		final double polsMeter = 2455;
 		int fl_tick = fl.getCurrentPosition() - fl_startPos;
@@ -184,116 +177,32 @@ public class DriveClass {
 		return (bl_dist + br_dist + fr_dist + fl_dist) / 4;
 	}
 
+	public double getPosX(){
+		double polsMeter = 2587;
 
-	public void driveForward(double meter, double power) {
-		double targetAngle = getHeading(); // zeroAngle
-		driveForward(meter, power, targetAngle);
+		int fl_tick = fl.getCurrentPosition();
+		int fr_tick = fr.getCurrentPosition();
+		int bl_tick = bl.getCurrentPosition();
+		int br_tick = br.getCurrentPosition();
+
+		double leftFrontDist = fl_tick / polsMeter;
+		double rightFrontDist = fr_tick / polsMeter;
+		double leftBackDist = bl_tick / polsMeter;
+		double rightBackDist = br_tick / polsMeter;
+		return (-leftBackDist + rightBackDist - rightFrontDist + leftFrontDist) / 4;
 	}
 
-	public void driveForward(double meter, double targetPower, double targetAngle) {
-		double s = (meter < 0) ? -1 : 1;
-		resetPosition();
-
-		while ((getForwardDistance() * s < meter * s) && opMode.opModeIsActive()) {
-			double power = targetPower;
-			double acclGain = 2;
-			double acclPower = Math.abs(getForwardDistance()) * acclGain + 0.2;
-			if (acclPower < power) {
-				power = acclPower;
-		    }
-			double breakgain = 1;
-			double deltaForward = Math.abs(meter - getForwardDistance());
-			double breakpower = deltaForward * breakgain;
-
-			if ( (breakpower < power) && (breakgain > 0.2) )
-			if (breakpower < power)  {
-				power = breakpower;
-			}
-			if (power < 0.25) {
-				power = 0.25;
-			}
-
-			double currentAngle = getHeading();
-			double err = getDeltaHeading(targetAngle);
-			double gain = 0.040;
-			double correction = gain * err;
-
-			setPower(power * s, correction, 0);
-
-			opMode.telemetry.addData("deltaForward", deltaForward);
-			opMode.telemetry.addData("acclPower", acclPower);
-			opMode.telemetry.addData("breakPower", breakpower);
-			opMode.telemetry.addData("power", power);
-
-			opMode.telemetry.addData("target", targetAngle);
-			opMode.telemetry.addData("current", currentAngle);
-			opMode.telemetry.addData("Error", err);
-			opMode.telemetry.update();
-		}
-		stopPower();
-	}
-
-	public void diagonal(double forward, double sideward, double targetPower, double targetAngle) {
-		double sf = (forward < 0) ? -1 : 1;
-		double ss = (sideward < 0) ? -1 : 1;
-		double c = Math.sqrt(sideward * sideward + forward * forward);
-		double RVf = forward / c;
-		double RVs = sideward / c;
-
-		resetPosition();
-
-		double currentAngle = getHeading();
-		while (opMode.opModeIsActive() && (RVf != 0) ||  (RVs != 0)) {
-
-			if (getForwardDistance() * sf > forward * sf) {
-				RVf = 0;
-			}
-			if (getStrafeDistance() * ss > sideward * ss) {
-				RVs = 0;
-			}
-			double power = targetPower ;
-
-			double deltaForward = forward - getForwardDistance();
-			double deltaStrafe  = sideward - getStrafeDistance();
-
-			double deltaC = Math.sqrt(deltaStrafe * deltaStrafe + deltaForward * deltaForward);
-			double lengthC = c - deltaC ;
-
-			double acclGain = 2;
-			double acclPower = lengthC * acclGain;
-
-			if (acclPower < power) {
-				power = acclPower;
-			}
-
-			double breakgain = 2;
-			double breakPower = deltaC * breakgain;
-
-			if (breakPower < power)  {
-				power = breakPower;
-			}
-
-			if (power < 0.25) {
-				power = 0.25;
-			}
-
-			double err = getDeltaHeading(targetAngle);
-			double gain = 0.040;
-			double correction = gain * err;
-			double Vf = RVf * power;
-			double Vs = RVs * power;
-
-			setPower(Vf, correction, Vs);
-
-			opMode.telemetry.addData("delta forward:", deltaForward);
-			opMode.telemetry.addData("speed forward:", Vf);
-			opMode.telemetry.addData("delta strafe:", deltaStrafe);
-			opMode.telemetry.addData("speed strafe:", Vs);
-			opMode.telemetry.addData("power:", power);
-
-			opMode.telemetry.update();
-		}
-		stopPower();
+	public double getPosY(){
+		final double polsMeter = 2455;
+		int fl_tick = fl.getCurrentPosition();
+		int fr_tick = fr.getCurrentPosition();
+		int bl_tick = bl.getCurrentPosition();
+		int br_tick = br.getCurrentPosition();
+		double fl_dist = fl_tick / polsMeter;
+		double fr_dist = fr_tick / polsMeter;
+		double bl_dist = bl_tick / polsMeter;
+		double br_dist = br_tick / polsMeter;
+		return (bl_dist + br_dist + fr_dist + fl_dist) / 4;
 	}
 
 	public double getStrafeDistance() {
@@ -308,35 +217,14 @@ public class DriveClass {
 		double rightFrontDist = fr_tick / polsMeter;
 		double leftBackDist = bl_tick / polsMeter;
 		double rightBackDist = br_tick / polsMeter;
-		// double forwardDistance = (leftBackDist + rightBackDist + rightFrontDist + leftFrontDist) / 4;
 		return (-leftBackDist + rightBackDist - rightFrontDist + leftFrontDist) / 4;
 	}
 
-	public void strafe(double meter, double power) {
-		double targetAngle = getHeading(); // zeroAngle
-		strafe(meter, power, targetAngle);
-	}
-
-	public void strafe(double meter, double power, double targetAngle) {
-		double s = (meter < 0) ? -1 : 1;
-
-		resetPosition();
-
-		while ((getStrafeDistance() * s < meter * s) && opMode.opModeIsActive()) {
-			double currentAngle = getHeading();
-			double err = getDeltaHeading(targetAngle);
-			double gain = 0.035;
-			double correction = gain * err;
-
-			setPower(0, correction, power * s);
-
-			opMode.telemetry.addData("distance", getStrafeDistance());
-			opMode.telemetry.addData("target", targetAngle);
-			opMode.telemetry.addData("current", currentAngle);
-			opMode.telemetry.addData("Error", err);
-			opMode.telemetry.update();
-		}
-		stopPower();
+	public void resetPosition() {
+		fl_startPos = fl.getCurrentPosition();
+		fr_startPos = fr.getCurrentPosition();
+		bl_startPos = bl.getCurrentPosition();
+		br_startPos = br.getCurrentPosition();
 	}
 
 	public void turn(double deg, double power) {
@@ -366,4 +254,77 @@ public class DriveClass {
 		}
 		stopPower();
 	}
+
+	public void goTo(double x, double y, double targetPower, double targetHeading){
+		double currentX = getPosX();
+		double currentY = getPosY();
+		double deltaX = x - currentX;
+		double deltaY = y - currentY;
+		drive(deltaY, deltaX, targetPower, targetHeading);
+	}
+
+	public void drive(double forward, double sideward, double targetPower, double targetAngle) {
+		double sf = (forward < 0) ? -1 : 1;
+		double ss = (sideward < 0) ? -1 : 1;
+		double c = Math.sqrt(sideward * sideward + forward * forward);
+		double RVf = forward / c;
+		double RVs = sideward / c;
+		final double minPower = 0.2;
+
+		resetPosition();
+
+		while (opMode.opModeIsActive() && (RVf != 0) ||  (RVs != 0)) {
+
+			if (getForwardDistance() * sf > forward * sf) {
+				RVf = 0;
+			}
+			if (getStrafeDistance() * ss > sideward * ss) {
+				RVs = 0;
+			}
+			double power = targetPower ;
+
+			double deltaForward = forward - getForwardDistance();
+			double deltaStrafe  = sideward - getStrafeDistance();
+
+			double deltaC = Math.sqrt(deltaStrafe * deltaStrafe + deltaForward * deltaForward);
+			double lengthC = c - deltaC ;
+
+			double acclGain = 2;
+			double acclPower = lengthC * acclGain + minPower;
+
+			if (acclPower < power) {
+				power = acclPower;
+			}
+
+			double breakgain = 2;
+			double breakPower = deltaC * breakgain + minPower;
+
+			if (breakPower < power)  {
+				power = breakPower;
+			}
+
+
+			double err = getDeltaHeading(targetAngle);
+			double gain = 0.040;
+			double correction = gain * err;
+			double Vf = RVf * power;
+			double Vs = RVs * power;
+
+			setPower(Vf, correction, Vs);
+
+//			opMode.telemetry.addData("delta forward:", deltaForward);
+//			opMode.telemetry.addData("speed forward:", Vf);
+//			opMode.telemetry.addData("delta strafe:", deltaStrafe);
+//			opMode.telemetry.addData("speed strafe:", Vs);
+//			opMode.telemetry.addData("power:", power);
+
+			//position Telemetry:
+			opMode.telemetry.addData("x position:", getPosX());
+			opMode.telemetry.addData("y position:", getPosY());
+
+			opMode.telemetry.update();
+		}
+		stopPower();
+	}
+
 }

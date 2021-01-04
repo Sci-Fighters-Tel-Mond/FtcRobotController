@@ -29,13 +29,19 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.teamcode.util.BananaPipeline;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.teamcode.util.DriveClass;
 import org.firstinspires.ftc.teamcode.util.Toggle;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -125,19 +131,23 @@ public class OpenCV_Scorpion extends LinearOpMode {
 
         if (abc == ABC.A) {
 //            robot.diagonal(tile * 2.5, tile / 3 * left, 0.8, heading);
-            robot.diagonal(5 * tile, 3 * tile * left - 0.2, 0.8, heading);
+//            robot.drive(5 * tile, 3 * tile * left - 0.2, 0.8, heading);
+            robot.goTo(-2 * tile, 3 * tile, 0.8, heading);
+            robot.goTo(-1 * tile, 4 * tile, 0.8, heading);
+            robot.goTo(-2 * tile, 5 * tile, 0.8, heading);
+            robot.goTo(0,0, 0.8, heading);
 
         }
 
         if (abc == ABC.B) {
 //            robot.driveForward(tile * 4, 1, heading);
 //            robot.strafe(tile, 1);
-            robot.diagonal(5 * tile,0, 0.8, heading);
+            robot.drive(5 * tile,0, 0.8, heading);
 
         }
 
         if (abc == ABC.C) {
-            robot.diagonal(0,3 * tile * left, 0.8, heading);
+            robot.drive(0,3 * tile * left, 0.8, heading);
 //            robot.driveForward(tile * 5, 1, heading);
         }
 
@@ -161,6 +171,10 @@ public class OpenCV_Scorpion extends LinearOpMode {
             }
             telemetry.addData("X", robot.getForwardDistance());
             telemetry.addData("Y", robot.getStrafeDistance());
+
+            telemetry.addData("x position:", robot.getPosX());
+            telemetry.addData("y position:", robot.getPosY());
+
             telemetry.update();
 
         }

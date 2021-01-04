@@ -441,7 +441,7 @@ public class fullScorpion extends LinearOpMode {
             // POV Mode uses left stick to go forward, and right stick to turn.
             // - This uses basic math to combine motions and is easier to drive straight.\
 
-            double boost  = gamepad1.right_trigger * 0.4 + 0.6;
+            double boost  = gamepad1.right_trigger * 0.25 + 0.75;
             double drive  = -gamepad1.left_stick_y * boost;
             double turn   = gamepad1.right_stick_x * boost;
             double strafe = gamepad1.left_stick_x * boost;
