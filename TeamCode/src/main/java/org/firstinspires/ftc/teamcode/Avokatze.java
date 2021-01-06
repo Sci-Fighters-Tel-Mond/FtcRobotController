@@ -28,16 +28,13 @@
  */
 
 package org.firstinspires.ftc.teamcode;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.util.DriveClass;
-import org.firstinspires.ftc.teamcode.util.ShooterClass;
-import org.firstinspires.ftc.teamcode.util.ShooterClass;
+import org.firstinspires.ftc.teamcode.util.GameClass;
+import org.firstinspires.ftc.teamcode.util.Toggle;
 
 @TeleOp(group="Linear Opmode")
 //@Disabled
@@ -47,7 +44,14 @@ public class Avokatze extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     private DriveClass drive = new DriveClass(this).useBrake();
-    private ShooterClass shooter = new ShooterClass(this);
+    private GameClass game = new GameClass(this);
+
+    private Toggle lDpad = new Toggle();
+    private Toggle rDpad = new Toggle();
+
+    private Toggle shooter = new Toggle();
+    private Toggle wobbleGrabber = new Toggle();
+    private Toggle collector = new Toggle();
 
     @Override
     public void runOpMode() {
@@ -55,7 +59,7 @@ public class Avokatze extends LinearOpMode {
         telemetry.update();
 
         drive.init(hardwareMap);
-        shooter.init(hardwareMap);
+        game.init(hardwareMap);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -63,6 +67,13 @@ public class Avokatze extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+            lDpad.update(gamepad1.dpad_left );
+            rDpad.update(gamepad1.dpad_right);
+
+            shooter.update(gamepad1.y);
+            wobbleGrabber.update(gamepad1.left_bumper);
+            collector.update(gamepad1.x);
+
 
             double boost  = gamepad1.right_trigger * 0.4 + 0.6;
 
@@ -70,40 +81,36 @@ public class Avokatze extends LinearOpMode {
             double turn   = gamepad1.right_stick_x * boost;
             double sideword = gamepad1.left_stick_x * boost;
 
-            if (gamepad1.right_bumper == true) {
-                drive.setPower(forward, turn, sideword);
-            }
-            else {
+            //if (gamepad1.left_bumper == true) {
+            //    drive.setPower(forward, turn, sideword);
+            //} else {
                 // calculate field oriented
                 // change to radian
                 double alpha = -drive.getHeading() / 180 * Math.PI;
                 double straight = forward * Math.cos(alpha) - sideword * Math.sin(alpha);
                 double straffe = forward * Math.sin(alpha) + sideword * Math.cos(alpha);
                 drive.setPower(straight, turn, straffe);
+            //}
+
+
+            if (shooter.isClicked()) {
+                game.toggleShooter();
+            }
+            if (wobbleGrabber.isClicked()) {
+                game.toggleWobbleGrabber();
+            }
+            if (collector.isClicked()) {
+                game.toggleCollector();
             }
 
 
-            if (gamepad1.x) {
-                shooter.setShooterSpeed(0.5);
+            if (gamepad1.dpad_up) {
+                game.setWobble(0.6);
+            } else if (gamepad1.dpad_down) {
+                game.setWobble(-0.6);
+            } else {
+                game.setWobble(0);
             }
-
-            if (gamepad1.y) {
-                shooter.setShooterSpeed(0.75);
-            }
-
-            if (gamepad1.a) {
-                shooter.setShooterSpeed(0);
-            }
-
-            if (gamepad1.b) {
-                shooter.setShooterSpeed(1);
-            }
-
-
-            // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("shooter", "speed (%.2f)", shooter.getShooterSpeed());
-            telemetry.update();
         }
     }
 }
