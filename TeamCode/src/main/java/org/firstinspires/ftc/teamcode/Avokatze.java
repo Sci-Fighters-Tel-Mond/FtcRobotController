@@ -75,7 +75,7 @@ public class Avokatze extends LinearOpMode {
             collector.update(gamepad1.x);
 
 
-            double boost  = gamepad1.right_trigger * 0.4 + 0.6;
+            double boost  = gamepad1.left_trigger * 0.4 + 0.6;
 
             double forward  = -gamepad1.left_stick_y * boost;
             double turn   = gamepad1.right_stick_x * boost;
@@ -110,6 +110,18 @@ public class Avokatze extends LinearOpMode {
                 game.setWobble(-0.6);
             } else {
                 game.setWobble(0);
+            }
+
+            if (gamepad1.a) {
+                game.setRingMover(0);
+            } else if (gamepad1.b) {
+                game.setRingMover(1);
+            }
+
+            if (gamepad1.right_trigger > 0.4) {
+                game.setRingMover(1);
+                sleep(200);
+                game.setRingMover(0);
             }
         }
     }
