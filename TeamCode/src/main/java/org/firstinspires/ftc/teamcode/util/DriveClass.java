@@ -39,11 +39,13 @@ public class DriveClass {
 	volatile private DcMotorEx br = null;
 
 	private BNO055IMU imu = null;
+	private BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
 	private int fl_startPos = 0;
 	private int fr_startPos = 0;
 	private int bl_startPos = 0;
 	private int br_startPos = 0;
+
 
 	public DriveClass(LinearOpMode opMode) {
 		this.opMode = opMode;
@@ -98,7 +100,6 @@ public class DriveClass {
 	private void initIMU(HardwareMap hw) {
 		imu = hw.get(BNO055IMU.class, "imu");
 
-		BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 		parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
 		parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
 
@@ -118,7 +119,7 @@ public class DriveClass {
 			opMode.telemetry.addData("Gyro", "Gyro/IMU Calibration Failed");
 		}
 
-		imu.startAccelerationIntegration(new Position(), new Velocity(), 10);
+//		imu.startAccelerationIntegration(new Position(), new Velocity(), 10);
 
 		opMode.telemetry.update();
 
@@ -143,6 +144,10 @@ public class DriveClass {
 
 	public void stopPower() {
 		setPower(0, 0, 0);
+	}
+
+	public void resetOrientation() {
+		imu.initialize(parameters);
 	}
 
 	public double getHeading() {
@@ -226,6 +231,7 @@ public class DriveClass {
 		bl_startPos = bl.getCurrentPosition();
 		br_startPos = br.getCurrentPosition();
 	}
+
 
 	public void turn(double deg, double power) {
 		double targetAngle = getHeading() + deg; // zeroAngle

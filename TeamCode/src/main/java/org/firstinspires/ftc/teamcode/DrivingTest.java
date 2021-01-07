@@ -153,18 +153,29 @@ public class DrivingTest extends LinearOpMode {
             }
 
             if (gamepad1.x){
-                drive.drive(0, 3 * tile, 0.8, drive.getHeading());
+                drive.resetOrientation();
+
             }
 
             if (gamepad1.y){
                 drive.resetPosition();
             }
 
-            telemetry.addData("Y: ", drive.getForwardDistance());
-            telemetry.addData("X:", drive.getStrafeDistance());
-            telemetry.addData("target", targetX);
-            telemetry.addData("turn", turn);
-            telemetry.addData("width", pipeline.width);
+            if (gamepad1.b){
+                drive.goTo(-2 * tile, 5 * tile, 0.8, drive.getHeading());
+            }
+
+
+            telemetry.addData("X: ", drive.getPosX());
+            telemetry.addData("Y:", drive.getPosY());
+
+
+            telemetry.addData("Dx: ", drive.getStrafeDistance());
+            telemetry.addData("Dy:", drive.getForwardDistance());
+
+//            telemetry.addData("target", targetX);
+//            telemetry.addData("turn", turn);
+//            telemetry.addData("width", pipeline.width);
             telemetry.update();
         }
     }
