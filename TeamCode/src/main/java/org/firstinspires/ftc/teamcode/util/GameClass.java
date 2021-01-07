@@ -103,7 +103,7 @@ public class GameClass {
     }
 
     public boolean getWobbleLimiter() {
-        return wobbleLimiter.getState();
+        return !wobbleLimiter.getState();
     }
 
 
