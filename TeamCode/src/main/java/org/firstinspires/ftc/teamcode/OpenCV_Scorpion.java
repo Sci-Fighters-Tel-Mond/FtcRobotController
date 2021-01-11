@@ -83,9 +83,7 @@ public class OpenCV_Scorpion extends LinearOpMode {
     // 0 - a
     // 1 -b
     // 4 - c
-    enum ABC {A, B, C}
-
-    ;
+    enum ABC {A, B, C};
 
     public ABC getRingNum(BananaPipeline pipeline) {
         if (pipeline.getTargetRect() == null) {

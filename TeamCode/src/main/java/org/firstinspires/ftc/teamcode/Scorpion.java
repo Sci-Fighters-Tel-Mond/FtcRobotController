@@ -56,7 +56,7 @@ import org.firstinspires.ftc.teamcode.util.Toggle;
 
 @TeleOp(name="Scorpion", group="Linear Opmode")
 //@Disabled
-public class fullScorpion extends LinearOpMode {
+public class Scorpion extends LinearOpMode {
 
 
     // Declare OpMode members.

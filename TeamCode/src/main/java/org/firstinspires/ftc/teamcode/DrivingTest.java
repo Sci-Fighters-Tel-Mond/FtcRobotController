@@ -74,22 +74,6 @@ public class DrivingTest extends LinearOpMode {
         });
     }
 
-    // 0 - a
-    // 1 -b
-    // 4 - c
-    enum ABC {A, B, C};
-    public ABC getRingNum(BananaPipeline pipeline) {
-        if (pipeline.getTargetRect() == null) {
-            return (ABC.A);
-        } else {
-            Rect rect = pipeline.getTargetRect();
-            if (rect.height < rect.width / 2) {
-                return (ABC.B);
-            } else {
-                return (ABC.C);
-            }
-        }
-    }
     //limits the max and min of a certain value
     private double minmax(double max, double min, double value) {
         if(value > max) {
@@ -120,15 +104,16 @@ public class DrivingTest extends LinearOpMode {
             double leftPower;
             double rightPower;
 
-            double boost = gamepad1.right_trigger * 0.4 + 0.6;
-            double y = -gamepad1.left_stick_y * boost;
-            double x =  gamepad1.left_stick_x * boost;
-            double turn = gamepad1.right_stick_x * boost;
-            boolean fieldOriented = !gamepad1.right_bumper;
+            double boost =  gamepad1.right_trigger * 0.4 + 0.6;
+            double y     = -gamepad1.left_stick_y * boost;
+            double x     =  gamepad1.left_stick_x * boost;
+            double turn  =  gamepad1.right_stick_x * boost;
+
+            boolean fieldOriented = gamepad1.right_bumper != true;
 
             double targetX = 0;
 
-            if(gamepad1.a) {
+            if(gamepad1.a) { // ring tracking
                 if(pipeline.getTargetRect() != null) {
                     Rect rect = pipeline.getTargetRect();
                     int xCenter = rect.x + rect.width/2;
