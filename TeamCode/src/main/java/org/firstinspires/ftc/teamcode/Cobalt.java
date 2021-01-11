@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.util.Toggle;
 
 @TeleOp(group="Linear Opmode")
 //@Disabled
-public class Avokatze extends LinearOpMode {
+public class Cobalt extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -61,7 +61,7 @@ public class Avokatze extends LinearOpMode {
             drive.setPowerOriented(y, x, turn, fieldOriented);
 
 
-            if (gamepad1.x) {
+            if (gamepad1.dpad_left) {
                 drive.resetOrientation();
                 drive.resetPosition();
             }
