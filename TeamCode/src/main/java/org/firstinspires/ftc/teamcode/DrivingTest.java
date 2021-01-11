@@ -121,19 +121,19 @@ public class DrivingTest extends LinearOpMode {
             double rightPower;
 
             double boost = gamepad1.right_trigger * 0.4 + 0.6;
-            double forward = -gamepad1.left_stick_y * boost;
+            double y = -gamepad1.left_stick_y * boost;
+            double x =  gamepad1.left_stick_x * boost;
             double turn = gamepad1.right_stick_x * boost;
-            double strafe = gamepad1.left_stick_x * boost;
             boolean fieldOriented = !gamepad1.right_bumper;
 
             double targetX = 0;
 
-            if(gamepad1.a){
+            if(gamepad1.a) {
                 if(pipeline.getTargetRect() != null) {
                     Rect rect = pipeline.getTargetRect();
-                    int x = rect.x + rect.width/2;
+                    int xCenter = rect.x + rect.width/2;
                     int screenCenter = pipeline.width/2;
-                    int delta = x - screenCenter;
+                    int delta = xCenter - screenCenter;
                     targetX = delta;
                     double gain = 0.7;
                     double k = 2.0 / pipeline.width;  // transform from pixels to power (-1...1).
@@ -142,15 +142,7 @@ public class DrivingTest extends LinearOpMode {
                 }
             }
 
-
-            if ( fieldOriented != true) {
-                drive.setPower(forward, turn, strafe);
-            } else {
-                double alpha = -drive.getHeading() / 180 * Math.PI;
-                double strait = forward * Math.cos(alpha) - strafe * Math.sin(alpha);
-                double side = forward * Math.sin(alpha) + strafe * Math.cos(alpha);
-                drive.setPower(strait, turn, side);
-            }
+            drive.setPowerOriented(y, x, turn, fieldOriented);
 
             if (gamepad1.x){
                 drive.resetOrientation();

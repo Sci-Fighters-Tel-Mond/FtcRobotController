@@ -142,6 +142,17 @@ public class DriveClass {
 		br.setPower(forward - turn + strafe);
 	}
 
+	public void setPowerOriented(double y, double x, double turn, boolean fieldOriented){
+		if ( fieldOriented != true) {
+			setPower(y, turn, x);  // No field oriented
+		} else {
+			double phiRad = -getHeading() / 180 * Math.PI;
+			double forward = y * Math.cos(phiRad) - x * Math.sin(phiRad);
+			double strafe = y * Math.sin(phiRad) + x * Math.cos(phiRad);
+			setPower(forward, turn, strafe);
+		}
+	}
+
 	public void stopPower() {
 		setPower(0, 0, 0);
 	}
@@ -270,6 +281,10 @@ public class DriveClass {
 	}
 
 	public void drive(double forward, double sideward, double targetPower, double targetAngle) {
+		drive(forward, sideward, targetPower, targetAngle, true);
+	}
+
+	public void drive(double forward, double sideward, double targetPower, double targetAngle, boolean fieldOriented) {
 		double sf = (forward < 0) ? -1 : 1;
 		double ss = (sideward < 0) ? -1 : 1;
 		double c = Math.sqrt(sideward * sideward + forward * forward);
@@ -309,14 +324,15 @@ public class DriveClass {
 				power = breakPower;
 			}
 
-
 			double err = getDeltaHeading(targetAngle);
 			double gain = 0.040;
 			double correction = gain * err;
 			double Vf = RVf * power;
 			double Vs = RVs * power;
 
-			setPower(Vf, correction, Vs);
+			// setPower(Vf, correction, Vs);
+
+			setPowerOriented(Vf, Vs, correction, fieldOriented);
 
 //			opMode.telemetry.addData("delta forward:", deltaForward);
 //			opMode.telemetry.addData("speed forward:", Vf);
@@ -327,7 +343,6 @@ public class DriveClass {
 			//position Telemetry:
 			opMode.telemetry.addData("x position:", getPosX());
 			opMode.telemetry.addData("y position:", getPosY());
-
 			opMode.telemetry.update();
 		}
 		stopPower();
