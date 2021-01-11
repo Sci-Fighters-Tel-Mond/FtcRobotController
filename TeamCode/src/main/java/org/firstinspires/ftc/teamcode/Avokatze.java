@@ -51,14 +51,20 @@ public class Avokatze extends LinearOpMode {
             collector.update(gamepad1.x);
 
 
+            boolean fieldOriented = gamepad1.right_bumper != true;
             double boost  = gamepad1.right_trigger * 0.4 + 0.6;
 
-            double y  = -gamepad1.left_stick_y * boost;
-            double x = gamepad1.left_stick_x * boost;
-            double turn     = gamepad1.right_stick_x * boost;
-            boolean fieldOriented = true; // gamepad1.left_bumper != true;
+            double y     = -gamepad1.left_stick_y * boost;
+            double x     = gamepad1.left_stick_x * boost;
+            double turn  = gamepad1.right_stick_x * boost;
 
             drive.setPowerOriented(y, x, turn, fieldOriented);
+
+
+            if (gamepad1.x) {
+                drive.resetOrientation();
+                drive.resetPosition();
+            }
 
             if (shooter.isClicked()) {
                 game.toggleShooter();

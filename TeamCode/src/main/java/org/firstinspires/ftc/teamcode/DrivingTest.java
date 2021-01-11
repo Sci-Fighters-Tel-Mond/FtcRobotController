@@ -112,7 +112,6 @@ public class DrivingTest extends LinearOpMode {
             boolean fieldOriented = gamepad1.right_bumper != true;
 
             double targetX = 0;
-
             if(gamepad1.a) { // ring tracking
                 if(pipeline.getTargetRect() != null) {
                     Rect rect = pipeline.getTargetRect();
