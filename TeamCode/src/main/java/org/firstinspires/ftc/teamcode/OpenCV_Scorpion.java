@@ -54,7 +54,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 public class OpenCV_Scorpion extends LinearOpMode {
     BananaPipeline pipeline;
     OpenCvInternalCamera phoneCam;
-    private DriveClass robot = new DriveClass(this).useEncoders();
+    private DriveClass robot = new DriveClass(this, DriveClass.ROBOT.SCORPION).useEncoders();
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 

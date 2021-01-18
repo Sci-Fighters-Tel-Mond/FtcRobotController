@@ -17,7 +17,7 @@ public class DriveClassTest extends LinearOpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
-    private DriveClass robot = new DriveClass(this)
+    private DriveClass robot = new DriveClass(this, DriveClass.ROBOT.SCORPION)
                                         .useEncoders()
                                         .useBrake();
 
