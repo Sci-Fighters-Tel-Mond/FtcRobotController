@@ -46,9 +46,27 @@ public class DriveClass {
 	private int bl_startPos = 0;
 	private int br_startPos = 0;
 
+	public enum ROBOT {
+		SCORPION,
+		COBALT
+	};
 
-	public DriveClass(LinearOpMode opMode) {
+	private ROBOT robot;
+
+	private int forwardTicksPerMeter;
+	private int strafeTicksPerMeter;
+
+	public DriveClass(LinearOpMode opMode, ROBOT robot) {
 		this.opMode = opMode;
+		this.robot = robot;
+
+		if (robot == ROBOT.SCORPION) {
+			this.forwardTicksPerMeter = 2455;
+			this.strafeTicksPerMeter = 2587;
+		} else if (robot == ROBOT.COBALT) {
+			this.forwardTicksPerMeter = 1753;
+			this.strafeTicksPerMeter = 2006;
+		}
 	}
 
 	public void init(HardwareMap hw) {
@@ -142,6 +160,17 @@ public class DriveClass {
 		br.setPower(forward - turn + strafe);
 	}
 
+	public void setPowerOriented(double y, double x, double turn, boolean fieldOriented){
+		if ( fieldOriented != true) {
+			setPower(y, turn, x);  // No field oriented
+		} else {
+			double phiRad = -getHeading() / 180 * Math.PI;
+			double forward = y * Math.cos(phiRad) - x * Math.sin(phiRad);
+			double strafe = y * Math.sin(phiRad) + x * Math.cos(phiRad);
+			setPower(forward, turn, strafe);
+		}
+	}
+
 	public void stopPower() {
 		setPower(0, 0, 0);
 	}
@@ -170,59 +199,67 @@ public class DriveClass {
 	}
 
 	public double getForwardDistance() {
-		final double polsMeter = 2455;
 		int fl_tick = fl.getCurrentPosition() - fl_startPos;
 		int fr_tick = fr.getCurrentPosition() - fr_startPos;
 		int bl_tick = bl.getCurrentPosition() - bl_startPos;
 		int br_tick = br.getCurrentPosition() - br_startPos;
-		double fl_dist = fl_tick / polsMeter;
-		double fr_dist = fr_tick / polsMeter;
-		double bl_dist = bl_tick / polsMeter;
-		double br_dist = br_tick / polsMeter;
+		double fl_dist = fl_tick / forwardTicksPerMeter;
+		double fr_dist = fr_tick / forwardTicksPerMeter;
+		double bl_dist = bl_tick / forwardTicksPerMeter;
+		double br_dist = br_tick / forwardTicksPerMeter;
 		return (bl_dist + br_dist + fr_dist + fl_dist) / 4;
 	}
 
-	public double getPosX(){
-		double polsMeter = 2587;
-
+	public double getPosY() {
 		int fl_tick = fl.getCurrentPosition();
 		int fr_tick = fr.getCurrentPosition();
 		int bl_tick = bl.getCurrentPosition();
 		int br_tick = br.getCurrentPosition();
-
-		double leftFrontDist = fl_tick / polsMeter;
-		double rightFrontDist = fr_tick / polsMeter;
-		double leftBackDist = bl_tick / polsMeter;
-		double rightBackDist = br_tick / polsMeter;
-		return (-leftBackDist + rightBackDist - rightFrontDist + leftFrontDist) / 4;
-	}
-
-	public double getPosY(){
-		final double polsMeter = 2455;
-		int fl_tick = fl.getCurrentPosition();
-		int fr_tick = fr.getCurrentPosition();
-		int bl_tick = bl.getCurrentPosition();
-		int br_tick = br.getCurrentPosition();
-		double fl_dist = fl_tick / polsMeter;
-		double fr_dist = fr_tick / polsMeter;
-		double bl_dist = bl_tick / polsMeter;
-		double br_dist = br_tick / polsMeter;
+		double fl_dist = fl_tick / forwardTicksPerMeter;
+		double fr_dist = fr_tick / forwardTicksPerMeter;
+		double bl_dist = bl_tick / forwardTicksPerMeter;
+		double br_dist = br_tick / forwardTicksPerMeter;
 		return (bl_dist + br_dist + fr_dist + fl_dist) / 4;
 	}
 
 	public double getStrafeDistance() {
-		double polsMeter = 2587;
-
 		int fl_tick = fl.getCurrentPosition() - fl_startPos;
 		int fr_tick = fr.getCurrentPosition() - fr_startPos;
 		int bl_tick = bl.getCurrentPosition() - bl_startPos;
 		int br_tick = br.getCurrentPosition() - br_startPos;
 
-		double leftFrontDist = fl_tick / polsMeter;
-		double rightFrontDist = fr_tick / polsMeter;
-		double leftBackDist = bl_tick / polsMeter;
-		double rightBackDist = br_tick / polsMeter;
-		return (-leftBackDist + rightBackDist - rightFrontDist + leftFrontDist) / 4;
+		double flDist = fl_tick / strafeTicksPerMeter;
+		double frDist = fr_tick / strafeTicksPerMeter;
+		double blDist = bl_tick / strafeTicksPerMeter;
+		double brDist = br_tick / strafeTicksPerMeter;
+		return (-blDist + brDist - frDist + flDist) / 4;
+	}
+
+	public double getPosX() {
+		int fl_tick = fl.getCurrentPosition();
+		int fr_tick = fr.getCurrentPosition();
+		int bl_tick = bl.getCurrentPosition();
+		int br_tick = br.getCurrentPosition();
+
+		double flDist = fl_tick / strafeTicksPerMeter;
+		double frDist = fr_tick / strafeTicksPerMeter;
+		double blDist = bl_tick / strafeTicksPerMeter;
+		double brDist = br_tick / strafeTicksPerMeter;
+		return (-blDist + brDist - frDist + flDist) / 4;
+	}
+
+	public void printWheelsPosition() {
+		opMode.telemetry.addData("fl", fl.getCurrentPosition());
+		opMode.telemetry.addData("fr", fr.getCurrentPosition());
+		opMode.telemetry.addData("bl", bl.getCurrentPosition());
+		opMode.telemetry.addData("br", br.getCurrentPosition());
+
+		opMode.telemetry.addData("average", (fl.getCurrentPosition() + fr.getCurrentPosition() + bl.getCurrentPosition() + br.getCurrentPosition()) / 4);
+
+		opMode.telemetry.addData("forwardDist", getForwardDistance());
+		opMode.telemetry.addData("strafeDist", getStrafeDistance());
+
+//		opMode.telemetry.update();
 	}
 
 	public void resetPosition() {
@@ -270,6 +307,10 @@ public class DriveClass {
 	}
 
 	public void drive(double forward, double sideward, double targetPower, double targetAngle) {
+		drive(forward, sideward, targetPower, targetAngle, true);
+	}
+
+	public void drive(double forward, double sideward, double targetPower, double targetAngle, boolean fieldOriented) {
 		double sf = (forward < 0) ? -1 : 1;
 		double ss = (sideward < 0) ? -1 : 1;
 		double c = Math.sqrt(sideward * sideward + forward * forward);
@@ -309,14 +350,15 @@ public class DriveClass {
 				power = breakPower;
 			}
 
-
 			double err = getDeltaHeading(targetAngle);
 			double gain = 0.040;
 			double correction = gain * err;
 			double Vf = RVf * power;
 			double Vs = RVs * power;
 
-			setPower(Vf, correction, Vs);
+			// setPower(Vf, correction, Vs);
+
+			setPowerOriented(Vf, Vs, correction, fieldOriented);
 
 //			opMode.telemetry.addData("delta forward:", deltaForward);
 //			opMode.telemetry.addData("speed forward:", Vf);
@@ -327,7 +369,6 @@ public class DriveClass {
 			//position Telemetry:
 			opMode.telemetry.addData("x position:", getPosX());
 			opMode.telemetry.addData("y position:", getPosY());
-
 			opMode.telemetry.update();
 		}
 		stopPower();
