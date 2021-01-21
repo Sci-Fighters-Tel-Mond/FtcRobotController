@@ -343,7 +343,7 @@ public class DriveClass {
 				power = acclPower;
 			}
 
-			double breakgain = 2;
+			double breakgain = 0.9;
 			double breakPower = deltaC * breakgain + minPower;
 
 			if (breakPower < power)  {

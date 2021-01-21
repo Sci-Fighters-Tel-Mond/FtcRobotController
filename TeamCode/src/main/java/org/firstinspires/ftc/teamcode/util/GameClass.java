@@ -13,7 +13,7 @@ public class GameClass {
 
     private DcMotorEx shooter = null;
     private DcMotorEx lifter = null;
-    private DcMotorEx collector = null;
+    private DcMotorEx intake = null;
 
     private DcMotorEx wobble = null;
     private Servo wobbleGrabber1 = null;
@@ -25,7 +25,7 @@ public class GameClass {
 
     private Toggle superState;
     private Toggle shooterState;
-    private Toggle collectorState;
+    private Toggle intakeState;
     private Toggle wobbleGrabberState;
 
     public GameClass(LinearOpMode opMode) {
@@ -36,7 +36,7 @@ public class GameClass {
         //region get from hw
         shooter = hw.get(DcMotorEx.class, "shooter");
         lifter = hw.get(DcMotorEx.class, "lifter");
-        collector = hw.get(DcMotorEx.class, "collector");
+        intake = hw.get(DcMotorEx.class, "collector");
 
         wobble = hw.get(DcMotorEx.class, "wobble");
         wobbleGrabber1 = hw.get(Servo.class, "wobble_grabber1");
@@ -49,7 +49,7 @@ public class GameClass {
 
         //region setDirection
         lifter.setDirection(DcMotorEx.Direction.REVERSE);
-        collector.setDirection(DcMotorEx.Direction.REVERSE);
+        intake.setDirection(DcMotorEx.Direction.REVERSE);
 
         wobble.setDirection(DcMotorEx.Direction.FORWARD);
         //endregion setDirection
@@ -62,19 +62,19 @@ public class GameClass {
 
         shooterState = new Toggle();
         wobbleGrabberState = new Toggle();
-        collectorState = new Toggle();
+        intakeState = new Toggle();
     }
 
     public void setShooterPosition (boolean active){
         superState.set(active);
         if (active) {
-            setCollector(false);
+            setIntake(true);
             setShooter(true);//stop shooter
             lifterUp(true);//up
         } else {
             setShooter(false);// stop shooter
             lifterUp(false);//down
-          setCollector(true);
+            setIntake(true);
         }
 
     }
@@ -119,14 +119,14 @@ public class GameClass {
     }
 
 
-    private void setCollector(boolean active) {
-        collectorState.set(active);
-        collector.setPower(active ? 1 : 0);
+    private void setIntake(boolean active) {
+        intakeState.set(active);
+        intake.setPower(active ? 1 : 0);
     }
 
     private void toggleCollector() {
-        boolean state = collectorState.toggle();
-        setCollector(state);
+        boolean state = intakeState.toggle();
+        setIntake(state);
     }
 
 
@@ -154,6 +154,21 @@ public class GameClass {
 
 
     public void setRingMover(double amt) {
-        ringMover.setPosition(amt);
+        if (superState.getState()) {
+            ringMover.setPosition(amt);
+        }
     }
+
+
+    public void setIntakePower(double v){
+        intake.setPower(v);
+    }
+
+    public void stopAll() {
+        shooter.setPower(0);
+        intake.setPower(0);
+        wobble.setPower(0);
+        lifter.setPower(0);
+    }
+
 }

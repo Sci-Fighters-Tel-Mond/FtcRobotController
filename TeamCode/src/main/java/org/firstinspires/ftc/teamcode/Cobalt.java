@@ -20,9 +20,8 @@ public class Cobalt extends LinearOpMode {
     private Toggle lDpad = new Toggle();
     private Toggle rDpad = new Toggle();
 
-    private Toggle shooter = new Toggle();
     private Toggle wobbleGrabber = new Toggle();
-    private Toggle collector = new Toggle();
+    private Toggle reverseIntake = new Toggle();
 
     @Override
     public void runOpMode() {
@@ -46,10 +45,7 @@ public class Cobalt extends LinearOpMode {
             lDpad.update(gamepad1.dpad_left );
             rDpad.update(gamepad1.dpad_right);
 
-            shooter.update(gamepad1.y);
             wobbleGrabber.update(gamepad1.left_bumper);
-            collector.update(gamepad1.x);
-
 
             boolean fieldOriented = gamepad1.left_bumper != true;
             double boost  = gamepad1.right_trigger * 0.4 + 0.6;
@@ -61,13 +57,14 @@ public class Cobalt extends LinearOpMode {
             boolean armShooter = gamepad1.x;
             boolean grabberClose = gamepad1.y;
             boolean grabberOpen = gamepad1.b;
+            boolean stopAll = gamepad1.a;
 
             boolean resetOrientation = gamepad1.start;
 
 
             boolean wobbleForward = gamepad1.dpad_up;
             boolean wobbleBackWard = gamepad1.dpad_down;
-            boolean reverseIntake = gamepad1.dpad_left;
+            reverseIntake.update(gamepad1.dpad_left);
             boolean intake = gamepad1.dpad_right;
 
             boolean ringFire = gamepad1.right_bumper;
@@ -93,6 +90,43 @@ public class Cobalt extends LinearOpMode {
             } else {
                 game.setRingMover(1);
             }
+
+            if (grabberOpen){
+                game.setWobbleGrabber(true);
+            }
+
+            if (grabberClose){
+                game.setWobbleGrabber(false);
+            }
+
+            if (armShooter){
+                game.setShooterPosition(true);
+            }
+
+            if (intake){
+                game.setShooterPosition(false);
+            }
+
+            if (reverseIntake.getState()){
+
+            }
+
+            if (reverseIntake.isClicked()){
+                game.setIntakePower(-1);
+            }
+
+            if (reverseIntake.isPressed()) {
+                game.setIntakePower(-1);
+            } else {
+                if (reverseIntake.isChanged()){
+                    game.setIntakePower(0);
+                }
+            }
+
+            if (stopAll){
+                game.stopAll();
+            }
+
         }
     }
 }
