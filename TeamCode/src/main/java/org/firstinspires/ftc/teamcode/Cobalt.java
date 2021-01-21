@@ -14,7 +14,7 @@ public class Cobalt extends LinearOpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
-    private DriveClass drive = new DriveClass(this).useBrake();
+    private DriveClass drive = new DriveClass(this, DriveClass.ROBOT.COBALT).useBrake();
     private GameClass game = new GameClass(this);
 
     private Toggle lDpad = new Toggle();
@@ -35,11 +35,11 @@ public class Cobalt extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-
         game.setRingMover(1);
-
+        game.lifterRestart();
 
         runtime.reset();
+
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -51,49 +51,46 @@ public class Cobalt extends LinearOpMode {
             collector.update(gamepad1.x);
 
 
-            boolean fieldOriented = gamepad1.right_bumper != true;
+            boolean fieldOriented = gamepad1.left_bumper != true;
             double boost  = gamepad1.right_trigger * 0.4 + 0.6;
 
             double y     = -gamepad1.left_stick_y * boost;
             double x     = gamepad1.left_stick_x * boost;
             double turn  = gamepad1.right_stick_x * boost;
 
+            boolean armShooter = gamepad1.x;
+            boolean grabberClose = gamepad1.y;
+            boolean grabberOpen = gamepad1.b;
+
+            boolean resetOrientation = gamepad1.start;
+
+
+            boolean wobbleForward = gamepad1.dpad_up;
+            boolean wobbleBackWard = gamepad1.dpad_down;
+            boolean reverseIntake = gamepad1.dpad_left;
+            boolean intake = gamepad1.dpad_right;
+
+            boolean ringFire = gamepad1.right_bumper;
+
+
             drive.setPowerOriented(y, x, turn, fieldOriented);
 
-
-            if (gamepad1.dpad_left) {
+            if (resetOrientation) {
                 drive.resetOrientation();
                 drive.resetPosition();
             }
 
-            if (shooter.isClicked()) {
-                game.toggleShooter();
-            }
-            if (wobbleGrabber.isClicked()) {
-                game.toggleWobbleGrabber();
-            }
-            if (collector.isClicked()) {
-                game.toggleCollector();
-            }
-
-
-            if (gamepad1.dpad_up) {
+            if (wobbleForward) {
                 game.setWobble(0.6);
-            } else if (gamepad1.dpad_down) {
+            } else if (wobbleBackWard) {
                 game.setWobble(-0.6);
             } else {
                 game.setWobble(0);
             }
 
-            if (gamepad1.a) {
+            if (ringFire) {
                 game.setRingMover(0);
-            } else if (gamepad1.b) {
-                game.setRingMover(1);
-            }
-
-            if (gamepad1.left_trigger > 0.4) {
-                game.setRingMover(0);
-                sleep(350);
+            } else {
                 game.setRingMover(1);
             }
         }

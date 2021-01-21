@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.util;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -19,9 +19,11 @@ public class GameClass {
     private Servo wobbleGrabber1 = null;
     private Servo wobbleGrabber2 = null;
     private DigitalChannel wobbleLimiter = null;
+    private DigitalChannel lifterLimiter = null;
 
     private Servo ringMover = null; // 1 - inside, 0 - outside
 
+    private Toggle superState;
     private Toggle shooterState;
     private Toggle collectorState;
     private Toggle wobbleGrabberState;
@@ -40,6 +42,7 @@ public class GameClass {
         wobbleGrabber1 = hw.get(Servo.class, "wobble_grabber1");
         wobbleGrabber2 = hw.get(Servo.class, "wobble_grabber2");
         wobbleLimiter = hw.get(DigitalChannel.class, "wobble_limiter");
+        lifterLimiter = hw.get(DigitalChannel.class, "shooter_limiter");
 
         ringMover = hw.get(Servo.class, "ring_mover");
         //endregion get from hw
@@ -62,23 +65,66 @@ public class GameClass {
         collectorState = new Toggle();
     }
 
-    public void setShooter(boolean active) {
+    public void setShooterPosition (boolean active){
+        superState.set(active);
+        if (active) {
+            setCollector(false);
+            setShooter(true);//stop shooter
+            lifterUp(true);//up
+        } else {
+            setShooter(false);// stop shooter
+            lifterUp(false);//down
+          setCollector(true);
+        }
+
+    }
+
+    public void lifterUp(boolean active) {
+        //up
+        int targetPosition;
+        if (active){
+            targetPosition = 30;
+        }else {
+           targetPosition = 0;
+        }
+        lifter.setTargetPosition(targetPosition);
+        lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public void lifterRestart() {
+        if (getLifterLimiter() == false) {
+            lifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            while (getLifterLimiter() == false){
+                lifter.setPower(-0.3);
+            }
+        }
+        lifter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lifter.setPower(0);
+        superState.set(false);
+    }
+
+    public boolean getLifterLimiter() {
+        return !lifterLimiter.getState();
+    }
+
+
+    private void setShooter(boolean active) {
         shooterState.set(active);
         shooter.setPower(active ? 0.8 : 0);
     }
 
-    public void toggleShooter() {
+    private void toggleShooter() {
         boolean state = shooterState.toggle();
         setShooter(state);
     }
 
 
-    public void setCollector(boolean active) {
+    private void setCollector(boolean active) {
         collectorState.set(active);
         collector.setPower(active ? 1 : 0);
     }
 
-    public void toggleCollector() {
+    private void toggleCollector() {
         boolean state = collectorState.toggle();
         setCollector(state);
     }
