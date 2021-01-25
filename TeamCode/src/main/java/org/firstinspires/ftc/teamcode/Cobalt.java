@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -7,14 +8,14 @@ import org.firstinspires.ftc.teamcode.util.DriveClass;
 import org.firstinspires.ftc.teamcode.util.GameClass;
 import org.firstinspires.ftc.teamcode.util.Toggle;
 
-@TeleOp(group="Linear Opmode")
+@TeleOp(group = "Linear Opmode")
 //@Disabled
 public class Cobalt extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
-    private DriveClass drive = new DriveClass(this, DriveClass.ROBOT.COBALT).useBrake();
+    private DriveClass drive = new DriveClass(this, DriveClass.ROBOT.COBALT).useEncoders().useBrake();
     private GameClass game = new GameClass(this);
 
     private Toggle lDpad = new Toggle();
@@ -39,20 +40,19 @@ public class Cobalt extends LinearOpMode {
 
         runtime.reset();
 
-
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            lDpad.update(gamepad1.dpad_left );
+            lDpad.update(gamepad1.dpad_left);
             rDpad.update(gamepad1.dpad_right);
 
             wobbleGrabber.update(gamepad1.left_bumper);
 
-            boolean fieldOriented = gamepad1.left_bumper != true;
-            double boost  = gamepad1.right_trigger * 0.4 + 0.6;
+            boolean fieldOriented = gamepad1.left_bumper;
+            double boost = gamepad1.right_trigger * 0.4 + 0.6;
 
-            double y     = -gamepad1.left_stick_y * boost;
-            double x     = gamepad1.left_stick_x * boost;
-            double turn  = gamepad1.right_stick_x * boost;
+            double y = -gamepad1.left_stick_y * boost;
+            double x = gamepad1.left_stick_x * boost;
+            double turn = gamepad1.right_stick_x * boost;
 
             boolean armShooter = gamepad1.x;
             boolean grabberClose = gamepad1.y;
@@ -91,42 +91,43 @@ public class Cobalt extends LinearOpMode {
                 game.setRingMover(1);
             }
 
-            if (grabberOpen){
+            if (grabberOpen) {
                 game.setWobbleGrabber(true);
             }
 
-            if (grabberClose){
+            if (grabberClose) {
                 game.setWobbleGrabber(false);
             }
 
-            if (armShooter){
+            if (armShooter) {
                 game.setShooterPosition(true);
             }
 
-            if (intake){
+            if (intake) {
                 game.setShooterPosition(false);
             }
 
-            if (reverseIntake.getState()){
+            if (reverseIntake.getState()) {
 
             }
 
-            if (reverseIntake.isClicked()){
+            if (reverseIntake.isClicked()) {
                 game.setIntakePower(-1);
             }
 
             if (reverseIntake.isPressed()) {
                 game.setIntakePower(-1);
             } else {
-                if (reverseIntake.isChanged()){
+                if (reverseIntake.isChanged()) {
                     game.setIntakePower(0);
                 }
             }
 
-            if (stopAll){
+            if (stopAll) {
                 game.stopAll();
             }
 
+            game.lifterTest(-gamepad1.right_stick_y);
         }
     }
 }

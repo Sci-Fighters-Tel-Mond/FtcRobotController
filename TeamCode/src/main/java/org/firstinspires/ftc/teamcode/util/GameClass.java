@@ -48,7 +48,6 @@ public class GameClass {
         //endregion get from hw
 
         //region setDirection
-        lifter.setDirection(DcMotorEx.Direction.REVERSE);
         intake.setDirection(DcMotorEx.Direction.REVERSE);
 
         wobble.setDirection(DcMotorEx.Direction.FORWARD);
@@ -60,20 +59,21 @@ public class GameClass {
         lifter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         //endregion encoders
 
+        superState = new Toggle();
         shooterState = new Toggle();
         wobbleGrabberState = new Toggle();
         intakeState = new Toggle();
     }
 
-    public void setShooterPosition (boolean active){
+    public void setShooterPosition(boolean active) {
         superState.set(active);
         if (active) {
-            setIntake(true);
-            setShooter(true);//stop shooter
-            lifterUp(true);//up
+            setIntake(false);
+            setShooter(true);
+            lifterUp(true); // up
         } else {
-            setShooter(false);// stop shooter
-            lifterUp(false);//down
+            setShooter(false); // stop shooter
+            lifterUp(false); // down
             setIntake(true);
         }
 
@@ -82,24 +82,31 @@ public class GameClass {
     public void lifterUp(boolean active) {
         //up
         int targetPosition;
-        if (active){
+        if (active) {
             targetPosition = 30;
-        }else {
-           targetPosition = 0;
+        } else {
+            targetPosition = 0;
         }
         lifter.setTargetPosition(targetPosition);
-        lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lifter.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        lifter.setPower(0.4);
+    }
+
+    public void lifterTest(double pow) {
+        lifter.setPower(pow);
+        opMode.telemetry.addData("lifter pos", lifter.getCurrentPosition());
     }
 
     public void lifterRestart() {
         if (getLifterLimiter() == false) {
-            lifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            while (getLifterLimiter() == false){
+            lifter.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+            while (getLifterLimiter() == false) {
                 lifter.setPower(-0.3);
             }
         }
-        lifter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lifter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         lifter.setPower(0);
+        lifter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         superState.set(false);
     }
 
@@ -152,15 +159,13 @@ public class GameClass {
         return !wobbleLimiter.getState();
     }
 
-
     public void setRingMover(double amt) {
         if (superState.getState()) {
             ringMover.setPosition(amt);
         }
     }
 
-
-    public void setIntakePower(double v){
+    public void setIntakePower(double v) {
         intake.setPower(v);
     }
 
@@ -170,5 +175,4 @@ public class GameClass {
         wobble.setPower(0);
         lifter.setPower(0);
     }
-
 }
