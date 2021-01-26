@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.util;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -29,7 +30,7 @@ public class GameClass {
 
     private boolean updateLifterState = false;
 
-    private int lifterupTargetPosition = 140;
+    private int lifterupTargetPosition = 125;
 
     public GameClass(LinearOpMode opMode) {
         this.opMode = opMode;
@@ -61,6 +62,8 @@ public class GameClass {
         wobble.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         lifter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         //endregion encoders
+
+        lifter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         superState = new Toggle();
         shooterState = new Toggle();
@@ -109,11 +112,13 @@ public class GameClass {
         }
         lifter.setTargetPosition(targetPosition);
         lifter.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        lifter.setPower(0.4);
+        lifter.setPower(0.36);
     }
 
     public void lifterTest(double pow) {
-        lifter.setPower(pow);
+        if (Math.abs(pow) > 0.1) {
+            lifter.setPower(pow);
+        }
     }
 
     public void lifterRestart() {
