@@ -22,11 +22,12 @@ public class GameClass {
 
     private Servo ringMover = null; // 1 - inside, 0 - outside
 
-    private Toggle superState;
+    private Toggle superState; // true - shooterPosition
     private Toggle shooterState;
     private Toggle intakeState;
     private Toggle wobbleGrabberState;
-    private Toggle updateLifterState;
+
+    private boolean updateLifterState = false;
 
     private int lifterupTargetPosition = 140;
 
@@ -65,7 +66,8 @@ public class GameClass {
         shooterState = new Toggle();
         wobbleGrabberState = new Toggle();
         intakeState = new Toggle();
-        updateLifterState = new Toggle();
+
+        ringMover.setPosition(1);
     }
 
     public void setShooterPosition(boolean active) {
@@ -76,18 +78,17 @@ public class GameClass {
         } else {
             setShooter(false); // stop shooter
             lifterUp(false); // down
-            updateLifterState.set(true);
-
+            updateLifterState = true;
         }
     }
 
     public void update() {
         opMode.telemetry.addData("lifter pos", lifter.getCurrentPosition());
 
-        if (updateLifterState.getState() == true) {
+        if (updateLifterState == true) {
             if (getLifterLimiter()) {
                 setIntake(true);
-                updateLifterState.set(false);
+                updateLifterState = false;
                 superState.set(false);
             }
 
@@ -118,12 +119,11 @@ public class GameClass {
     public void lifterRestart() {
         if (getLifterLimiter() == false) {
             lifter.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-            while (getLifterLimiter() == false) {
-                lifter.setPower(-0.3);
-            }
+            lifter.setPower(-0.3);
+            while (getLifterLimiter() == false) {}
         }
-        lifter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         lifter.setPower(0);
+        lifter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         lifter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         superState.set(false);
     }
@@ -180,6 +180,14 @@ public class GameClass {
     public void setRingMover(double amt) {
         if (superState.getState()) {
             ringMover.setPosition(amt);
+        }
+    }
+
+    public void shoot() {
+        if (superState.getState()) {
+            setRingMover(0);
+            opMode.sleep(300);
+            setRingMover(1);
         }
     }
 

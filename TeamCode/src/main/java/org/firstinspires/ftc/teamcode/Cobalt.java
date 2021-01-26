@@ -18,11 +18,10 @@ public class Cobalt extends LinearOpMode {
     private DriveClass drive = new DriveClass(this, DriveClass.ROBOT.COBALT).useEncoders().useBrake();
     private GameClass game = new GameClass(this);
 
-    private Toggle lDpad = new Toggle();
-    private Toggle rDpad = new Toggle();
-
     private Toggle wobbleGrabber = new Toggle();
     private Toggle reverseIntake = new Toggle();
+
+//    private Toggle shoot = new Toggle();
 
     @Override
     public void runOpMode() {
@@ -35,17 +34,17 @@ public class Cobalt extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        game.setRingMover(1);
         game.lifterRestart();
 
         runtime.reset();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            lDpad.update(gamepad1.dpad_left);
-            rDpad.update(gamepad1.dpad_right);
-
             wobbleGrabber.update(gamepad1.left_bumper);
+            reverseIntake.update(gamepad1.dpad_left);
+
+//            shoot.update(gamepad1.right_bumper);
+            boolean ringFire = gamepad1.right_bumper;
 
             boolean fieldOriented = gamepad1.left_bumper;
             double boost = gamepad1.right_trigger * 0.4 + 0.6;
@@ -64,10 +63,8 @@ public class Cobalt extends LinearOpMode {
 
             boolean wobbleForward = gamepad1.dpad_up;
             boolean wobbleBackWard = gamepad1.dpad_down;
-            reverseIntake.update(gamepad1.dpad_left);
             boolean intake = gamepad1.dpad_right;
 
-            boolean ringFire = gamepad1.right_bumper;
 
 
             drive.setPowerOriented(y, x, turn, fieldOriented);
@@ -90,6 +87,10 @@ public class Cobalt extends LinearOpMode {
             } else {
                 game.setRingMover(1);
             }
+//            if (shoot.isClicked()) {
+//                game.shoot();
+//            }
+
 
             if (grabberOpen) {
                 game.setWobbleGrabber(true);
@@ -130,7 +131,6 @@ public class Cobalt extends LinearOpMode {
 //            game.lifterTest(-gamepad1.right_stick_y);
 
             game.update();
-
             telemetry.update();
         }
     }
