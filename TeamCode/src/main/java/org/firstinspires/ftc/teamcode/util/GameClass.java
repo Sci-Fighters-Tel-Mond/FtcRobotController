@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.util;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -27,6 +26,9 @@ public class GameClass {
     private Toggle shooterState;
     private Toggle intakeState;
     private Toggle wobbleGrabberState;
+    private Toggle updateLifterState;
+
+    private int lifterupTargetPosition = 140;
 
     public GameClass(LinearOpMode opMode) {
         this.opMode = opMode;
@@ -63,10 +65,10 @@ public class GameClass {
         shooterState = new Toggle();
         wobbleGrabberState = new Toggle();
         intakeState = new Toggle();
+        updateLifterState = new Toggle();
     }
 
     public void setShooterPosition(boolean active) {
-        superState.set(active);
         if (active) {
             setIntake(false);
             setShooter(true);
@@ -74,7 +76,24 @@ public class GameClass {
         } else {
             setShooter(false); // stop shooter
             lifterUp(false); // down
-            setIntake(true);
+            updateLifterState.set(true);
+
+        }
+    }
+
+    public void update() {
+        opMode.telemetry.addData("lifter pos", lifter.getCurrentPosition());
+
+        if (updateLifterState.getState() == true) {
+            if (getLifterLimiter()) {
+                setIntake(true);
+                updateLifterState.set(false);
+                superState.set(false);
+            }
+
+            if (lifter.getCurrentPosition() > lifterupTargetPosition - 10){
+                superState.set(true);
+            }
         }
 
     }
@@ -83,7 +102,7 @@ public class GameClass {
         //up
         int targetPosition;
         if (active) {
-            targetPosition = 30;
+            targetPosition = lifterupTargetPosition;
         } else {
             targetPosition = 0;
         }
@@ -94,7 +113,6 @@ public class GameClass {
 
     public void lifterTest(double pow) {
         lifter.setPower(pow);
-        opMode.telemetry.addData("lifter pos", lifter.getCurrentPosition());
     }
 
     public void lifterRestart() {

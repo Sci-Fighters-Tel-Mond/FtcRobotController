@@ -127,7 +127,11 @@ public class Cobalt extends LinearOpMode {
                 game.stopAll();
             }
 
-            game.lifterTest(-gamepad1.right_stick_y);
+//            game.lifterTest(-gamepad1.right_stick_y);
+
+            game.update();
+
+            telemetry.update();
         }
     }
 }
