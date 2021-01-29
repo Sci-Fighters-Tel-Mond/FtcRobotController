@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.util;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -27,6 +28,7 @@ public class GameClass {
     private Toggle shooterState;
     private Toggle intakeState;
     private Toggle wobbleGrabberState;
+    private Toggle testToggle = new Toggle();
 
     private boolean updateLifterState = false;
 
@@ -54,7 +56,7 @@ public class GameClass {
         //region setDirection
         intake.setDirection(DcMotorEx.Direction.REVERSE);
 
-        wobble.setDirection(DcMotorEx.Direction.FORWARD);
+        wobble.setDirection(DcMotorEx.Direction.REVERSE);
         //endregion setDirection
 
         //region encoders
@@ -94,12 +96,11 @@ public class GameClass {
                 updateLifterState = false;
                 superState.set(false);
             }
+         }
 
-            if (lifter.getCurrentPosition() > lifterupTargetPosition - 10){
-                superState.set(true);
-            }
+        if (lifter.getCurrentPosition() > lifterupTargetPosition - 10) {
+            superState.set(true);
         }
-
     }
 
     public void lifterUp(boolean active) {
@@ -116,8 +117,13 @@ public class GameClass {
     }
 
     public void lifterTest(double pow) {
-        if (Math.abs(pow) > 0.1) {
+        opMode.telemetry.addData("power", pow);
+
+        testToggle.update(Math.abs(pow) > 0.1);
+        if (testToggle.isPressed()) {
             lifter.setPower(pow);
+        } else if (testToggle.isChanged()) {
+            lifter.setPower(0);
         }
     }
 

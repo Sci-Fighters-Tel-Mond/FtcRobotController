@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.util.DriveClass;
 import org.firstinspires.ftc.teamcode.util.GameClass;
 import org.firstinspires.ftc.teamcode.util.Toggle;
 
-@TeleOp(group = "Linear Opmode")
+@TeleOp(group = "Cobalt")
 //@Disabled
 public class Cobalt extends LinearOpMode {
 
@@ -47,7 +47,7 @@ public class Cobalt extends LinearOpMode {
             boolean ringFire = gamepad1.right_bumper;
 
             boolean fieldOriented = gamepad1.left_bumper;
-            double boost = gamepad1.right_trigger * 0.4 + 0.6;
+            double boost = gamepad1.right_trigger * 0.6 + 0.4;
 
             double y = -gamepad1.left_stick_y * boost;
             double x = gamepad1.left_stick_x * boost;
@@ -128,7 +128,7 @@ public class Cobalt extends LinearOpMode {
                 game.stopAll();
             }
 
-//            game.lifterTest(-gamepad1.right_stick_y);
+            game.lifterTest(-gamepad1.right_stick_y);
 
             game.update();
             telemetry.update();
