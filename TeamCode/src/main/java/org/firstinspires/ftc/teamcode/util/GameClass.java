@@ -25,10 +25,10 @@ public class GameClass {
 
     private Servo ringMover = null; // 1 - inside, 0 - outside
 
-    private Toggle superState; // true - shooterPosition
-    private Toggle shooterState;
-    private Toggle intakeState;
-    private Toggle wobbleGrabberState;
+    private Toggle superState = new Toggle();// true - shooterPosition
+    private Toggle shooterState = new Toggle();
+    private Toggle intakeState = new Toggle();
+    private Toggle wobbleGrabberState = new Toggle();
     private Toggle testToggle = new Toggle();
 
     private boolean updateLifterState = false;
@@ -67,11 +67,6 @@ public class GameClass {
         //endregion encoders
 
         lifter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        superState = new Toggle();
-        shooterState = new Toggle();
-        wobbleGrabberState = new Toggle();
-        intakeState = new Toggle();
 
         ringMover.setPosition(1);
     }

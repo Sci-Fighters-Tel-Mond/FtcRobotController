@@ -41,7 +41,6 @@ public class Cobalt extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             wobbleGrabber.update(gamepad1.left_bumper);
-            reverseIntake.update(gamepad1.dpad_left);
 
 //            shoot.update(gamepad1.right_bumper);
             boolean ringFire = gamepad1.right_bumper;
@@ -64,8 +63,7 @@ public class Cobalt extends LinearOpMode {
             boolean wobbleForward = gamepad1.dpad_up;
             boolean wobbleBackWard = gamepad1.dpad_down;
             boolean intake = gamepad1.dpad_right;
-
-
+            reverseIntake.update(gamepad1.dpad_left);
 
             drive.setPowerOriented(y, x, turn, fieldOriented);
 
@@ -106,14 +104,6 @@ public class Cobalt extends LinearOpMode {
 
             if (intake) {
                 game.setShooterPosition(false);
-            }
-
-            if (reverseIntake.getState()) {
-
-            }
-
-            if (reverseIntake.isClicked()) {
-                game.setIntakePower(-1);
             }
 
             if (reverseIntake.isPressed()) {
