@@ -29,6 +29,7 @@ public class DriveClass {
 		this.useBrake = true;
 		return this;
 	}
+
 	//endregion DON'T TOUCH
 
 	private LinearOpMode opMode; // First I declared it as OpMode now its LinearOpMode
@@ -40,6 +41,8 @@ public class DriveClass {
 
 	private BNO055IMU imu = null;
 	private BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+
+	private boolean fieldOriented = true;
 
 	private int fl_startPos = 0;
 	private int fr_startPos = 0;

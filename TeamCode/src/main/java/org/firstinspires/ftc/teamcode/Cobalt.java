@@ -46,7 +46,7 @@ public class Cobalt extends LinearOpMode {
 //            shoot.update(gamepad1.right_bumper);
             boolean ringFire = gamepad1.right_bumper;
 
-            boolean fieldOriented = gamepad1.left_bumper;
+            boolean fieldOriented = !gamepad1.left_bumper;
             double boost = gamepad1.right_trigger * 0.6 + 0.4;
 
             double y = -gamepad1.left_stick_y * boost;
