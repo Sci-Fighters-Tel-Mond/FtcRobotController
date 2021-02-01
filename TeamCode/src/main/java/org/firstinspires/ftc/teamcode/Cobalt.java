@@ -35,6 +35,7 @@ public class Cobalt extends LinearOpMode {
         waitForStart();
 
         game.lifterRestart();
+        game.wobbleArmRestart();
 
         runtime.reset();
 
@@ -73,11 +74,11 @@ public class Cobalt extends LinearOpMode {
             }
 
             if (wobbleForward) {
-                game.setWobble(0.6);
+                game.setWobbleArm(0.6);
             } else if (wobbleBackWard) {
-                game.setWobble(-0.6);
+                game.setWobbleArm(-0.6);
             } else {
-                game.setWobble(0);
+                game.setWobbleArm(0);
             }
 
             if (ringFire) {

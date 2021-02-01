@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.util;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -17,10 +16,10 @@ public class GameClass {
     private DcMotorEx lifter = null;
     private DcMotorEx intake = null;
 
-    private DcMotorEx wobble = null;
+    private DcMotorEx wobbleArm = null;
     private Servo wobbleGrabber1 = null;
     private Servo wobbleGrabber2 = null;
-    private DigitalChannel wobbleLimiter = null;
+    private DigitalChannel wobbleArmLimiter = null;
     private DigitalChannel lifterLimiter = null;
 
     private Servo ringMover = null; // 1 - inside, 0 - outside
@@ -45,10 +44,10 @@ public class GameClass {
         lifter = hw.get(DcMotorEx.class, "lifter");
         intake = hw.get(DcMotorEx.class, "collector");
 
-        wobble = hw.get(DcMotorEx.class, "wobble");
+        wobbleArm = hw.get(DcMotorEx.class, "wobble");
         wobbleGrabber1 = hw.get(Servo.class, "wobble_grabber1");
         wobbleGrabber2 = hw.get(Servo.class, "wobble_grabber2");
-        wobbleLimiter = hw.get(DigitalChannel.class, "wobble_limiter");
+        wobbleArmLimiter = hw.get(DigitalChannel.class, "wobble_limiter");
         lifterLimiter = hw.get(DigitalChannel.class, "shooter_limiter");
 
         ringMover = hw.get(Servo.class, "ring_mover");
@@ -57,12 +56,12 @@ public class GameClass {
         //region setDirection
         intake.setDirection(DcMotorEx.Direction.REVERSE);
 
-        wobble.setDirection(DcMotorEx.Direction.REVERSE);
+        wobbleArm.setDirection(DcMotorEx.Direction.REVERSE);
         //endregion setDirection
 
         //region encoders
         shooter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        wobble.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        wobbleArm.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         lifter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         //endregion encoders
 
@@ -132,7 +131,7 @@ public class GameClass {
             lifter.setPower(-0.3);
             ElapsedTime timer = new ElapsedTime();
             while (getLifterLimiter() == false) {
-                if (timer.milliseconds() >= 4000) break;
+                if (timer.milliseconds() > 2000) break;
             }
             lifter.setPower(0);
             opMode.sleep(1000);
@@ -142,6 +141,18 @@ public class GameClass {
         lifter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         superState.set(false);
     }
+
+    public void wobbleArmRestart(){
+        wobbleArm.setPower(-0.6);
+        ElapsedTime time = new ElapsedTime();
+        while (getWobbleArmLimiter() == false){
+           if ( time.milliseconds() > 2000) break;
+        }
+        wobbleArm.setPower(0);
+        wobbleArm.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        wobbleArm.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+    }
+
 
     public boolean getLifterLimiter() {
         return !lifterLimiter.getState();
@@ -170,11 +181,11 @@ public class GameClass {
     }
 
 
-    public void setWobble(double pow) {
-        if (getWobbleLimiter()) {
+    public void setWobbleArm(double pow) {
+        if (getWobbleArmLimiter()) {
             pow = Math.max(pow, 0);
         }
-        wobble.setPower(pow);
+        wobbleArm.setPower(pow);
     }
 
     public void setWobbleGrabber(boolean state) {
@@ -188,8 +199,8 @@ public class GameClass {
         setWobbleGrabber(state);
     }
 
-    public boolean getWobbleLimiter() {
-        return !wobbleLimiter.getState();
+    public boolean getWobbleArmLimiter() {
+        return !wobbleArmLimiter.getState();
     }
 
     public void setRingMover(double amt) {
@@ -213,7 +224,7 @@ public class GameClass {
     public void stopAll() {
         shooter.setPower(0);
         intake.setPower(0);
-        wobble.setPower(0);
+        wobbleArm.setPower(0);
         lifter.setPower(0);
     }
 }
