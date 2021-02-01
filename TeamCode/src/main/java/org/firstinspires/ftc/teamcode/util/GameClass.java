@@ -32,7 +32,7 @@ public class GameClass {
 
     private boolean updateLifterState = false;
 
-    private int lifterupTargetPosition = 125;
+    private int lifterupTargetPosition = 120;
 
     public GameClass(LinearOpMode opMode) {
         this.opMode = opMode;
@@ -113,13 +113,16 @@ public class GameClass {
         }
         lifter.setTargetPosition(targetPosition);
         lifter.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        lifter.setPower(0.36);
+        lifter.setPower(0.5);
     }
 
     public void lifterTest(double pow) {
         opMode.telemetry.addData("power", pow);
 
-        testToggle.update(Math.abs(pow) > 0.1);
+        testToggle.update(Math.abs(pow) > 0.2);
+        if (testToggle.isClicked()) {
+            lifter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
         if (testToggle.isPressed()) {
             lifter.setPower(pow);
         } else if (testToggle.isChanged()) {
@@ -132,8 +135,9 @@ public class GameClass {
             lifter.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
             lifter.setPower(-0.3);
             while (getLifterLimiter() == false) {}
+            lifter.setPower(0);
+            opMode.sleep(1000);
         }
-        lifter.setPower(0);
         lifter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         lifter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         superState.set(false);
@@ -168,7 +172,7 @@ public class GameClass {
 
     public void setWobble(double pow) {
         if (getWobbleLimiter()) {
-            pow = Math.min(pow, 0);
+            pow = Math.max(pow, 0);
         }
         wobble.setPower(pow);
     }
