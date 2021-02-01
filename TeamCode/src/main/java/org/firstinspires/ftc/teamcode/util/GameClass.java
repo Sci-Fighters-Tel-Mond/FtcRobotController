@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class GameClass {
 
@@ -134,9 +135,13 @@ public class GameClass {
         if (getLifterLimiter() == false) {
             lifter.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
             lifter.setPower(-0.3);
-            while (getLifterLimiter() == false) {}
+            ElapsedTime timer = new ElapsedTime();
+            while (getLifterLimiter() == false) {
+                if (timer.milliseconds() >= 4000) break;
+            }
             lifter.setPower(0);
             opMode.sleep(1000);
+
         }
         lifter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         lifter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
