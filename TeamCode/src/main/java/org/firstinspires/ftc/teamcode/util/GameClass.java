@@ -30,9 +30,15 @@ public class GameClass {
     private Toggle wobbleGrabberState = new Toggle();
     private Toggle testToggle = new Toggle();
 
-    private boolean updateLifterState = false;
+    private boolean lifterDownRequest = false;
+    private boolean lifterUpRequest = false;
+
+
 
     private int lifterupTargetPosition = 120;
+
+    ElapsedTime timer = new ElapsedTime();
+
 
     public GameClass(LinearOpMode opMode) {
         this.opMode = opMode;
@@ -74,41 +80,54 @@ public class GameClass {
         if (active) {
             setIntake(false);
             setShooter(true);
-            lifterUp(true); // up
+            lifterUpDown(true); // up
         } else {
             setShooter(false); // stop shooter
-            lifterUp(false); // down
-            updateLifterState = true;
+            lifterUpDown(false); // down
+            lifterDownRequest = true;
         }
     }
 
     public void update() {
         opMode.telemetry.addData("lifter pos", lifter.getCurrentPosition());
 
-        if (updateLifterState == true) {
-            if (getLifterLimiter()) {
+
+        if (lifterDownRequest) {
+            if (getLifterLimiter() || timer.milliseconds() > 1000) {
                 setIntake(true);
-                updateLifterState = false;
+                lifterDownRequest = false;
                 superState.set(false);
+                lifter.setPower(0);
             }
          }
 
         if (lifter.getCurrentPosition() > lifterupTargetPosition - 10) {
             superState.set(true);
         }
+
+        if (lifterUpRequest){
+            if (timer.milliseconds() > 1000 ){
+                lifter.setPower(0.1);
+                lifterUpRequest = false;
+                superState.set(true);
+            }
+            opMode.telemetry.addData("timer mls", timer.milliseconds());
+
+        }
     }
 
-    public void lifterUp(boolean active) {
-        //up
-        int targetPosition;
-        if (active) {
-            targetPosition = lifterupTargetPosition;
+    public void lifterUpDown(boolean isup) {
+        if (isup) {
+            lifter.setPower(1);
+            lifterUpRequest = true;
+            lifterDownRequest = false;
+            timer.reset();
         } else {
-            targetPosition = 0;
+            lifter.setPower(-0.5);
+            lifterUpRequest = false;
+            lifterDownRequest = true;
+            timer.reset();
         }
-        lifter.setTargetPosition(targetPosition);
-        lifter.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        lifter.setPower(0.5);
     }
 
     public void lifterTest(double pow) {
@@ -125,23 +144,6 @@ public class GameClass {
         }
     }
 
-    public void lifterRestart() {
-        if (getLifterLimiter() == false) {
-            lifter.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-            lifter.setPower(-0.3);
-            ElapsedTime timer = new ElapsedTime();
-            while (getLifterLimiter() == false) {
-                if (timer.milliseconds() > 2000) break;
-            }
-            lifter.setPower(0);
-            opMode.sleep(1000);
-
-        }
-        lifter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        lifter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        superState.set(false);
-    }
-
     public void wobbleArmRestart(){
         wobbleArm.setPower(-0.6);
         ElapsedTime time = new ElapsedTime();
@@ -151,6 +153,25 @@ public class GameClass {
         wobbleArm.setPower(0);
         wobbleArm.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         wobbleArm.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void lifterRestart() {
+        lifter.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+        if (getLifterLimiter() == false) {
+            lifter.setPower(-0.3);
+            ElapsedTime timer = new ElapsedTime();
+            while (getLifterLimiter() == false) {
+                if (timer.milliseconds() > 2000) break;
+            }
+            lifter.setPower(0);
+            opMode.sleep(1000);
+
+        }
+//        lifter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+//        lifter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
+        superState.set(false);
     }
 
 
