@@ -84,36 +84,31 @@ public class GameClass {
         } else {
             setShooter(false); // stop shooter
             lifterUpDown(false); // down
-            lifterDownRequest = true;
         }
     }
 
     public void update() {
-        opMode.telemetry.addData("lifter pos", lifter.getCurrentPosition());
+        opMode.telemetry.addData("Lifter pos", lifter.getCurrentPosition());
 
+        if (lifterUpRequest){
+            if (lifter.getCurrentPosition() > lifterupTargetPosition - 10 || timer.milliseconds() > 1000 ){
+                lifterUpRequest = false;
+                lifter.setPower(0.1);
+                superState.set(true);
+            }
+            //opMode.telemetry.addData("timer mls", timer.milliseconds());
+        }
 
         if (lifterDownRequest) {
-            if (getLifterLimiter() || timer.milliseconds() > 1000) {
-                setIntake(true);
+            if (getLifterLimiter()) { // || timer.milliseconds() > 1000) {
                 lifterDownRequest = false;
-                superState.set(false);
+                setIntake(true);
                 lifter.setPower(0);
+                superState.set(false);
             }
          }
 
-        if (lifter.getCurrentPosition() > lifterupTargetPosition - 10) {
-            superState.set(true);
-        }
-
-        if (lifterUpRequest){
-            if (timer.milliseconds() > 1000 ){
-                lifter.setPower(0.1);
-                lifterUpRequest = false;
-                superState.set(true);
-            }
-            opMode.telemetry.addData("timer mls", timer.milliseconds());
-
-        }
+        opMode.telemetry.addData("Supper State", superState.getState());
     }
 
     public void lifterUpDown(boolean isup) {
@@ -194,11 +189,6 @@ public class GameClass {
     private void setIntake(boolean active) {
         intakeState.set(active);
         intake.setPower(active ? 1 : 0);
-    }
-
-    private void toggleCollector() {
-        boolean state = intakeState.toggle();
-        setIntake(state);
     }
 
 

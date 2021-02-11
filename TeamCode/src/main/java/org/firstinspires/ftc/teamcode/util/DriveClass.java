@@ -59,6 +59,8 @@ public class DriveClass {
 	private int forwardTicksPerMeter;
 	private int strafeTicksPerMeter;
 
+	ElapsedTime timer = new ElapsedTime();
+
 	public DriveClass(LinearOpMode opMode, ROBOT robot) {
 		this.opMode = opMode;
 		this.robot = robot;
@@ -322,6 +324,7 @@ public class DriveClass {
 		final double minPower = 0.2;
 
 		resetPosition();
+		timer.reset();
 
 		while (opMode.opModeIsActive() && (RVf != 0) ||  (RVs != 0)) {
 
@@ -340,7 +343,7 @@ public class DriveClass {
 			double lengthC = c - deltaC ;
 
 			double acclGain = 2;
-			double acclPower = lengthC * acclGain + minPower;
+			double acclPower = lengthC * acclGain +  minPower;
 
 			if (acclPower < power) {
 				power = acclPower;
@@ -359,19 +362,27 @@ public class DriveClass {
 			double Vf = RVf * power;
 			double Vs = RVs * power;
 
+
+
 			// setPower(Vf, correction, Vs);
 
 			setPowerOriented(Vf, Vs, correction, fieldOriented);
 
-//			opMode.telemetry.addData("delta forward:", deltaForward);
-//			opMode.telemetry.addData("speed forward:", Vf);
+			opMode.telemetry.addData("time", timer.milliseconds());
+			opMode.telemetry.addData("delta forward:", deltaForward);
+			opMode.telemetry.addData("speed forward:", Vf);
 //			opMode.telemetry.addData("delta strafe:", deltaStrafe);
-//			opMode.telemetry.addData("speed strafe:", Vs);
-//			opMode.telemetry.addData("power:", power);
+			opMode.telemetry.addData("speed strafe:", Vs);
+			opMode.telemetry.addData("power:", power);
+			opMode.telemetry.addData("current pos", getForwardDistance(
+			));
+
 
 			//position Telemetry:
+
 			opMode.telemetry.addData("x position:", getPosX());
 			opMode.telemetry.addData("y position:", getPosY());
+
 			opMode.telemetry.update();
 		}
 		stopPower();
