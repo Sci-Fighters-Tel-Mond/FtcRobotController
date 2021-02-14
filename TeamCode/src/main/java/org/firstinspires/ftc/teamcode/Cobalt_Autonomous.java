@@ -127,39 +127,42 @@ public class Cobalt_Autonomous extends LinearOpMode {
 
         double heading = robot.getHeading();
 
-        if (abc == ABC.A) {
-//            robot.diagonal(tile * 2.5, tile / 3 * left, 0.8, heading);
-//            robot.drive(5 * tile, 3 * tile * left - 0.2, 0.8, heading);
-            robot.goTo(-2 * tile, 3 * tile, 0.8, heading);
+        robot.drive(2.5 * tile, 0, 1, heading, false);
 
-//            while (gamepad1.b == false){;}
+
+//        if (abc == ABC.A) {
+////            robot.diagonal(tile * 2.5, tile / 3 * left, 0.8, heading);
+////            robot.drive(5 * tile, 3 * tile * left - 0.2, 0.8, heading);
+//            robot.goTo(-2 * tile, 3 * tile, 0.8, heading);
+//
+////            while (gamepad1.b == false){;}
+////            robot.goTo(-1*tile, 4 * tile, 0.8, heading);
+////
+////            while (gamepad1.b == false){;}
+////            robot.goTo(-2* tile, 5 * tile, 0.8, heading);
+////
+////            while (gamepad1.b == false){;}
+////            robot.goTo(0,0, 0.8, heading);
+//
+//        }
+//
+//        if (abc == ABC.B) {
+////            robot.driveForward(tile * 4, 1, heading);
+////            robot.strafe(tile, 1);
 //            robot.goTo(-1*tile, 4 * tile, 0.8, heading);
 //
-//            while (gamepad1.b == false){;}
-//            robot.goTo(-2* tile, 5 * tile, 0.8, heading);
+//        }
 //
-//            while (gamepad1.b == false){;}
-//            robot.goTo(0,0, 0.8, heading);
+//        if (abc == ABC.C) {
+//            robot.goTo(-2* tile, 5 * tile, 0.8, heading);
+////            robot.driveForward(tile * 5, 1, heading);
+//        }
 
-        }
-
-        if (abc == ABC.B) {
-//            robot.driveForward(tile * 4, 1, heading);
-//            robot.strafe(tile, 1);
-            robot.goTo(-1*tile, 4 * tile, 0.8, heading);
-
-        }
-
-        if (abc == ABC.C) {
-            robot.goTo(-2* tile, 5 * tile, 0.8, heading);
-//            robot.driveForward(tile * 5, 1, heading);
-        }
-
+//
         while(opModeIsActive()) {
 
             double leftPower;
             double rightPower;
-
             double boost = gamepad1.right_trigger * 0.4 + 0.6;
             double drive = -gamepad1.left_stick_y * boost;
             double turn = gamepad1.right_stick_x * boost;
@@ -180,10 +183,6 @@ public class Cobalt_Autonomous extends LinearOpMode {
             telemetry.addData("y position:", robot.getPosY());
 
             telemetry.update();
-
         }
-
     }
-
-
 }

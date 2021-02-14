@@ -23,11 +23,12 @@ public class Toggle {
 
     public void set(boolean input) {
         if (lastInput != input) {
-            state = input;
             changed = true;
         } else {
             changed = false;
         }
+        state = input;
+        lastInput = input;
     }
 
     public boolean toggle() {
@@ -44,11 +45,11 @@ public class Toggle {
         return changed;
     }
 
-    public boolean getState() {
-        return state;
-    }
+    public boolean getState() { return state; }
 
     public boolean isClicked() {
         return changed && pressed;
     }
+
+    public boolean isReleased() { return changed && !pressed; }
 }

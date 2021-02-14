@@ -24,20 +24,18 @@ public class GameClass {
 
     private Servo ringMover = null; // 1 - inside, 0 - outside
 
-    private Toggle superState = new Toggle();// true - shooterPosition
+    private Toggle supperState = new Toggle();// true - shooterPosition
     private Toggle shooterState = new Toggle();
     private Toggle intakeState = new Toggle();
     private Toggle wobbleGrabberState = new Toggle();
-    private Toggle testToggle = new Toggle();
+    private Toggle testLifterToggle = new Toggle();
 
     private boolean lifterDownRequest = false;
     private boolean lifterUpRequest = false;
 
+    private int lifterUpTargetPosition = 120;
 
-
-    private int lifterupTargetPosition = 120;
-
-    ElapsedTime timer = new ElapsedTime();
+    private ElapsedTime timer = new ElapsedTime();
 
 
     public GameClass(LinearOpMode opMode) {
@@ -76,86 +74,81 @@ public class GameClass {
         ringMover.setPosition(1);
     }
 
-    public void setShooterPosition(boolean active) {
-        if (active) {
+    public void setSupperPosition(boolean goUp) {
+        if (goUp) {
             setIntake(false);
-            setShooter(true);
+            setShooterRoller(true);
             lifterUpDown(true); // up
-        } else {
-            setShooter(false); // stop shooter
+        } else { // goDown
+            setShooterRoller(false); // stop shooter
             lifterUpDown(false); // down
-            lifterDownRequest = true;
         }
     }
 
-    public void update() {
-        opMode.telemetry.addData("lifter pos", lifter.getCurrentPosition());
-
-
-        if (lifterDownRequest) {
-            if (getLifterLimiter() || timer.milliseconds() > 1000) {
-                setIntake(true);
-                lifterDownRequest = false;
-                superState.set(false);
-                lifter.setPower(0);
-            }
-         }
-
-        if (lifter.getCurrentPosition() > lifterupTargetPosition - 10) {
-            superState.set(true);
-        }
-
-        if (lifterUpRequest){
-            if (timer.milliseconds() > 1000 ){
-                lifter.setPower(0.1);
-                lifterUpRequest = false;
-                superState.set(true);
-            }
-            opMode.telemetry.addData("timer mls", timer.milliseconds());
-
-        }
-    }
-
-    public void lifterUpDown(boolean isup) {
-        if (isup) {
+    public void lifterUpDown(boolean goUp) {
+        if (goUp) {
             lifter.setPower(1);
             lifterUpRequest = true;
             lifterDownRequest = false;
-            timer.reset();
         } else {
-            lifter.setPower(-0.5);
+            lifter.setPower(-0.9);
             lifterUpRequest = false;
             lifterDownRequest = true;
-            timer.reset();
         }
+        timer.reset();
+    }
+
+    public void update() {
+        opMode.telemetry.addData("Lifter pos", lifter.getCurrentPosition());
+
+        if (lifterUpRequest){
+            if (lifter.getCurrentPosition() > lifterUpTargetPosition - 10 || timer.milliseconds() > 1000 ){
+                lifterUpRequest = false;
+                lifter.setPower(0.1);
+                supperState.set(true);
+            }
+            opMode.telemetry.addData("Lifter GO UP", timer.milliseconds());
+        }
+
+        if (lifterDownRequest) {
+            if (getLifterLimiter() || (timer.milliseconds() > 1000)) {
+                lifterDownRequest = false;
+                setIntake(true);
+                lifter.setPower(0);
+                supperState.set(false);
+            }
+            opMode.telemetry.addData("Lifter GO Down", timer.milliseconds());
+        }
+
+        opMode.telemetry.addData("Supper State", supperState.getState());
     }
 
     public void lifterTest(double pow) {
-        opMode.telemetry.addData("power", pow);
-
-        testToggle.update(Math.abs(pow) > 0.2);
-        if (testToggle.isClicked()) {
+        testLifterToggle.update(Math.abs(pow) > 0.2);
+        if (testLifterToggle.isClicked()) {
             lifter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
-        if (testToggle.isPressed()) {
+        if (testLifterToggle.isPressed()) {
+            opMode.telemetry.addData("TEST Lifter Power", pow);
             lifter.setPower(pow);
-        } else if (testToggle.isChanged()) {
+        } else if (testLifterToggle.isReleased()) {
+            opMode.telemetry.addData("TEST Lifter Power", pow);
             lifter.setPower(0);
         }
     }
 
-    public void wobbleArmRestart(){
+    public void wobbleArmInitPosition(){
         wobbleArm.setPower(-0.6);
         ElapsedTime time = new ElapsedTime();
         while (getWobbleArmLimiter() == false){
-           if ( time.milliseconds() > 2000) break;
+           if ( time.milliseconds() > 5000) break;
         }
         wobbleArm.setPower(0);
         wobbleArm.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         wobbleArm.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
     }
 
-    public void lifterRestart() {
+    public void lifterInitPosition() {
         lifter.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
         if (getLifterLimiter() == false) {
@@ -168,10 +161,10 @@ public class GameClass {
             opMode.sleep(1000);
 
         }
-//        lifter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-//        lifter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        lifter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        lifter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
-        superState.set(false);
+        supperState.set(false);
     }
 
 
@@ -180,25 +173,20 @@ public class GameClass {
     }
 
 
-    private void setShooter(boolean active) {
+    private void setShooterRoller(boolean active) {
         shooterState.set(active);
         shooter.setPower(active ? 0.8 : 0);
     }
 
     private void toggleShooter() {
         boolean state = shooterState.toggle();
-        setShooter(state);
+        setShooterRoller(state);
     }
 
 
     private void setIntake(boolean active) {
         intakeState.set(active);
         intake.setPower(active ? 1 : 0);
-    }
-
-    private void toggleCollector() {
-        boolean state = intakeState.toggle();
-        setIntake(state);
     }
 
 
@@ -225,13 +213,13 @@ public class GameClass {
     }
 
     public void setRingMover(double amt) {
-        if (superState.getState()) {
+        if (supperState.getState()) {
             ringMover.setPosition(amt);
         }
     }
 
     public void shoot() {
-        if (superState.getState()) {
+        if (supperState.getState()) {
             setRingMover(0);
             opMode.sleep(300);
             setRingMover(1);
@@ -243,8 +231,10 @@ public class GameClass {
     }
 
     public void stopAll() {
-        shooter.setPower(0);
-        intake.setPower(0);
+        supperState.set(false);
+        setShooterRoller(false);
+        setIntake(false);
+
         wobbleArm.setPower(0);
         lifter.setPower(0);
     }
