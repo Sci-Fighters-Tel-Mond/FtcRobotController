@@ -56,8 +56,8 @@ public class DriveClass {
 
 	private ROBOT robot;
 
-	private int forwardTicksPerMeter;
-	private int strafeTicksPerMeter;
+	private double forwardTicksPerMeter;
+	private double strafeTicksPerMeter;
 
 	ElapsedTime timer = new ElapsedTime();
 
@@ -204,10 +204,10 @@ public class DriveClass {
 	}
 
 	public double getForwardDistance() {
-		int fl_tick = fl.getCurrentPosition() - fl_startPos;
-		int fr_tick = fr.getCurrentPosition() - fr_startPos;
-		int bl_tick = bl.getCurrentPosition() - bl_startPos;
-		int br_tick = br.getCurrentPosition() - br_startPos;
+		double fl_tick = fl.getCurrentPosition() - fl_startPos;
+		double fr_tick = fr.getCurrentPosition() - fr_startPos;
+		double bl_tick = bl.getCurrentPosition() - bl_startPos;
+		double br_tick = br.getCurrentPosition() - br_startPos;
 		double fl_dist = fl_tick / forwardTicksPerMeter;
 		double fr_dist = fr_tick / forwardTicksPerMeter;
 		double bl_dist = bl_tick / forwardTicksPerMeter;
@@ -216,10 +216,10 @@ public class DriveClass {
 	}
 
 	public double getPosY() {
-		int fl_tick = fl.getCurrentPosition();
-		int fr_tick = fr.getCurrentPosition();
-		int bl_tick = bl.getCurrentPosition();
-		int br_tick = br.getCurrentPosition();
+		double fl_tick = fl.getCurrentPosition();
+		double fr_tick = fr.getCurrentPosition();
+		double bl_tick = bl.getCurrentPosition();
+		double br_tick = br.getCurrentPosition();
 		double fl_dist = fl_tick / forwardTicksPerMeter;
 		double fr_dist = fr_tick / forwardTicksPerMeter;
 		double bl_dist = bl_tick / forwardTicksPerMeter;
@@ -228,10 +228,10 @@ public class DriveClass {
 	}
 
 	public double getStrafeDistance() {
-		int fl_tick = fl.getCurrentPosition() - fl_startPos;
-		int fr_tick = fr.getCurrentPosition() - fr_startPos;
-		int bl_tick = bl.getCurrentPosition() - bl_startPos;
-		int br_tick = br.getCurrentPosition() - br_startPos;
+		double fl_tick = fl.getCurrentPosition() - fl_startPos;
+		double fr_tick = fr.getCurrentPosition() - fr_startPos;
+		double bl_tick = bl.getCurrentPosition() - bl_startPos;
+		double br_tick = br.getCurrentPosition() - br_startPos;
 
 		double flDist = fl_tick / strafeTicksPerMeter;
 		double frDist = fr_tick / strafeTicksPerMeter;
@@ -241,10 +241,10 @@ public class DriveClass {
 	}
 
 	public double getPosX() {
-		int fl_tick = fl.getCurrentPosition();
-		int fr_tick = fr.getCurrentPosition();
-		int bl_tick = bl.getCurrentPosition();
-		int br_tick = br.getCurrentPosition();
+		double fl_tick = fl.getCurrentPosition();
+		double fr_tick = fr.getCurrentPosition();
+		double bl_tick = bl.getCurrentPosition();
+		double br_tick = br.getCurrentPosition();
 
 		double flDist = fl_tick / strafeTicksPerMeter;
 		double frDist = fr_tick / strafeTicksPerMeter;
@@ -263,8 +263,6 @@ public class DriveClass {
 
 		opMode.telemetry.addData("forwardDist", getForwardDistance());
 		opMode.telemetry.addData("strafeDist", getStrafeDistance());
-
-//		opMode.telemetry.update();
 	}
 
 	public void resetPosition() {
@@ -272,6 +270,7 @@ public class DriveClass {
 		fr_startPos = fr.getCurrentPosition();
 		bl_startPos = bl.getCurrentPosition();
 		br_startPos = br.getCurrentPosition();
+		opMode.telemetry.addData("RESET POSITION !!!!!!", 0);
 	}
 
 
@@ -362,26 +361,20 @@ public class DriveClass {
 			double Vf = RVf * power;
 			double Vs = RVs * power;
 
-
-
-			// setPower(Vf, correction, Vs);
-
 			setPowerOriented(Vf, Vs, correction, fieldOriented);
 
 			opMode.telemetry.addData("time", timer.milliseconds());
+			//position Telemetry:
+			opMode.telemetry.addData("x position:", getPosX());
+			opMode.telemetry.addData("y position:", getPosY());
+
+
 			opMode.telemetry.addData("delta forward:", deltaForward);
 			opMode.telemetry.addData("speed forward:", Vf);
 //			opMode.telemetry.addData("delta strafe:", deltaStrafe);
 			opMode.telemetry.addData("speed strafe:", Vs);
 			opMode.telemetry.addData("power:", power);
-			opMode.telemetry.addData("current pos", getForwardDistance(
-			));
-
-
-			//position Telemetry:
-
-			opMode.telemetry.addData("x position:", getPosX());
-			opMode.telemetry.addData("y position:", getPosY());
+			opMode.telemetry.addData("current pos", getForwardDistance());
 
 			opMode.telemetry.update();
 		}

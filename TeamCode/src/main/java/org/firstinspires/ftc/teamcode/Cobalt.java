@@ -18,10 +18,7 @@ public class Cobalt extends LinearOpMode {
     private DriveClass drive = new DriveClass(this, DriveClass.ROBOT.COBALT).useEncoders().useBrake();
     private GameClass game = new GameClass(this);
 
-    private Toggle wobbleGrabber = new Toggle();
     private Toggle reverseIntake = new Toggle();
-
-//    private Toggle shoot = new Toggle();
 
     @Override
     public void runOpMode() {
@@ -31,19 +28,16 @@ public class Cobalt extends LinearOpMode {
         drive.init(hardwareMap);
         game.init(hardwareMap);
 
+        game.lifterInitPosition();
+        game.wobbleArmInitPosition();
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-
-        game.lifterRestart();
-        game.wobbleArmRestart();
 
         runtime.reset();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            wobbleGrabber.update(gamepad1.left_bumper);
-
-//            shoot.update(gamepad1.right_bumper);
             boolean ringFire = gamepad1.right_bumper;
 
             boolean fieldOriented = !gamepad1.left_bumper;
@@ -86,10 +80,6 @@ public class Cobalt extends LinearOpMode {
             } else {
                 game.setRingMover(1);
             }
-//            if (shoot.isClicked()) {
-//                game.shoot();
-//            }
-
 
             if (grabberOpen) {
                 game.setWobbleGrabber(true);
@@ -100,17 +90,17 @@ public class Cobalt extends LinearOpMode {
             }
 
             if (armShooter) {
-                game.setShooterPosition(true);
+                game.setSupperPosition(true);
             }
 
             if (intake) {
-                game.setShooterPosition(false);
+                game.setSupperPosition(false);
             }
 
             if (reverseIntake.isPressed()) {
                 game.setIntakePower(-1);
             } else {
-                if (reverseIntake.isChanged()) {
+                if (reverseIntake.isReleased()) {
                     game.setIntakePower(0);
                 }
             }
@@ -119,8 +109,10 @@ public class Cobalt extends LinearOpMode {
                 game.stopAll();
             }
 
-            game.lifterTest(-gamepad1.right_stick_y);
+            // game.lifterTest(-gamepad1.right_stick_y);
 
+            telemetry.addData("X Pos", drive.getPosX());
+            telemetry.addData("Y Pos", drive.getPosY());
             game.update();
             telemetry.update();
         }
