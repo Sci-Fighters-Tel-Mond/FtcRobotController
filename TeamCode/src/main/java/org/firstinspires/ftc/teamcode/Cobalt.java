@@ -47,7 +47,7 @@ public class Cobalt extends LinearOpMode {
             double x = gamepad1.left_stick_x * boost;
             double turn = gamepad1.right_stick_x * boost;
 
-            boolean armShooter = gamepad1.x;
+            boolean armShooter = gamepad1.x; // up armShooter
             boolean grabberClose = gamepad1.y;
             boolean grabberOpen = gamepad1.b;
             boolean stopAll = gamepad1.a;
@@ -57,7 +57,7 @@ public class Cobalt extends LinearOpMode {
 
             boolean wobbleForward = gamepad1.dpad_up;
             boolean wobbleBackWard = gamepad1.dpad_down;
-            boolean intake = gamepad1.dpad_right;
+            boolean intake = gamepad1.dpad_right; // down armShooter
             reverseIntake.update(gamepad1.dpad_left);
 
             drive.setPowerOriented(y, x, turn, fieldOriented);
