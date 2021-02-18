@@ -120,24 +120,24 @@ public class AutoItamar extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-        abc = getRingNum(pipeline);
+        abc = getRingNum(pipeline);// a b c?
         telemetry.addData("Rings", abc);
         telemetry.update();
 
-        game.wobbleArmGoTo(1500);
+        game.wobbleArmGoTo(1500); //wobble up
         sleep(500);
-        game.setSuperPosition(true);
+        game.setSuperPosition(true);// fire position
 
         double heading = robot.getHeading();
         robot.drive(2*tile,0, 0.8, heading);
         game.update();
         robot.turnTo(15, 0.6);
-        game.shoot();
-        sleep(1000);
-        game.shoot();
-        sleep(1000);
-        game.shoot();
-        sleep(1000);
+
+
+       for (int x = 0; x < 3; x++){ // fire ring
+           game.shoot();
+           sleep(1000);
+       }
         robot.turnTo(0, 0.6);
         telemetry.addData("going to", abc);
         telemetry.update();
