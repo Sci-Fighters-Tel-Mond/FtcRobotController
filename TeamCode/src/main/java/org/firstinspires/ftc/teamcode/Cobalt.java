@@ -90,11 +90,11 @@ public class Cobalt extends LinearOpMode {
             }
 
             if (armShooter) {
-                game.setSupperPosition(true);
+                game.setSuperPosition(true);
             }
 
             if (intake) {
-                game.setSupperPosition(false);
+                game.setSuperPosition(false);
             }
 
             if (reverseIntake.isPressed()) {
@@ -113,6 +113,7 @@ public class Cobalt extends LinearOpMode {
 
             telemetry.addData("X Pos", drive.getPosX());
             telemetry.addData("Y Pos", drive.getPosY());
+            telemetry.addData("Position", game.getWobbleArmPos());
             game.update();
             telemetry.update();
         }

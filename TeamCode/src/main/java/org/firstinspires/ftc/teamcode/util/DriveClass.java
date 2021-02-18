@@ -282,7 +282,7 @@ public class DriveClass {
 	public void turnTo(double targetAngle, double targetPower) {
 		double delta = getDeltaHeading(targetAngle);
 		double s = (delta < 0) ? -1 : 1;
-		while ((delta * s > 5 * s) && opMode.opModeIsActive()) {
+		while ((delta * s > 0) && opMode.opModeIsActive()) {
 
 			delta = getDeltaHeading(targetAngle);
 			double gain = 0.04;
@@ -297,7 +297,6 @@ public class DriveClass {
 			opMode.telemetry.addData("delta", delta);
 			opMode.telemetry.addData("power", power);
 			opMode.telemetry.update();
-
 		}
 		stopPower();
 	}

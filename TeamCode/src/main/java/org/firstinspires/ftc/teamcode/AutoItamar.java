@@ -48,7 +48,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 public class AutoItamar extends LinearOpMode {
     BananaPipeline pipeline;
     OpenCvInternalCamera phoneCam;
-    private DriveClass robot = new DriveClass(this, DriveClass.ROBOT.SCORPION).useEncoders();
+    private DriveClass robot = new DriveClass(this, DriveClass.ROBOT.COBALT).useEncoders();
     private GameClass game = new GameClass(this);    // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -105,13 +105,16 @@ public class AutoItamar extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-
         initCamera();
         robot.init(hardwareMap);
+        game.init(hardwareMap);
 
         ABC abc = getRingNum(pipeline);
         telemetry.addData("Rings", abc);
         telemetry.update();
+
+        game.lifterInitPosition();
+        game.wobbleArmInitPosition();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -121,21 +124,44 @@ public class AutoItamar extends LinearOpMode {
         telemetry.addData("Rings", abc);
         telemetry.update();
 
+        game.wobbleArmGoTo(1500);
+        sleep(500);
+        game.setSuperPosition(true);
+
         double heading = robot.getHeading();
-
-        robot.drive(0, tile, 0.8, heading);
-        robot.drive(2*tile, 0, 0.8, heading);
-
+        robot.drive(2*tile,0, 0.8, heading);
+        game.update();
+        robot.turnTo(15, 0.6);
         game.shoot();
+        sleep(1000);
+        game.shoot();
+        sleep(1000);
+        game.shoot();
+        sleep(1000);
+        robot.turnTo(0, 0.6);
+        telemetry.addData("going to", abc);
+        telemetry.update();
 
         if (abc == ABC.A) {
+            robot.goTo(-0.45,1.5, 0.8,heading);
         }
 
         if (abc == ABC.B) {
+            robot.goTo(0.15,1.9, 0.8,heading);
         }
 
         if (abc == ABC.C) {
+            robot.goTo(-0.5,2.5, 0.8,heading);
         }
+        //Last current position - tiles: (x: -0.5, y: 4.5)
+        game.wobbleArmGoTo(5778);
+        sleep(3000);
+        game.setWobbleGrabber(true);
+        sleep(250);
+        game.wobbleArmGoTo(100);
+        sleep(2000);
+        robot.goTo(-0.15,1.2,0.8,heading);
+        game.setWobbleGrabber(false);
 
         while(opModeIsActive()) {
 
@@ -160,6 +186,7 @@ public class AutoItamar extends LinearOpMode {
 
             telemetry.addData("x position:", robot.getPosX());
             telemetry.addData("y position:", robot.getPosY());
+
 
             telemetry.update();
 

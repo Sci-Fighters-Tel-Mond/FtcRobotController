@@ -24,7 +24,7 @@ public class GameClass {
 
     private Servo ringMover = null; // 1 - inside, 0 - outside
 
-    private Toggle supperState = new Toggle();// true - shooterPosition
+    private Toggle superState = new Toggle();// true - shooterPosition
     private Toggle shooterState = new Toggle();
     private Toggle intakeState = new Toggle();
     private Toggle wobbleGrabberState = new Toggle();
@@ -66,7 +66,7 @@ public class GameClass {
         //region encoders
         shooter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         wobbleArm.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        lifter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        lifter.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         //endregion encoders
 
         lifter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -74,8 +74,8 @@ public class GameClass {
         ringMover.setPosition(1);
     }
 
-    public void setSupperPosition(boolean goUp) {
-        if (goUp) {
+    public void setSuperPosition(boolean goUp) {
+        if (goUp && getWobbleArmPos() >= 50) { //??????????????????????????????????????
             setIntake(false);
             setShooterRoller(true);
             lifterUpDown(true); // up
@@ -105,7 +105,7 @@ public class GameClass {
             if (lifter.getCurrentPosition() > lifterUpTargetPosition - 10 || timer.milliseconds() > 1000 ){
                 lifterUpRequest = false;
                 lifter.setPower(0.1);
-                supperState.set(true);
+                superState.set(true);
             }
             opMode.telemetry.addData("Lifter GO UP", timer.milliseconds());
         }
@@ -115,12 +115,12 @@ public class GameClass {
                 lifterDownRequest = false;
                 setIntake(true);
                 lifter.setPower(0);
-                supperState.set(false);
+                superState.set(false);
             }
             opMode.telemetry.addData("Lifter GO Down", timer.milliseconds());
         }
 
-        opMode.telemetry.addData("Supper State", supperState.getState());
+        opMode.telemetry.addData("Super State", superState.getState());
     }
 
     public void lifterTest(double pow) {
@@ -148,11 +148,21 @@ public class GameClass {
         wobbleArm.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
     }
 
+    public int getWobbleArmPos(){
+        return wobbleArm.getCurrentPosition();
+    }
+
+    public void wobbleArmGoTo(int position) {
+        wobbleArm.setTargetPosition(position);
+        wobbleArm.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        wobbleArm.setPower(1);
+    }
+
     public void lifterInitPosition() {
         lifter.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
         if (getLifterLimiter() == false) {
-            lifter.setPower(-0.3);
+            lifter.setPower(-9);
             ElapsedTime timer = new ElapsedTime();
             while (getLifterLimiter() == false) {
                 if (timer.milliseconds() > 2000) break;
@@ -164,7 +174,7 @@ public class GameClass {
         lifter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         lifter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
-        supperState.set(false);
+        superState.set(false);
     }
 
 
@@ -189,7 +199,6 @@ public class GameClass {
         intake.setPower(active ? 1 : 0);
     }
 
-
     public void setWobbleArm(double pow) {
         if (getWobbleArmLimiter()) {
             pow = Math.max(pow, 0);
@@ -213,13 +222,13 @@ public class GameClass {
     }
 
     public void setRingMover(double amt) {
-        if (supperState.getState()) {
+        if (superState.getState()) {
             ringMover.setPosition(amt);
         }
     }
 
     public void shoot() {
-        if (supperState.getState()) {
+        if (superState.getState() ) {
             setRingMover(0);
             opMode.sleep(300);
             setRingMover(1);
@@ -231,7 +240,7 @@ public class GameClass {
     }
 
     public void stopAll() {
-        supperState.set(false);
+        superState.set(false);
         setShooterRoller(false);
         setIntake(false);
 
