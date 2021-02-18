@@ -57,6 +57,7 @@ public class AutoItamar extends LinearOpMode {
     final int left = -1;
     final int right = 1;
 
+
     private void initCamera() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
