@@ -13,7 +13,7 @@ public class GameClass {
     private LinearOpMode opMode;
 
     private DcMotorEx shooter = null;
-    private DcMotorEx lifter = null;
+    public DcMotorEx lifter = null;
     private DcMotorEx intake = null;
 
     private DcMotorEx wobbleArm = null;
@@ -33,7 +33,9 @@ public class GameClass {
     private boolean lifterDownRequest = false;
     private boolean lifterUpRequest = false;
 
-    private int lifterUpTargetPosition = 120;
+    final private int lifterUpTargetPosition = 1728;
+    final private int lifterDownTargetPosition = 0;
+
 
     private ElapsedTime timer = new ElapsedTime();
 
@@ -75,10 +77,12 @@ public class GameClass {
     }
 
     public void setSuperPosition(boolean goUp) {
-        if (goUp && getWobbleArmPos() >= 50) { //??????????????????????????????????????
-            setIntake(false);
-            setShooterRoller(true);
-            lifterUpDown(true); // up
+        if (goUp) {
+            if (getWobbleArmPos() >= 50) {
+                setIntake(false);
+                setShooterRoller(true);
+                lifterUpDown(true); // up
+            }
         } else { // goDown
             setShooterRoller(false); // stop shooter
             lifterUpDown(false); // down
@@ -87,11 +91,15 @@ public class GameClass {
 
     public void lifterUpDown(boolean goUp) {
         if (goUp) {
+            lifter.setTargetPosition(lifterUpTargetPosition);
+            lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             lifter.setPower(1);
             lifterUpRequest = true;
             lifterDownRequest = false;
         } else {
-            lifter.setPower(-0.9);
+            lifter.setTargetPosition(lifterDownTargetPosition);
+            lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lifter.setPower(1);
             lifterUpRequest = false;
             lifterDownRequest = true;
         }
@@ -99,19 +107,19 @@ public class GameClass {
     }
 
     public void update() {
+        opMode.telemetry.addData("wobble position", getWobbleArmPos());
         opMode.telemetry.addData("Lifter pos", lifter.getCurrentPosition());
 
         if (lifterUpRequest){
-            if (lifter.getCurrentPosition() > lifterUpTargetPosition - 10 || timer.milliseconds() > 1000 ){
+            if (lifter.getCurrentPosition() > lifterUpTargetPosition - 10 || timer.milliseconds() > 4000 ){
                 lifterUpRequest = false;
-                lifter.setPower(0.1);
                 superState.set(true);
             }
             opMode.telemetry.addData("Lifter GO UP", timer.milliseconds());
         }
 
         if (lifterDownRequest) {
-            if (getLifterLimiter() || (timer.milliseconds() > 1000)) {
+            if (getLifterLimiter() || (timer.milliseconds() > 4000)) {
                 lifterDownRequest = false;
                 setIntake(true);
                 lifter.setPower(0);
@@ -137,7 +145,7 @@ public class GameClass {
         }
     }
 
-    public void wobbleArmInitPosition(){
+    public void initWobbleArmPosition(){
         wobbleArm.setPower(-0.6);
         ElapsedTime time = new ElapsedTime();
         while (getWobbleArmLimiter() == false){
@@ -154,18 +162,18 @@ public class GameClass {
 
     public void wobbleArmGoTo(int position) {
         wobbleArm.setTargetPosition(position);
+        lifter.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
         wobbleArm.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         wobbleArm.setPower(1);
     }
 
     public void lifterInitPosition() {
-        lifter.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-
         if (getLifterLimiter() == false) {
-            lifter.setPower(-9);
+            lifter.setPower(-1);
             ElapsedTime timer = new ElapsedTime();
             while (getLifterLimiter() == false) {
-                if (timer.milliseconds() > 2000) break;
+                if (timer.milliseconds() > 4000) break;
             }
             lifter.setPower(0);
             opMode.sleep(1000);

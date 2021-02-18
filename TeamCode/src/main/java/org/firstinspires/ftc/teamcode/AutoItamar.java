@@ -115,7 +115,7 @@ public class AutoItamar extends LinearOpMode {
         telemetry.update();
 
         game.lifterInitPosition();
-        game.wobbleArmInitPosition();
+        game.initWobbleArmPosition();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();

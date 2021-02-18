@@ -29,7 +29,7 @@ public class Cobalt extends LinearOpMode {
         game.init(hardwareMap);
 
         game.lifterInitPosition();
-        game.wobbleArmInitPosition();
+        game.initWobbleArmPosition();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -91,6 +91,8 @@ public class Cobalt extends LinearOpMode {
 
             if (armShooter) {
                 game.setSuperPosition(true);
+                telemetry.addData("X ", "IS PRESSED");
+
             }
 
             if (intake) {
@@ -109,13 +111,15 @@ public class Cobalt extends LinearOpMode {
                 game.stopAll();
             }
 
-            // game.lifterTest(-gamepad1.right_stick_y);
-
-            telemetry.addData("X Pos", drive.getPosX());
+            game.lifterTest(-gamepad1.right_stick_y);
+            telemetry.addData("X Pos",drive.getPosX());
             telemetry.addData("Y Pos", drive.getPosY());
-            telemetry.addData("Position", game.getWobbleArmPos());
+            telemetry.addData("Heading:", drive.getHeading());
+
+
+
             game.update();
             telemetry.update();
         }
     }
-}
+} // 2650 זה גובה לפגיעה בגול הגבוה
