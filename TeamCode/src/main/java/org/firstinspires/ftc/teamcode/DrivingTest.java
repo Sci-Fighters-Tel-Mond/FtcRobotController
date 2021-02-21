@@ -35,8 +35,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.util.BananaPipeline;
 import org.firstinspires.ftc.teamcode.util.DriveClass;
+import org.firstinspires.ftc.teamcode.util.Location;
 import org.firstinspires.ftc.teamcode.util.Toggle;
-import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -48,7 +48,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 public class DrivingTest extends LinearOpMode {
     BananaPipeline pipeline;
     OpenCvInternalCamera phoneCam;
-    private DriveClass drive = new DriveClass(this, DriveClass.ROBOT.SCORPION).useEncoders();
+    private DriveClass drive = new DriveClass(this, DriveClass.ROBOT.SCORPION, new Location(Location.LOCATION.START0_0, 0, 0)).useEncoders();
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -142,8 +142,8 @@ public class DrivingTest extends LinearOpMode {
             }
 
 
-            telemetry.addData("X: ", drive.getPosX());
-            telemetry.addData("Y:", drive.getPosY());
+            telemetry.addData("X: ", drive.getAbsolutesPcsX());
+            telemetry.addData("Y:", drive.getAbsolutesPosY());
 
 
             telemetry.addData("Dx: ", drive.getStrafeDistance());

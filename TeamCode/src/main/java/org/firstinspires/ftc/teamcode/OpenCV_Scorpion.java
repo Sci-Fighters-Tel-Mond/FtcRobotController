@@ -29,20 +29,14 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.teamcode.util.BananaPipeline;
 import org.firstinspires.ftc.teamcode.util.DriveClass;
+import org.firstinspires.ftc.teamcode.util.Location;
 import org.firstinspires.ftc.teamcode.util.Toggle;
-import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -54,7 +48,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 public class OpenCV_Scorpion extends LinearOpMode {
     BananaPipeline pipeline;
     OpenCvInternalCamera phoneCam;
-    private DriveClass robot = new DriveClass(this, DriveClass.ROBOT.SCORPION).useEncoders();
+    private DriveClass robot = new DriveClass(this, DriveClass.ROBOT.SCORPION, new Location(Location.LOCATION.START0_0, 0, 0)).useEncoders();
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -177,8 +171,8 @@ public class OpenCV_Scorpion extends LinearOpMode {
             telemetry.addData("X", robot.getForwardDistance());
             telemetry.addData("Y", robot.getStrafeDistance());
 
-            telemetry.addData("x position:", robot.getPosX());
-            telemetry.addData("y position:", robot.getPosY());
+            telemetry.addData("x position:", robot.getAbsolutesPcsX());
+            telemetry.addData("y position:", robot.getAbsolutesPosY());
 
             telemetry.update();
 

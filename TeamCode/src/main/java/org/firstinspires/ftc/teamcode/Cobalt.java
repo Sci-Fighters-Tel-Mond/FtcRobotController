@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.util.DriveClass;
 import org.firstinspires.ftc.teamcode.util.GameClass;
+import org.firstinspires.ftc.teamcode.util.Location;
 import org.firstinspires.ftc.teamcode.util.Toggle;
 
 @TeleOp(group = "Cobalt")
@@ -14,8 +15,7 @@ public class Cobalt extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-
-    private DriveClass drive = new DriveClass(this, DriveClass.ROBOT.COBALT).useEncoders().useBrake();
+    private DriveClass drive = new DriveClass(this, DriveClass.ROBOT.COBALT, new Location(Location.LOCATION.START0_0, 0, 0)).useEncoders().useBrake();
     private GameClass game = new GameClass(this);
 
     private Toggle reverseIntake = new Toggle();
@@ -28,7 +28,7 @@ public class Cobalt extends LinearOpMode {
         drive.init(hardwareMap);
         game.init(hardwareMap);
 
-        game.lifterInitPosition();
+        game.initLifterPosition();
         game.initWobbleArmPosition();
 
         // Wait for the game to start (driver presses PLAY)
@@ -112,8 +112,8 @@ public class Cobalt extends LinearOpMode {
             }
 
             game.lifterTest(-gamepad1.right_stick_y);
-            telemetry.addData("X Pos",drive.getPosX());
-            telemetry.addData("Y Pos", drive.getPosY());
+            telemetry.addData("X Pos",drive.getAbsolutesPcsX());
+            telemetry.addData("Y Pos", drive.getAbsolutesPosY());
             telemetry.addData("Heading:", drive.getHeading());
 
 

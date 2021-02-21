@@ -13,10 +13,10 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 public class DriveClass {
 	//region DON'T TOUCH
+	final double tile = 0.6;
 	private boolean useEncoders = false;
 	private boolean useBrake = false;
 
@@ -56,14 +56,18 @@ public class DriveClass {
 
 	private ROBOT robot;
 
+	private Location startingPosition;
+
 	private double forwardTicksPerMeter;
 	private double strafeTicksPerMeter;
 
 	ElapsedTime timer = new ElapsedTime();
 
-	public DriveClass(LinearOpMode opMode, ROBOT robot) {
+	public DriveClass(LinearOpMode opMode, ROBOT robot, Location startingPosition) {
 		this.opMode = opMode;
 		this.robot = robot;
+		this.startingPosition = startingPosition;
+
 
 		if (robot == ROBOT.SCORPION) {
 			this.forwardTicksPerMeter = 2455;
@@ -216,6 +220,10 @@ public class DriveClass {
 	}
 
 	public double getPosY() {
+		return getAbsolutesPosY() - startingPosition.y;
+	}
+
+	public double getAbsolutesPosY() {
 		double fl_tick = fl.getCurrentPosition();
 		double fr_tick = fr.getCurrentPosition();
 		double bl_tick = bl.getCurrentPosition();
@@ -241,6 +249,10 @@ public class DriveClass {
 	}
 
 	public double getPosX() {
+		return getAbsolutesPcsX() - startingPosition.x;
+	}
+
+	public double getAbsolutesPcsX() {
 		double fl_tick = fl.getCurrentPosition();
 		double fr_tick = fr.getCurrentPosition();
 		double bl_tick = bl.getCurrentPosition();
@@ -306,6 +318,10 @@ public class DriveClass {
 		double currentY = getPosY();
 		double deltaX = x - currentX;
 		double deltaY = y - currentY;
+		opMode.telemetry.addData("goto x", x);
+		opMode.telemetry.addData("goto y", y);
+		opMode.telemetry.update();
+
 		drive(deltaY, deltaX, targetPower, targetHeading);
 	}
 
@@ -364,8 +380,8 @@ public class DriveClass {
 
 			opMode.telemetry.addData("time", timer.milliseconds());
 			//position Telemetry:
-			opMode.telemetry.addData("x position:", getPosX());
-			opMode.telemetry.addData("y position:", getPosY());
+			opMode.telemetry.addData("x position:", getAbsolutesPcsX());
+			opMode.telemetry.addData("y position:", getAbsolutesPosY());
 
 
 			opMode.telemetry.addData("delta forward:", deltaForward);

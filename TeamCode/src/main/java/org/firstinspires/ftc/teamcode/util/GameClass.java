@@ -152,6 +152,7 @@ public class GameClass {
            if ( time.milliseconds() > 5000) break;
         }
         wobbleArm.setPower(0);
+        opMode.sleep(500);
         wobbleArm.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         wobbleArm.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
     }
@@ -168,7 +169,7 @@ public class GameClass {
         wobbleArm.setPower(1);
     }
 
-    public void lifterInitPosition() {
+    public void initLifterPosition() {
         if (getLifterLimiter() == false) {
             lifter.setPower(-1);
             ElapsedTime timer = new ElapsedTime();

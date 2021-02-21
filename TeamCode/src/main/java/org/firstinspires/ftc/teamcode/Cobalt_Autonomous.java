@@ -36,6 +36,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.util.BananaPipeline;
 import org.firstinspires.ftc.teamcode.util.DriveClass;
 import org.firstinspires.ftc.teamcode.util.GameClass;
+import org.firstinspires.ftc.teamcode.util.Location;
 import org.firstinspires.ftc.teamcode.util.Toggle;
 import org.opencv.core.Rect;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -48,7 +49,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 public class Cobalt_Autonomous extends LinearOpMode {
     BananaPipeline pipeline;
     OpenCvInternalCamera phoneCam;
-    private DriveClass robot = new DriveClass(this, DriveClass.ROBOT.COBALT).useEncoders().useBrake();
+    private DriveClass robot = new DriveClass(this, DriveClass.ROBOT.COBALT, new Location(Location.LOCATION.BLUE_EXTERNAL_START_POSITION, -1.75*0.6, 0)).useEncoders().useBrake();
     private GameClass game = new GameClass(this);
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -179,8 +180,8 @@ public class Cobalt_Autonomous extends LinearOpMode {
             telemetry.addData("X", robot.getForwardDistance());
             telemetry.addData("Y", robot.getStrafeDistance());
 
-            telemetry.addData("x position:", robot.getPosX());
-            telemetry.addData("y position:", robot.getPosY());
+            telemetry.addData("x position:", robot.getAbsolutesPcsX());
+            telemetry.addData("y position:", robot.getAbsolutesPosY());
 
             telemetry.update();
         }

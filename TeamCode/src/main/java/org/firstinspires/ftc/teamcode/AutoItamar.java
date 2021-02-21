@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -36,7 +37,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.util.BananaPipeline;
 import org.firstinspires.ftc.teamcode.util.DriveClass;
 import org.firstinspires.ftc.teamcode.util.GameClass;
-import org.firstinspires.ftc.teamcode.util.Toggle;
+import org.firstinspires.ftc.teamcode.util.Location;
 import org.opencv.core.Rect;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -46,17 +47,22 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 @Autonomous(group = "Linear Opmode")
 //@Disabled
 public class AutoItamar extends LinearOpMode {
+    final double tile = 0.6;
     BananaPipeline pipeline;
     OpenCvInternalCamera phoneCam;
-    private DriveClass robot = new DriveClass(this, DriveClass.ROBOT.COBALT).useEncoders();
-    private GameClass game = new GameClass(this);    // Declare OpMode members.
+
+    Location startingPosition = new Location(Location.LOCATION.BLUE_EXTERNAL_START_POSITION,-1.75*tile,0*tile);
+    Location a_pos = new Location(Location.LOCATION.BLUE_A,-3*tile,2.5*tile);
+    Location b_pos = new Location(Location.LOCATION.BLUE_B,-1.5*tile,3*tile);
+    Location c_pos = new Location(Location.LOCATION.BLUE_C,-1.5*tile,5*tile);
+
+    private DriveClass robot = new DriveClass(this, DriveClass.ROBOT.COBALT, startingPosition).useEncoders();
+    private GameClass  game  = new GameClass(this);    // Declare OpMode members.
+
     private ElapsedTime runtime = new ElapsedTime();
 
-    private Toggle fieldOriented = new Toggle(false);
-    final double tile = 0.6;
     final int left = -1;
     final int right = 1;
-
 
     private void initCamera() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -94,11 +100,7 @@ public class AutoItamar extends LinearOpMode {
     }
 
 
-    // main functions
-    // main functions
-    // main functions
-    // main functions
-    // main functions
+    // main functions ==============================================================================
 
     @Override
     public void runOpMode() {
@@ -114,7 +116,7 @@ public class AutoItamar extends LinearOpMode {
         telemetry.addData("Rings", abc);
         telemetry.update();
 
-        game.lifterInitPosition();
+        game.initLifterPosition();
         game.initWobbleArmPosition();
 
         // Wait for the game to start (driver presses PLAY)
@@ -130,30 +132,32 @@ public class AutoItamar extends LinearOpMode {
         game.setSuperPosition(true);// fire position
 
         double heading = robot.getHeading();
+
         robot.drive(2*tile,0, 0.8, heading);
         game.update();
         robot.turnTo(15, 0.6);
 
-
-       for (int x = 0; x < 3; x++){ // fire ring
+        for (int x = 0; x < 3; x++){ // fire ring
            game.shoot();
            sleep(1000);
-       }
+        }
+
         robot.turnTo(0, 0.6);
         telemetry.addData("going to", abc);
         telemetry.update();
 
         if (abc == ABC.A) {
-            robot.goTo(-0.45,1.5, 0.8,heading);
+            robot.goTo(a_pos.x,a_pos.y, 0.8,heading);
         }
 
         if (abc == ABC.B) {
-            robot.goTo(0.15,1.9, 0.8,heading);
+            robot.goTo(b_pos.x,b_pos.y, 0.8,heading);
         }
 
         if (abc == ABC.C) {
-            robot.goTo(-0.5,2.5, 0.8,heading);
+            robot.goTo(c_pos.x,c_pos.y, 0.8,heading);
         }
+
         //Last current position - tiles: (x: -0.5, y: 4.5)
         game.wobbleArmGoTo(5778);
         sleep(3000);
@@ -164,34 +168,7 @@ public class AutoItamar extends LinearOpMode {
         robot.goTo(-0.15,1.2,0.8,heading);
         game.setWobbleGrabber(false);
 
-        while(opModeIsActive()) {
 
-            double leftPower;
-            double rightPower;
-
-            double boost = gamepad1.right_trigger * 0.4 + 0.6;
-            double drive = -gamepad1.left_stick_y * boost;
-            double turn = gamepad1.right_stick_x * boost;
-            double strafe = gamepad1.left_stick_x * boost;
-
-            if (gamepad1.right_bumper == true) {
-                robot.setPower(drive, turn, strafe);
-            } else {
-                double alpha = -robot.getHeading() / 180 * Math.PI;
-                double forward = drive * Math.cos(alpha) - strafe * Math.sin(alpha);
-                double side = drive * Math.sin(alpha) + strafe * Math.cos(alpha);
-                robot.setPower(forward, turn, side);
-            }
-            telemetry.addData("X", robot.getForwardDistance());
-            telemetry.addData("Y", robot.getStrafeDistance());
-
-            telemetry.addData("x position:", robot.getPosX());
-            telemetry.addData("y position:", robot.getPosY());
-
-
-            telemetry.update();
-
-        }
 
     }
 

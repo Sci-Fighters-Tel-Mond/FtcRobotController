@@ -21,14 +21,19 @@ public class Location {
         RED_MIDDLE_STICK_POINT, // the middle
         RED_THIRD_STICK_POINT, //the left one
         BLUE_PARKING,
-        RED_PARKING
+        RED_PARKING,
+        START0_0
 
-
-    };
-    Location(String name, float x, float y){
 
     }
-    float x;
-    float y;
+
+    ;
+
+    public Location(LOCATION name, double x, double y) {
+
+    }
+
+    public double x;
+    public double y;
     String name;
 }
