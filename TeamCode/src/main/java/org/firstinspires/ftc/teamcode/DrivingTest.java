@@ -142,7 +142,7 @@ public class DrivingTest extends LinearOpMode {
             }
 
 
-            telemetry.addData("X: ", drive.getAbsolutesPcsX());
+            telemetry.addData("X: ", drive.getAbsolutesPosX());
             telemetry.addData("Y:", drive.getAbsolutesPosY());
 
 

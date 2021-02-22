@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util;
+ package org.firstinspires.ftc.teamcode.util;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -33,7 +33,7 @@ public class GameClass {
     private boolean lifterDownRequest = false;
     private boolean lifterUpRequest = false;
 
-    final private int lifterUpTargetPosition = 1728;
+    final private int lifterUpTargetPosition = 1600;
     final private int lifterDownTargetPosition = 0;
 
 
@@ -89,6 +89,11 @@ public class GameClass {
         }
     }
 
+    public boolean getSuperState(){
+        update();
+        return superState.getState();
+    }
+
     public void lifterUpDown(boolean goUp) {
         if (goUp) {
             lifter.setTargetPosition(lifterUpTargetPosition);
@@ -111,7 +116,7 @@ public class GameClass {
         opMode.telemetry.addData("Lifter pos", lifter.getCurrentPosition());
 
         if (lifterUpRequest){
-            if (lifter.getCurrentPosition() > lifterUpTargetPosition - 10 || timer.milliseconds() > 4000 ){
+            if (lifter.getCurrentPosition() > lifterUpTargetPosition - 200 || timer.milliseconds() > 4000 ){
                 lifterUpRequest = false;
                 superState.set(true);
             }
@@ -139,6 +144,11 @@ public class GameClass {
         if (testLifterToggle.isPressed()) {
             opMode.telemetry.addData("TEST Lifter Power", pow);
             lifter.setPower(pow);
+
+            int curTicks = lifter.getCurrentPosition();
+            if ((curTicks > 2000 && pow > 0) || (getLifterLimiter() && pow < 0)) {
+                lifter.setPower(0);
+            }
         } else if (testLifterToggle.isReleased()) {
             opMode.telemetry.addData("TEST Lifter Power", pow);
             lifter.setPower(0);
@@ -194,7 +204,7 @@ public class GameClass {
 
     private void setShooterRoller(boolean active) {
         shooterState.set(active);
-        shooter.setPower(active ? 0.8 : 0);
+        shooter.setPower(active ? 0.95 : 0);
     }
 
     private void toggleShooter() {

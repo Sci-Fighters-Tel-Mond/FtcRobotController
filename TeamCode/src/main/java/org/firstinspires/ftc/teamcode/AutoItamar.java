@@ -52,9 +52,10 @@ public class AutoItamar extends LinearOpMode {
     OpenCvInternalCamera phoneCam;
 
     Location startingPosition = new Location(Location.LOCATION.BLUE_EXTERNAL_START_POSITION,-1.75*tile,0*tile);
-    Location a_pos = new Location(Location.LOCATION.BLUE_A,-3*tile,2.5*tile);
-    Location b_pos = new Location(Location.LOCATION.BLUE_B,-1.5*tile,3*tile);
-    Location c_pos = new Location(Location.LOCATION.BLUE_C,-1.5*tile,5*tile);
+    Location a_pos = new Location(Location.LOCATION.BLUE_A,-1.2,1.3);
+    Location b_pos = new Location(Location.LOCATION.BLUE_B,-0.8,1.9);
+    Location c_pos = new Location(Location.LOCATION.BLUE_C,-1.2,2.5);
+    Location shootPos = new Location(Location.LOCATION.BLUE_SHOOTING_POINT,-0.96,1.255);
 
     private DriveClass robot = new DriveClass(this, DriveClass.ROBOT.COBALT, startingPosition).useEncoders();
     private GameClass  game  = new GameClass(this);    // Declare OpMode members.
@@ -128,16 +129,20 @@ public class AutoItamar extends LinearOpMode {
         telemetry.update();
 
         game.wobbleArmGoTo(1500); //wobble up
-        sleep(500);
+        sleep(200);
         game.setSuperPosition(true);// fire position
 
         double heading = robot.getHeading();
 
-        robot.drive(2*tile,0, 0.8, heading);
+        robot.goTo(shootPos.x, shootPos.y, 1, 0);
         game.update();
-        robot.turnTo(15, 0.6);
+        robot.turnTo(20, 0.6);
 
-        for (int x = 0; x < 3; x++){ // fire ring
+        while (! game.getSuperState()){
+
+        }
+
+        for (int x = 0; x < 3; x++) { // fire ring
            game.shoot();
            sleep(1000);
         }
@@ -165,7 +170,7 @@ public class AutoItamar extends LinearOpMode {
         sleep(250);
         game.wobbleArmGoTo(100);
         sleep(2000);
-        robot.goTo(-0.15,1.2,0.8,heading);
+        robot.goTo(-1,1.8,0.8,heading);
         game.setWobbleGrabber(false);
 
 

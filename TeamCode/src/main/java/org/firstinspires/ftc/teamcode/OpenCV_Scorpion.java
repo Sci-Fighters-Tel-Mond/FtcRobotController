@@ -171,7 +171,7 @@ public class OpenCV_Scorpion extends LinearOpMode {
             telemetry.addData("X", robot.getForwardDistance());
             telemetry.addData("Y", robot.getStrafeDistance());
 
-            telemetry.addData("x position:", robot.getAbsolutesPcsX());
+            telemetry.addData("x position:", robot.getAbsolutesPosX());
             telemetry.addData("y position:", robot.getAbsolutesPosY());
 
             telemetry.update();

@@ -220,7 +220,7 @@ public class DriveClass {
 	}
 
 	public double getPosY() {
-		return getAbsolutesPosY() - startingPosition.y;
+		return getAbsolutesPosY() + startingPosition.y;
 	}
 
 	public double getAbsolutesPosY() {
@@ -249,10 +249,10 @@ public class DriveClass {
 	}
 
 	public double getPosX() {
-		return getAbsolutesPcsX() - startingPosition.x;
+		return getAbsolutesPosX() + startingPosition.x;
 	}
 
-	public double getAbsolutesPcsX() {
+	public double getAbsolutesPosX() {
 		double fl_tick = fl.getCurrentPosition();
 		double fr_tick = fr.getCurrentPosition();
 		double bl_tick = bl.getCurrentPosition();
@@ -380,7 +380,7 @@ public class DriveClass {
 
 			opMode.telemetry.addData("time", timer.milliseconds());
 			//position Telemetry:
-			opMode.telemetry.addData("x position:", getAbsolutesPcsX());
+			opMode.telemetry.addData("x position:", getAbsolutesPosX());
 			opMode.telemetry.addData("y position:", getAbsolutesPosY());
 
 

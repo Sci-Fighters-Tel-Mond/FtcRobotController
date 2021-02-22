@@ -27,13 +27,13 @@ public class Location {
 
     }
 
-    ;
-
-    public Location(LOCATION name, double x, double y) {
-
-    }
-
+    LOCATION name;
     public double x;
     public double y;
-    String name;
+
+    public Location(LOCATION name, double x, double y) {
+        this.name = name;
+        this.x = x;
+        this.y = y;
+    }
 }
