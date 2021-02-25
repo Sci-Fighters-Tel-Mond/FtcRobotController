@@ -21,6 +21,8 @@ public class Cobalt extends LinearOpMode {
     private GameClass game = new GameClass(this);
 
     private Toggle reverseIntake = new Toggle();
+    private Toggle wobbleForward = new Toggle();
+    private Toggle wobbleBackward = new Toggle();
 
     @Override
     public void runOpMode() {
@@ -57,10 +59,12 @@ public class Cobalt extends LinearOpMode {
             boolean resetOrientation = gamepad1.start;
 
 
-            boolean wobbleForward = gamepad1.dpad_up;
-            boolean wobbleBackWard = gamepad1.dpad_down;
+            //boolean wobbleForward = gamepad1.dpad_up;
+            //boolean wobbleBackWard = gamepad1.dpad_down;
             boolean intake = gamepad1.dpad_right; // down armShooter
             reverseIntake.update(gamepad1.dpad_left);
+            wobbleForward.update(gamepad1.dpad_up);
+            wobbleBackward.update(gamepad1.dpad_down);
 
             drive.setPowerOriented(y, x, turn, fieldOriented);
 
@@ -69,13 +73,25 @@ public class Cobalt extends LinearOpMode {
                 drive.resetPosition();
             }
 
-            if (wobbleForward) {
-                game.setWobbleArm(0.6);
-            } else if (wobbleBackWard) {
+            if(wobbleBackward.isClicked()) {
                 game.setWobbleArm(-0.6);
-            } else {
+            } else if(wobbleBackward.isReleased())
+                game.setWobbleArm(0);
+
+            if (wobbleForward.isClicked()) {
+                game.setWobbleArm(0.6);
+            } else if (wobbleForward.isReleased()) {
                 game.setWobbleArm(0);
             }
+
+
+//            if (wobbleForward) {
+//                game.setWobbleArm(0.6);
+//            } else if (wobbleBackWard) {
+//                game.setWobbleArm(-0.6);
+//            } else {
+//                game.setWobbleArm(0);
+//            }
 
             if (ringFire) {
                 game.setRingMover(0);
