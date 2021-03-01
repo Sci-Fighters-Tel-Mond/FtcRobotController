@@ -69,9 +69,19 @@ public class Cobalt extends LinearOpMode {
             drive.setPowerOriented(y, x, turn, fieldOriented);
 
             if (resetOrientation) {
-                drive.resetOrientation();
-                drive.resetPosition();
+                if (gamepad1.x) {
+                    drive.resetOrientation(90);
+                    drive.resetPosition();
+                }
             }
+
+            if (resetOrientation) {
+                if (gamepad1.y) {
+                    drive.resetOrientation(-90);
+                    drive.resetPosition();
+                }
+            }
+
 
             if(wobbleBackward.isClicked()) {
                 game.setWobbleArm(-0.6);

@@ -43,6 +43,7 @@ public class DriveClass {
 	private BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
 	private boolean fieldOriented = true;
+	private double angleOffset = 0;
 
 	private int fl_startPos = 0;
 	private int fr_startPos = 0;
@@ -173,7 +174,7 @@ public class DriveClass {
 		if ( fieldOriented != true) {
 			setPower(y, turn, x);  // No field oriented
 		} else {
-			double phiRad = -getHeading() / 180 * Math.PI;
+			double phiRad = (-getHeading() + angleOffset) / 180 * Math.PI;
 			double forward = y * Math.cos(phiRad) - x * Math.sin(phiRad);
 			double strafe = y * Math.sin(phiRad) + x * Math.cos(phiRad);
 			setPower(forward, turn, strafe);
@@ -184,8 +185,9 @@ public class DriveClass {
 		setPower(0, 0, 0);
 	}
 
-	public void resetOrientation() {
+	public void resetOrientation(double angle) {
 		imu.initialize(parameters);
+		angleOffset = angle;
 	}
 
 	public double getHeading() {

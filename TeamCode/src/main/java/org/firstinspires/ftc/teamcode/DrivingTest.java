@@ -129,7 +129,7 @@ public class DrivingTest extends LinearOpMode {
             drive.setPowerOriented(y, x, turn, fieldOriented);
 
             if (gamepad1.x){
-                drive.resetOrientation();
+                drive.resetOrientation(0);
 
             }
 
