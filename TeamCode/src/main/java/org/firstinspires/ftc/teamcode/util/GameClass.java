@@ -33,7 +33,7 @@ public class GameClass {
     private enum LifterRequest {UP, DOWN, STAY};
     private LifterRequest lifterRequest = LifterRequest.STAY;
 
-    final private int lifterUpTargetPosition = 1400;
+    final private int lifterUpTargetPosition = 2400;
     final private int lifterDownTargetPosition = 0;
 
 
@@ -61,6 +61,7 @@ public class GameClass {
 
         //region setDirection
         intake.setDirection(DcMotorEx.Direction.REVERSE);
+        lifter.setDirection(DcMotorEx.Direction.REVERSE);
 
         wobbleArm.setDirection(DcMotorEx.Direction.REVERSE);
         //endregion setDirection
@@ -142,16 +143,15 @@ public class GameClass {
     public void lifterTest(double pow) {
         testLifterToggle.update(Math.abs(pow) > 0.2);
         if (testLifterToggle.isClicked()) {
-            lifter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            lifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
         if (testLifterToggle.isPressed()) {
-            opMode.telemetry.addData("TEST Lifter Power", pow);
-            lifter.setPower(pow);
-
             int curTicks = lifter.getCurrentPosition();
-            if ((curTicks > 2000 && pow > 0) || (getLifterLimiter() && pow < 0)) {
-                lifter.setPower(0);
+            if ((curTicks > 2800 && pow > 0) || (getLifterLimiter() && pow < 0)) {
+                pow = 0;
             }
+            lifter.setPower(pow);
+            opMode.telemetry.addData("TEST Lifter Power", pow);
         } else if (testLifterToggle.isReleased()) {
             opMode.telemetry.addData("TEST Lifter Power", pow);
             lifter.setPower(0);
