@@ -33,7 +33,7 @@ public class GameClass {
     private enum LifterRequest {UP, DOWN, STAY};
     private LifterRequest lifterRequest = LifterRequest.STAY;
 
-    final private int lifterUpTargetPosition = 2400;
+    final private int lifterUpTargetPosition = 1930;
     final private int lifterDownTargetPosition = 0;
 
 

@@ -52,8 +52,8 @@ public class Cobalt extends LinearOpMode {
             double x = gamepad1.left_stick_x * boost;
             double turn = gamepad1.right_stick_x * boost;
 
-            boolean armShooter = gamepad1.x; // up armShooter
-            boolean grabberClose = gamepad1.y;
+            boolean armShooter = gamepad1.x && ! gamepad1.start; // up armShooter
+            boolean grabberClose = gamepad1.y && ! gamepad1.start;
             boolean grabberOpen = gamepad1.b;
             boolean stopAll = gamepad1.a;
 
