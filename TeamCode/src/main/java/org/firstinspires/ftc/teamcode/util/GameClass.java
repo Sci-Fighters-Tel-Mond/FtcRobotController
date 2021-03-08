@@ -33,7 +33,7 @@ public class GameClass {
     private enum LifterRequest {UP, DOWN, STAY};
     private LifterRequest lifterRequest = LifterRequest.STAY;
 
-    final private int lifterUpTargetPosition = 1930;
+    final private int lifterUpTargetPosition = 1925;
     final private int lifterDownTargetPosition = 0;
 
 
@@ -205,7 +205,7 @@ public class GameClass {
 
     private void setShooterRoller(boolean active) {
         shooterState.set(active);
-        shooter.setPower(active ? 0.95 : 0);
+        shooter.setPower(active ? 1 : 0);
     }
 
     private void toggleShooter() {

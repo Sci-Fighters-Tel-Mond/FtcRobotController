@@ -172,7 +172,7 @@ public class DriveClass {
 
 	public void setPowerOriented(double y, double x, double turn, boolean fieldOriented){
 		if ( fieldOriented != true) {
-			setPower(y, turn, x);  // No field oriented
+			setPower(y , turn, x);  // No field oriented
 		} else {
 			double phiRad = (-getHeading() + angleOffset) / 180 * Math.PI;
 			double forward = y * Math.cos(phiRad) - x * Math.sin(phiRad);
@@ -361,7 +361,7 @@ public class DriveClass {
 			double acclGain = 2;
 			double acclPower = lengthC * acclGain +  minPower;
 
-			if (acclPower < power) {
+			if (acclPower + 0.2 < power ) {
 				power = acclPower;
 			}
 

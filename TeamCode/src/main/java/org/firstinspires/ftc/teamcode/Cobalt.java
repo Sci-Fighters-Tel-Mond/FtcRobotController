@@ -24,6 +24,7 @@ public class Cobalt extends LinearOpMode {
     private Toggle wobbleForward = new Toggle();
     private Toggle wobbleBackward = new Toggle();
     private Toggle shootHeading = new Toggle();
+    private Toggle ringFire = new Toggle();
 
     @Override
     public void runOpMode() {
@@ -43,7 +44,7 @@ public class Cobalt extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            boolean ringFire = gamepad1.right_bumper;
+            //boolean ringFire = gamepad1.right_bumper;
 
             boolean fieldOriented = !gamepad1.left_bumper;
             double boost = gamepad1.right_trigger * 0.6 + 0.4;
@@ -59,32 +60,28 @@ public class Cobalt extends LinearOpMode {
 
             boolean resetOrientation = gamepad1.start;
 
-
             boolean intake = gamepad1.dpad_right; // down armShooter
             reverseIntake.update(gamepad1.dpad_left);
             wobbleForward.update(gamepad1.dpad_up);
             wobbleBackward.update(gamepad1.dpad_down);
             shootHeading.update(gamepad1.back);
+            ringFire.update(gamepad1.right_bumper);
 
-            drive.setPowerOriented(y, x, turn, fieldOriented);
-
-            if (resetOrientation) {
-                if (gamepad1.x) {
-                    drive.resetOrientation(90);
-                    drive.resetPosition();
-                }
-            }
+            drive.setPowerOriented(y, x , turn, fieldOriented);
 
             if (resetOrientation) {
-                if (gamepad1.y) {
-                    drive.resetOrientation(-90);
-                    drive.resetPosition();
-                }
+                drive.resetOrientation(90);
+                drive.resetPosition();
             }
 
+            if(shootHeading.isClicked()) {
+                drive.turnTo(3, 1);
+            }
 
-            if (shootHeading.isClicked()) {
-                drive.turnTo(13.7, 1);
+            if(ringFire.isClicked()) {
+                game.setRingMover(0);
+                sleep(300);
+                game.setRingMover(1);
             }
 
             if(wobbleBackward.isClicked()) {
@@ -98,11 +95,13 @@ public class Cobalt extends LinearOpMode {
                 game.setWobbleArm(0);
             }
 
-            if (ringFire) {
-                game.setRingMover(0);
-            } else {
-                game.setRingMover(1);
-            }
+
+
+//            if (ringFire) {
+//                game.setRingMover(0);
+ //           } else {
+//                game.setRingMover(1);
+ //           }
 
             if (grabberOpen) {
                 game.setWobbleGrabber(true);
@@ -145,4 +144,4 @@ public class Cobalt extends LinearOpMode {
             telemetry.update();
         }
     }
-} // 2650 זה גובה לפגיעה בגול הגבוה
+}
