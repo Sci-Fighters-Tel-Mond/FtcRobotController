@@ -44,7 +44,6 @@ public class Cobalt extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            //boolean ringFire = gamepad1.right_bumper;
 
             boolean fieldOriented = !gamepad1.left_bumper;
             double boost = gamepad1.right_trigger * 0.6 + 0.4;
@@ -84,24 +83,17 @@ public class Cobalt extends LinearOpMode {
                 game.setRingMover(1);
             }
 
-            if(wobbleBackward.isClicked()) {
+            if(wobbleBackward.isPressed()) {
                 game.setWobbleArm(-0.6);
             } else if(wobbleBackward.isReleased())
                 game.setWobbleArm(0);
 
-            if (wobbleForward.isClicked()) {
+            if (wobbleForward.isPressed()) {
                 game.setWobbleArm(0.6);
             } else if (wobbleForward.isReleased()) {
                 game.setWobbleArm(0);
             }
 
-
-
-//            if (ringFire) {
-//                game.setRingMover(0);
- //           } else {
-//                game.setRingMover(1);
- //           }
 
             if (grabberOpen) {
                 game.setWobbleGrabber(true);

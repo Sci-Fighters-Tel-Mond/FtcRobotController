@@ -179,6 +179,12 @@ public class DriveClass {
 			double strafe = y * Math.sin(phiRad) + x * Math.cos(phiRad);
 			setPower(forward, turn, strafe);
 		}
+
+		opMode.telemetry.addData("front left:", fl.getCurrentPosition());
+		opMode.telemetry.addData("front right:", fr.getCurrentPosition());
+		opMode.telemetry.addData("back left:", bl.getCurrentPosition());
+		opMode.telemetry.addData("back right:", br.getCurrentPosition());
+
 	}
 
 	public void stopPower() {
@@ -344,10 +350,10 @@ public class DriveClass {
 
 		while (opMode.opModeIsActive() && (RVf != 0) ||  (RVs != 0)) {
 
-			if (getForwardDistance() * sf > forward * sf) {
+			if (getForwardDistance() * sf > forward * sf - 0.02) {
 				RVf = 0;
 			}
-			if (getStrafeDistance() * ss > sideward * ss) {
+			if (getStrafeDistance() * ss > sideward * ss - 0.02) {
 				RVs = 0;
 			}
 			double power = targetPower ;

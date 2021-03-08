@@ -46,16 +46,16 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 
 @Autonomous(group = "Linear Opmode")
 //@Disabled
-public class AutoItamar extends LinearOpMode {
+public class Auto extends LinearOpMode {
     final double tile = 0.6;
     BananaPipeline pipeline;
     OpenCvInternalCamera phoneCam;
 
     Location startingPosition = new Location(Location.LOCATION.BLUE_EXTERNAL_START_POSITION,-1.75*tile,0*tile);
-    Location a_pos = new Location(Location.LOCATION.BLUE_A,-1.2,1.3);
+    Location a_pos = new Location(Location.LOCATION.BLUE_A,-1.2,1.4);
     Location b_pos = new Location(Location.LOCATION.BLUE_B,-0.8,1.9);
     Location c_pos = new Location(Location.LOCATION.BLUE_C,-1.2,2.5);
-    Location shootPos = new Location(Location.LOCATION.BLUE_SHOOTING_POINT,-0.96,1.255);
+    Location shootPos = new Location(Location.LOCATION.BLUE_SHOOTING_POINT,-0.3,1.5);
 
     private DriveClass robot = new DriveClass(this, DriveClass.ROBOT.COBALT, startingPosition).useEncoders();
     private GameClass  game  = new GameClass(this);    // Declare OpMode members.
@@ -118,6 +118,7 @@ public class AutoItamar extends LinearOpMode {
         telemetry.update();
 
         game.initLifterPosition();
+        game.setWobbleGrabber(false);
         game.initWobbleArmPosition();
 
         // Wait for the game to start (driver presses PLAY)
@@ -134,47 +135,43 @@ public class AutoItamar extends LinearOpMode {
 
         double heading = robot.getHeading();
 
-        robot.goTo(shootPos.x, shootPos.y, 1, 0);
+        robot.goTo(shootPos.x, shootPos.y, 1.1, 0);
         game.update();
-        robot.turnTo(20, 0.6);
+       // robot.turnTo(20, 0.6);
 
-        while (! game.getSuperState()){
-
-        }
+        while (! game.getSuperState());
 
         for (int x = 0; x < 3; x++) { // fire ring
            game.shoot();
            sleep(1000);
         }
-
-        robot.turnTo(0, 0.6);
+        game.setSuperPosition(false);
+       // robot.turnTo(0, 0.6);
         telemetry.addData("going to", abc);
         telemetry.update();
 
         if (abc == ABC.A) {
-            robot.goTo(a_pos.x,a_pos.y, 0.8,heading);
+            robot.goTo(a_pos.x,a_pos.y, 1,heading);
         }
 
         if (abc == ABC.B) {
-            robot.goTo(b_pos.x,b_pos.y, 0.8,heading);
+            robot.goTo(b_pos.x,b_pos.y, 1,heading);
         }
 
         if (abc == ABC.C) {
-            robot.goTo(c_pos.x,c_pos.y, 0.8,heading);
+            robot.goTo(c_pos.x,c_pos.y, 1,heading);
         }
 
         //Last current position - tiles: (x: -0.5, y: 4.5)
         game.wobbleArmGoTo(5778);
-        sleep(3000);
+        sleep(1000);
         game.setWobbleGrabber(true);
         sleep(250);
         game.wobbleArmGoTo(100);
         sleep(2000);
-        robot.goTo(-1,1.8,0.8,heading);
+        robot.drive(-0.1,0.3, 1, heading);
+        robot.goTo(-0.8,1.8,1,heading);
         game.setWobbleGrabber(false);
-
-
-
     }
 
 
