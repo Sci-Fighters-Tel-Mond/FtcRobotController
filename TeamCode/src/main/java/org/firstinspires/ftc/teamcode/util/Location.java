@@ -12,6 +12,7 @@ public class Location {
         RED_A, //
         RED_B, //
         RED_C, //
+        BLUE_FIRST_POINT,
         BLUE_SHOOTING_POINT, // to the upper target
         RED_SHOOTING_POINT, // to the upper target
         BLUE_FIRST_STICK_POINT, // the left one

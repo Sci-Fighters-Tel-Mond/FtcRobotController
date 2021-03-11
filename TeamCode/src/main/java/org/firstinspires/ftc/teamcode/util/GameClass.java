@@ -33,7 +33,8 @@ public class GameClass {
     private enum LifterRequest {UP, DOWN, STAY};
     private LifterRequest lifterRequest = LifterRequest.STAY;
 
-    final private int lifterUpTargetPosition = 1925;
+    final private double shooterSpeed = 0.98;
+    final private int lifterUpTargetPosition = 1880;
     final private int lifterDownTargetPosition = 0;
 
 
@@ -118,6 +119,7 @@ public class GameClass {
     public void update() {
         opMode.telemetry.addData("wobble position", getWobbleArmPos());
         opMode.telemetry.addData("Lifter pos", lifter.getCurrentPosition());
+        opMode.telemetry.addData("shooter!!!!!!!!!!!", shooter.getVelocity());
 
         if (lifterRequest == LifterRequest.UP){
             if (lifter.getCurrentPosition() > lifterUpTargetPosition - 200 || timer.milliseconds() > 4000 ){
@@ -205,7 +207,7 @@ public class GameClass {
 
     private void setShooterRoller(boolean active) {
         shooterState.set(active);
-        shooter.setPower(active ? 1 : 0);
+        shooter.setPower(active ? shooterSpeed : 0);
     }
 
     private void toggleShooter() {

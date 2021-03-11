@@ -321,6 +321,10 @@ public class DriveClass {
 		stopPower();
 	}
 
+	public void  goToLocation(Location location, double power, double targetHeading){
+		goTo(location.x, location.y, power, targetHeading);
+	}
+
 	public void goTo(double x, double y, double targetPower, double targetHeading){
 		double currentX = getPosX();
 		double currentY = getPosY();
