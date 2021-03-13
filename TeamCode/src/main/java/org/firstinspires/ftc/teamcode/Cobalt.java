@@ -52,8 +52,8 @@ public class Cobalt extends LinearOpMode {
             double x = gamepad1.left_stick_x * boost;
             double turn = gamepad1.right_stick_x * boost;
 
-            boolean armShooter = gamepad1.x && ! gamepad1.start; // up armShooter
-            boolean grabberClose = gamepad1.y && ! gamepad1.start;
+            boolean armShooter = gamepad1.x && !gamepad1.start; // up armShooter
+            boolean grabberClose = gamepad1.y && !gamepad1.start;
             boolean grabberOpen = gamepad1.b;
             boolean stopAll = gamepad1.a;
 
@@ -66,27 +66,31 @@ public class Cobalt extends LinearOpMode {
             shootHeading.update(gamepad1.back);
             ringFire.update(gamepad1.right_bumper);
 
-            drive.setPowerOriented(y, x , turn, fieldOriented);
+            drive.setPowerOriented(y, x, turn, fieldOriented);
 
             if (resetOrientation) {
                 drive.resetOrientation(90);
                 drive.resetPosition();
             }
 
-            if(shootHeading.isClicked()) {
+            if (shootHeading.isClicked()) {
                 drive.turnTo(3, 1);
             }
 
-            if(ringFire.isClicked()) {
+            if (ringFire.isClicked()) {
                 game.setRingMover(0);
                 sleep(300);
                 game.setRingMover(1);
             }
 
-            if(wobbleBackward.isPressed()) {
+            if (wobbleBackward.isPressed()) {
+                //game.wobbleArmGoTo(?);
                 game.setWobbleArm(-0.6);
-            } else if(wobbleBackward.isReleased())
-                game.setWobbleArm(0);
+            } else if (wobbleBackward.isReleased()){
+                game.setWobbleArm(0.6);
+                //game.wobbleArmGoTo(3000);
+                telemetry.addData("wobblePos:", game.getWobbleArmPos());
+            }
 
             if (wobbleForward.isPressed()) {
                 game.setWobbleArm(0.6);
