@@ -321,11 +321,11 @@ public class DriveClass {
 		stopPower();
 	}
 
-	public void  goToLocation(Location location, double power, double targetHeading){
-		goTo(location.x, location.y, power, targetHeading);
+	public void  goToLocation(Location location, double power, double targetHeading, double tolerance){
+		goTo(location.x, location.y, power, targetHeading, tolerance);
 	}
 
-	public void goTo(double x, double y, double targetPower, double targetHeading){
+	public void goTo(double x, double y, double targetPower, double targetHeading, double tolerance){
 		double currentX = getPosX();
 		double currentY = getPosY();
 		double deltaX = x - currentX;
@@ -334,7 +334,7 @@ public class DriveClass {
 		opMode.telemetry.addData("goto y", y);
 		opMode.telemetry.update();
 
-		drive(deltaY, deltaX, targetPower, targetHeading);
+		drive(deltaY, deltaX, targetPower, targetHeading, true, tolerance);
 	}
 
 	public void drive(double forward, double sideward, double targetPower, double targetAngle) {
@@ -342,6 +342,10 @@ public class DriveClass {
 	}
 
 	public void drive(double forward, double sideward, double targetPower, double targetAngle, boolean fieldOriented) {
+		drive(forward, sideward, targetPower, targetAngle, fieldOriented, 0.02);
+	}
+
+	public void drive(double forward, double sideward, double targetPower, double targetAngle, boolean fieldOriented, double tolerance) {
 		double sf = (forward < 0) ? -1 : 1;
 		double ss = (sideward < 0) ? -1 : 1;
 		double c = Math.sqrt(sideward * sideward + forward * forward);
@@ -354,10 +358,10 @@ public class DriveClass {
 
 		while (opMode.opModeIsActive() && (RVf != 0) ||  (RVs != 0)) {
 
-			if (getForwardDistance() * sf > forward * sf - 0.02) {
+			if (getForwardDistance() * sf > forward * sf - tolerance) {
 				RVf = 0;
 			}
-			if (getStrafeDistance() * ss > sideward * ss - 0.02) {
+			if (getStrafeDistance() * ss > sideward * ss - tolerance) {
 				RVs = 0;
 			}
 			double power = targetPower ;

@@ -1,4 +1,4 @@
- package org.firstinspires.ftc.teamcode.util;
+package org.firstinspires.ftc.teamcode.util;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -33,7 +33,7 @@ public class GameClass {
     private enum LifterRequest {UP, DOWN, STAY};
     private LifterRequest lifterRequest = LifterRequest.STAY;
 
-    final private double shooterSpeed = 0.98;
+    final private double shooterSpeed = 0.9;
     final private int lifterUpTargetPosition = 1880;
     final private int lifterDownTargetPosition = 0;
 

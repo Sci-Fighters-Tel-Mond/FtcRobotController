@@ -53,8 +53,8 @@ public class Cobalt extends LinearOpMode {
             double turn = gamepad1.right_stick_x * boost;
 
             boolean armShooter = gamepad1.x && !gamepad1.start; // up armShooter
-            boolean grabberClose = gamepad1.y && !gamepad1.start;
-            boolean grabberOpen = gamepad1.b;
+            boolean grabberOpen = gamepad1.y && !gamepad1.start; // open wobble grabbers.
+            boolean grabberClose = gamepad1.b;
             boolean stopAll = gamepad1.a;
 
             boolean resetOrientation = gamepad1.start;
@@ -83,20 +83,21 @@ public class Cobalt extends LinearOpMode {
                 game.setRingMover(1);
             }
 
-            if (wobbleBackward.isPressed()) {
-                //game.wobbleArmGoTo(?);
-                game.setWobbleArm(-0.6);
-            } else if (wobbleBackward.isReleased()){
-                game.setWobbleArm(0.6);
+            if (wobbleBackward.isClicked()) {
+                game.wobbleArmGoTo(2850);
+               // game.setWobbleArm(-0.6);
+            } //else if (wobbleBackward.isReleased()){
+                //game.setWobbleArm(0.0);
                 //game.wobbleArmGoTo(3000);
-                telemetry.addData("wobblePos:", game.getWobbleArmPos());
-            }
 
-            if (wobbleForward.isPressed()) {
-                game.setWobbleArm(0.6);
-            } else if (wobbleForward.isReleased()) {
-                game.setWobbleArm(0);
-            }
+           // }
+
+            if (wobbleForward.isClicked()) {
+                game.wobbleArmGoTo(6185);
+                //game.setWobbleArm(0.6);
+            }//} else if (wobbleForward.isReleased()) {
+                //game.setWobbleArm(0);
+            //}
 
 
             if (grabberOpen) {

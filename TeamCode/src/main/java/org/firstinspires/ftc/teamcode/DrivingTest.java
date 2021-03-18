@@ -139,7 +139,7 @@ public class DrivingTest extends LinearOpMode {
             }
 
             if (gamepad1.b){
-                drive.goTo(-2 * tile, 5 * tile, 0.8, drive.getHeading());
+                drive.goTo(-2 * tile, 5 * tile, 0.8, drive.getHeading(), 0.05);
             }
 
 
