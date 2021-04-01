@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.study;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -48,7 +48,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 public class OpenCV_Scorpion extends LinearOpMode {
     BananaPipeline pipeline;
     OpenCvInternalCamera phoneCam;
-    private DriveClass robot = new DriveClass(this, DriveClass.ROBOT.SCORPION, new Location(Location.LOCATION.START0_0, 0, 0)).useEncoders();
+    private DriveClass robot = new DriveClass(this, DriveClass.ROBOT.SCORPION, new Location(0, 0)).useEncoders();
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 

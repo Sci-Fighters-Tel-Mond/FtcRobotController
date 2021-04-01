@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.study;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -50,7 +50,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 public class Cobalt_Autonomous extends LinearOpMode {
     BananaPipeline pipeline;
     OpenCvInternalCamera phoneCam;
-    private DriveClass robot = new DriveClass(this, DriveClass.ROBOT.COBALT, new Location(Location.LOCATION.BLUE_EXTERNAL_START_POSITION, -1.75*0.6, 0)).useEncoders().useBrake();
+    private DriveClass robot = new DriveClass(this, DriveClass.ROBOT.COBALT, new Location(-1.75*0.6, 0)).useEncoders().useBrake();
     private GameClass game = new GameClass(this);
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();

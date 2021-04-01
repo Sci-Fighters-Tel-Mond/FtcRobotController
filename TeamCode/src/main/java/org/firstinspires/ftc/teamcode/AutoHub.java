@@ -54,11 +54,11 @@ public class AutoHub extends LinearOpMode {
 	BananaPipeline pipeline;
 	OpenCvWebcam cam;
 
-	Location startingPosition = new Location(Location.LOCATION.BLUE_EXTERNAL_START_POSITION,-1.75*tile,0*tile);
-	Location a_pos = new Location(Location.LOCATION.BLUE_A,-1.2,1.3);
-	Location b_pos = new Location(Location.LOCATION.BLUE_B,-0.8,1.9);
-	Location c_pos = new Location(Location.LOCATION.BLUE_C,-1.2,2.5);
-	Location shootPos = new Location(Location.LOCATION.BLUE_SHOOTING_POINT,-0.96,1.255);
+	Location startingPosition = new Location(-1.75*tile,0*tile);
+	Location a_pos = new Location(-1.2,1.3);
+	Location b_pos = new Location(-0.8,1.9);
+	Location c_pos = new Location(-1.2,2.5);
+	Location shootPos = new Location(-0.96,1.255);
 
 //    private DriveClass robot = new DriveClass(this, DriveClass.ROBOT.COBALT, startingPosition).useEncoders();
 //    private GameClass  game  = new GameClass(this);    // Declare OpMode members.

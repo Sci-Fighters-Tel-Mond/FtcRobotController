@@ -16,7 +16,7 @@ public class Cobalt extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    Location startingPosition = new Location(Location.LOCATION.BLUE_EXTERNAL_START_POSITION,-1.75*tile,0*tile);
+    Location startingPosition = new Location(-1.75*tile,0*tile);
     private DriveClass drive = new DriveClass(this, DriveClass.ROBOT.COBALT, startingPosition).useEncoders().useBrake();
     private GameClass game = new GameClass(this);
 

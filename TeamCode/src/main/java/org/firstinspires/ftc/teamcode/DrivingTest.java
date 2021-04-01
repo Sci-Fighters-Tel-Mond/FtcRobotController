@@ -48,7 +48,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 public class DrivingTest extends LinearOpMode {
     BananaPipeline pipeline;
     OpenCvInternalCamera phoneCam;
-    private DriveClass drive = new DriveClass(this, DriveClass.ROBOT.SCORPION, new Location(Location.LOCATION.START0_0, 0, 0)).useEncoders();
+    private DriveClass drive = new DriveClass(this, DriveClass.ROBOT.SCORPION, new Location(0, 0)).useEncoders();
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 

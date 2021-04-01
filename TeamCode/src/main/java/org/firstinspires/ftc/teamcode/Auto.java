@@ -50,13 +50,15 @@ public class Auto extends LinearOpMode {
     BananaPipeline pipeline;
     OpenCvCamera cam;
 
-    Location startingPosition = new Location(Location.LOCATION.BLUE_EXTERNAL_START_POSITION,-0.75,0);
-    Location a_pos = new Location(Location.LOCATION.BLUE_A,-1.35,1.4);
-    Location b_pos = new Location(Location.LOCATION.BLUE_B,-0.7,1.95);
-    Location c_pos = new Location(Location.LOCATION.BLUE_C,-1.35,2.6);
-    Location firstPos = new Location(Location.LOCATION.BLUE_FIRST_STICK_POINT,-0.27,0.73); // -0.25,0.73
-    Location shootPos = new Location(Location.LOCATION.BLUE_SHOOTING_POINT,-0.27,1.4);
-    Location parkPos = new Location(Location.LOCATION.BLUE_PARKING,-0.8,2);
+    Location startingPosition = new Location(-0.75,0);
+    Location a_pos = new Location(-1.35,1.4);
+    Location b_pos = new Location(-0.7,1.95);
+    Location c_pos = new Location(-1.35,2.6);
+    Location firstPos = new Location(-0.27,0.73); // -0.25,0.73
+    Location shootPos = new Location(-0.27,1.4);
+    Location parkPos = new Location(-0.8,2);
+    Location wobbleFirst_pos = new Location(-2.5 * tile,2 * tile);
+    Location wobble_pos = new Location(-2.25 * tile,1.5 * tile);
 
     private DriveClass robot = new DriveClass(this, DriveClass.ROBOT.COBALT, startingPosition).useEncoders();
     private GameClass  game  = new GameClass(this);    // Declare OpMode members.
@@ -151,16 +153,11 @@ public class Auto extends LinearOpMode {
         telemetry.addData("going to", abc);
         telemetry.update();
 
-        if (abc == ABC.A) {
-            robot.goToLocation(a_pos, 1,heading, 0.05);
-        }
 
-        if (abc == ABC.B) {
-            robot.goToLocation(b_pos, 1,heading, 0.05);
-        }
-
-        if (abc == ABC.C) {
-            robot.goToLocation(c_pos, 1,heading, 0.05);
+        switch (abc){
+            case A: robot.goToLocation(a_pos, 1,heading, 0.05); break;
+            case B: robot.goToLocation(b_pos, 1,heading, 0.05); break;
+            case C: robot.goToLocation(c_pos, 1,heading, 0.05); break;
         }
 
         //Last current position - tiles: (x: -0.5, y: 4.5)
@@ -168,11 +165,31 @@ public class Auto extends LinearOpMode {
         sleep(1000);
         game.setWobbleGrabber(true);
         sleep(250);
-        game.wobbleArmGoTo(100);
-        sleep(2000);
+
+        robot.goToLocation(wobbleFirst_pos, 1,heading, 0.05);
+        robot.goToLocation(wobble_pos, 1,heading, 0.05);
+
+        game.setWobbleGrabber(false);
+        game.wobbleArmGoTo(4000);
+
+        robot.goToLocation(wobbleFirst_pos, 1,heading, 0.05);
+
+        switch (abc){
+            case A: robot.goToLocation(a_pos, 1,heading, 0.05); break;
+            case B: robot.goToLocation(b_pos, 1,heading, 0.05); break;
+            case C: robot.goToLocation(c_pos, 1,heading, 0.05); break;
+        }
+
+        game.wobbleArmGoTo(5778);
+        sleep(250);
+        game.setWobbleGrabber(true);
+        sleep(250);
+
         if (abc == ABC.A) {
             robot.drive(-0.05, 0.25, 1, heading, true, 0.1);
         }
+
+        game.wobbleArmGoTo(100);
 
         robot.goToLocation(parkPos,1,heading, 0.05);
         game.setWobbleGrabber(false);
