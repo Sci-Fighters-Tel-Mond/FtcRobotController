@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.util.Toggle;
 
 
 @TeleOp(name="Wobble Mover", group="Linear Opmode")
-//@Disabled
+@Disabled
 public class Wobble extends LinearOpMode {
 
     // Declare OpMode members.

@@ -111,22 +111,23 @@ public class DrivingTest extends LinearOpMode {
 
             boolean fieldOriented = gamepad1.right_bumper != true;
 
-            double targetX = 0;
-            if(gamepad1.a) { // ring tracking
-                if(pipeline.getTargetRect() != null) {
-                    Rect rect = pipeline.getTargetRect();
-                    int xCenter = rect.x + rect.width/2;
-                    int screenCenter = pipeline.width/2;
-                    int delta = xCenter - screenCenter;
-                    targetX = delta;
-                    double gain = 0.7;
-                    double k = 2.0 / pipeline.width;  // transform from pixels to power (-1...1).
-                    double correction = k * delta * gain;
-                    turn += correction;
-                }
-            }
+//            double targetX = 0;
+//            if(gamepad1.a) { // ring tracking
+//                if(pipeline.getTargetRect() != null) {
+//                    Rect rect = pipeline.getTargetRect();
+//                    int xCenter = rect.x + rect.width/2;
+//                    int screenCenter = pipeline.width/2;
+//                    int delta = xCenter - screenCenter;
+//                    targetX = delta;
+//                    double gain = 0.7;
+//                    double k = 2.0 / pipeline.width;  // transform from pixels to power (-1...1).
+//                    double correction = k * delta * gain;
+//                    turn += correction;
+//                }
+//            }
 
-            drive.setPowerOriented(y, x, turn, fieldOriented);
+            drive.setPowerOriented(y, x, turn, false);
+
 
             if (gamepad1.x){
                 drive.resetOrientation(0);
@@ -138,7 +139,7 @@ public class DrivingTest extends LinearOpMode {
             }
 
             if (gamepad1.b){
-                drive.goTo(-2 * tile, 5 * tile, 0.8, drive.getHeading());
+                drive.goTo(-2 * tile, 5 * tile, 0.8, drive.getHeading(), 0.05);
             }
 
 

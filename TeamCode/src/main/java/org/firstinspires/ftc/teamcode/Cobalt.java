@@ -23,6 +23,8 @@ public class Cobalt extends LinearOpMode {
     private Toggle reverseIntake = new Toggle();
     private Toggle wobbleForward = new Toggle();
     private Toggle wobbleBackward = new Toggle();
+    private Toggle shootHeading = new Toggle();
+    private Toggle ringFire = new Toggle();
 
     @Override
     public void runOpMode() {
@@ -42,7 +44,6 @@ public class Cobalt extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            boolean ringFire = gamepad1.right_bumper;
 
             boolean fieldOriented = !gamepad1.left_bumper;
             double boost = gamepad1.right_trigger * 0.6 + 0.4;
@@ -51,63 +52,53 @@ public class Cobalt extends LinearOpMode {
             double x = gamepad1.left_stick_x * boost;
             double turn = gamepad1.right_stick_x * boost;
 
-            boolean armShooter = gamepad1.x; // up armShooter
-            boolean grabberClose = gamepad1.y;
-            boolean grabberOpen = gamepad1.b;
+            boolean armShooter = gamepad1.x && !gamepad1.start; // up armShooter
+            boolean grabberOpen = gamepad1.y && !gamepad1.start; // open wobble grabbers.
+            boolean grabberClose = gamepad1.b;
             boolean stopAll = gamepad1.a;
 
             boolean resetOrientation = gamepad1.start;
 
-
-            //boolean wobbleForward = gamepad1.dpad_up;
-            //boolean wobbleBackWard = gamepad1.dpad_down;
             boolean intake = gamepad1.dpad_right; // down armShooter
             reverseIntake.update(gamepad1.dpad_left);
             wobbleForward.update(gamepad1.dpad_up);
             wobbleBackward.update(gamepad1.dpad_down);
+            shootHeading.update(gamepad1.back);
+            ringFire.update(gamepad1.right_bumper);
 
             drive.setPowerOriented(y, x, turn, fieldOriented);
 
             if (resetOrientation) {
-                if (gamepad1.x) {
-                    drive.resetOrientation(90);
-                    drive.resetPosition();
-                }
+                drive.resetOrientation(90);
+                drive.resetPosition();
             }
 
-            if (resetOrientation) {
-                if (gamepad1.y) {
-                    drive.resetOrientation(-90);
-                    drive.resetPosition();
-                }
+            if (shootHeading.isClicked()) {
+                drive.turnTo(3, 1);
             }
 
-
-            if(wobbleBackward.isClicked()) {
-                game.setWobbleArm(-0.6);
-            } else if(wobbleBackward.isReleased())
-                game.setWobbleArm(0);
-
-            if (wobbleForward.isClicked()) {
-                game.setWobbleArm(0.6);
-            } else if (wobbleForward.isReleased()) {
-                game.setWobbleArm(0);
-            }
-
-
-//            if (wobbleForward) {
-//                game.setWobbleArm(0.6);
-//            } else if (wobbleBackWard) {
-//                game.setWobbleArm(-0.6);
-//            } else {
-//                game.setWobbleArm(0);
-//            }
-
-            if (ringFire) {
+            if (ringFire.isClicked()) {
                 game.setRingMover(0);
-            } else {
+                sleep(300);
                 game.setRingMover(1);
             }
+
+            if (wobbleBackward.isClicked()) {
+                game.wobbleArmGoTo(2850);
+               // game.setWobbleArm(-0.6);
+            } //else if (wobbleBackward.isReleased()){
+                //game.setWobbleArm(0.0);
+                //game.wobbleArmGoTo(3000);
+
+           // }
+
+            if (wobbleForward.isClicked()) {
+                game.wobbleArmGoTo(6185);
+                //game.setWobbleArm(0.6);
+            }//} else if (wobbleForward.isReleased()) {
+                //game.setWobbleArm(0);
+            //}
+
 
             if (grabberOpen) {
                 game.setWobbleGrabber(true);
@@ -150,4 +141,4 @@ public class Cobalt extends LinearOpMode {
             telemetry.update();
         }
     }
-} // 2650 זה גובה לפגיעה בגול הגבוה
+}

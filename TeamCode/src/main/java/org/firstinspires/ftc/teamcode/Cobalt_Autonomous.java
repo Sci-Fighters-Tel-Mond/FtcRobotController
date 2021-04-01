@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -45,7 +46,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
 @Autonomous(name = "Full Flaw - Uno Robot", group = "Cobalt")
-//@Disabled
+@Disabled
 public class Cobalt_Autonomous extends LinearOpMode {
     BananaPipeline pipeline;
     OpenCvInternalCamera phoneCam;
@@ -99,10 +100,6 @@ public class Cobalt_Autonomous extends LinearOpMode {
 
 
     // main functions
-    // main functions
-    // main functions
-    // main functions
-    // main functions
 
     @Override
     public void runOpMode() {
@@ -132,17 +129,17 @@ public class Cobalt_Autonomous extends LinearOpMode {
 
 
 //        if (abc == ABC.A) {
-////            robot.diagonal(tile * 2.5, tile / 3 * left, 0.8, heading);
-////            robot.drive(5 * tile, 3 * tile * left - 0.2, 0.8, heading);
+//            robot.diagonal(tile * 2.5, tile / 3 * left, 0.8, heading);
+//            robot.drive(5 * tile, 3 * tile * left - 0.2, 0.8, heading);
 //            robot.goTo(-2 * tile, 3 * tile, 0.8, heading);
 //
-////            while (gamepad1.b == false){;}
-////            robot.goTo(-1*tile, 4 * tile, 0.8, heading);
-////
-////            while (gamepad1.b == false){;}
-////            robot.goTo(-2* tile, 5 * tile, 0.8, heading);
-////
-////            while (gamepad1.b == false){;}
+//            while (gamepad1.b == false){;}
+//            robot.goTo(-1*tile, 4 * tile, 0.8, heading);
+//
+//            while (gamepad1.b == false){;}
+//            robot.goTo(-2* tile, 5 * tile, 0.8, heading);
+//
+//            while (gamepad1.b == false){;}
 ////            robot.goTo(0,0, 0.8, heading);
 //
 //        }
@@ -159,7 +156,7 @@ public class Cobalt_Autonomous extends LinearOpMode {
 ////            robot.driveForward(tile * 5, 1, heading);
 //        }
 
-//
+//*/
         while(opModeIsActive()) {
 
             double leftPower;

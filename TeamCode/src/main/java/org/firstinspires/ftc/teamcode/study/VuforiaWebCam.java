@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode.study;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -85,6 +86,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 
 
 @TeleOp(group ="Concept")
+@Disabled
 //@Disabled
 public class VuforiaWebCam extends LinearOpMode {
 
