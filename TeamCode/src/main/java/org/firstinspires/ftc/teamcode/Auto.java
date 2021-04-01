@@ -166,13 +166,15 @@ public class Auto extends LinearOpMode {
         game.setWobbleGrabber(true);
         sleep(250);
 
-        robot.goToLocation(wobbleFirst_pos, 1,heading, 0.05);
-        robot.goToLocation(wobble_pos, 1,heading, 0.05);
+        robot.goToLocation(wobbleFirst_pos, 1,heading, 0.1);
+        robot.turnTo(170, 1);
+        robot.goToLocation(wobble_pos, 1,170, 0.05);
 
         game.setWobbleGrabber(false);
         game.wobbleArmGoTo(4000);
 
-        robot.goToLocation(wobbleFirst_pos, 1,heading, 0.05);
+        robot.goToLocation(wobbleFirst_pos, 1,0, 0.05);
+        robot.turnTo(170, 1);
 
         switch (abc){
             case A: robot.goToLocation(a_pos, 1,heading, 0.05); break;
