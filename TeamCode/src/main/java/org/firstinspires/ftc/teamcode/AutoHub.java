@@ -68,8 +68,9 @@ public class AutoHub extends LinearOpMode {
 	final int right = 1;
 
 	private void initCamera() {
+		int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 		WebcamName webcam = hardwareMap.get(WebcamName.class, "webcam");
-		cam = OpenCvCameraFactory.getInstance().createWebcam(webcam);
+		cam = OpenCvCameraFactory.getInstance().createWebcam(webcam, cameraMonitorViewId);
 		pipeline = new BananaPipeline();
 		cam.setPipeline(pipeline);
 
