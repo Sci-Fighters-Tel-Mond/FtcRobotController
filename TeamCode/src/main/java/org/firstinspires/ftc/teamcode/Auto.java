@@ -35,21 +35,20 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.util.BananaPipeline;
+import org.firstinspires.ftc.teamcode.util.CvCam;
 import org.firstinspires.ftc.teamcode.util.DriveClass;
 import org.firstinspires.ftc.teamcode.util.GameClass;
 import org.firstinspires.ftc.teamcode.util.Location;
 import org.opencv.core.Rect;
 import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 
 @Autonomous(group = "Linear Opmode")
 //@Disabled
 public class Auto extends LinearOpMode {
     final double tile = 0.6;
     BananaPipeline pipeline;
-    OpenCvInternalCamera phoneCam;
+    OpenCvCamera cam;
 
     Location startingPosition = new Location(Location.LOCATION.BLUE_EXTERNAL_START_POSITION,-0.75,0);
     Location a_pos = new Location(Location.LOCATION.BLUE_A,-1.35,1.4);
@@ -68,18 +67,14 @@ public class Auto extends LinearOpMode {
     final int right = 1;
 
     private void initCamera() {
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+        cam = CvCam.getCam(hardwareMap, true);
         pipeline = new BananaPipeline();
-        phoneCam.setPipeline(pipeline);
+        cam.setPipeline(pipeline);
 
-        phoneCam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
-
-        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+        cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                phoneCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                phoneCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+            cam.startStreaming(640, 360, OpenCvCameraRotation.UPRIGHT);
             }
         });
     }
@@ -141,7 +136,7 @@ public class Auto extends LinearOpMode {
         game.update();
        // robot.turnTo(20, 0.6);
 
-        while (! game.getSuperState());
+        while (opModeIsActive() && !game.getSuperState());
 
         for (int x = 0; x < 3; x++) { // fire ring
             game.update();
@@ -182,6 +177,4 @@ public class Auto extends LinearOpMode {
         robot.goToLocation(parkPos,1,heading, 0.05);
         game.setWobbleGrabber(false);
     }
-
-
 }

@@ -52,7 +52,8 @@ public class BananaPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat frame) {
         // search for the orange Rings
-        Mat smallFrame = new Mat(frame, new Range(frame.height() / 2, frame.height()));
+//        Mat smallFrame = new Mat(frame, new Range(frame.height() / 2, frame.height()));
+        Mat smallFrame = frame;
         Imgproc.cvtColor(smallFrame, hsv, Imgproc.COLOR_RGB2HSV);  // Convert to HSV color set
         Scalar min_yellow = new Scalar(8, 130, 160);
         Scalar max_yellow = new Scalar(60, 255, 255);
