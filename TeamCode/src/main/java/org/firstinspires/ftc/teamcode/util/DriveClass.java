@@ -126,7 +126,7 @@ public class DriveClass {
 	}
 
 	private void initIMU(HardwareMap hw) {
-		imu = hw.get(BNO055IMU.class, "imu");
+		imu = hw.get(BNO055IMU.class, "imu 1");
 
 		parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
 		parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -170,8 +170,8 @@ public class DriveClass {
 		br.setPower(forward - turn + strafe);
 	}
 
-	public void setPowerOriented(double y, double x, double turn, boolean fieldOriented){
-		if ( fieldOriented != true) {
+	public void setPowerOriented(double y, double x, double turn, boolean fieldOriented) {
+		if (fieldOriented != true) {
 			setPower(y , turn, x);  // No field oriented
 		} else {
 			double phiRad = (-getHeading() + angleOffset) / 180 * Math.PI;

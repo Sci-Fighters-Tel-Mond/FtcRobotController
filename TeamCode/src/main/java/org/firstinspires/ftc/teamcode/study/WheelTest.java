@@ -19,7 +19,6 @@ public class WheelTest extends LinearOpMode {
 	private DcMotorEx bl = null;
 	private DcMotorEx br = null;
 
-
 	@Override
 	public void runOpMode() {
 		fl = hardwareMap.get(DcMotorEx.class, "fl");

@@ -46,154 +46,168 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 @Autonomous(group = "Linear Opmode")
 //@Disabled
 public class Auto extends LinearOpMode {
-    final double tile = 0.6;
-    BananaPipeline pipeline;
-    OpenCvCamera cam;
+	final double tile = 0.6;
+	BananaPipeline pipeline;
+	OpenCvCamera cam;
 
-    Location startingPosition = new Location(-0.75,0);
-    Location a_pos = new Location(-1.35,1.4);
-    Location b_pos = new Location(-0.7,1.95);
-    Location c_pos = new Location(-1.35,2.6);
-    Location firstPos = new Location(-0.27,0.73); // -0.25,0.73
-    Location shootPos = new Location(-0.27,1.4);
-    Location parkPos = new Location(-0.8,2);
-    Location wobbleFirst_pos = new Location(-2.5 * tile,2 * tile);
-    Location wobble_pos = new Location(-2.25 * tile,1.5 * tile);
+	Location startingPosition = new Location(-0.75, 0);
+	Location a_pos = new Location(-1.35, 1.4);
+	Location b_pos = new Location(-0.7, 1.95);
+	Location c_pos = new Location(-1.35, 2.6);
+	Location firstPos = new Location(-0.27, 0.73); // -0.25,0.73
+	Location shootPos = new Location(-0.27, 1.4);
+	Location parkPos = new Location(-0.8, 2);
+	Location wobbleFirst_pos = new Location(-2.5 * tile, 2 * tile);
+	Location wobble_pos = new Location(-2.25 * tile, 1.5 * tile);
 
-    private DriveClass robot = new DriveClass(this, DriveClass.ROBOT.COBALT, startingPosition).useEncoders();
-    private GameClass  game  = new GameClass(this);    // Declare OpMode members.
+	private DriveClass robot = new DriveClass(this, DriveClass.ROBOT.COBALT, startingPosition).useEncoders();
+	private GameClass game = new GameClass(this);    // Declare OpMode members.
 
-    private ElapsedTime runtime = new ElapsedTime();
+	private ElapsedTime runtime = new ElapsedTime();
 
-    final int left = -1;
-    final int right = 1;
+	final int left = -1;
+	final int right = 1;
 
-    private void initCamera() {
-        cam = CvCam.getCam(hardwareMap, true);
-        pipeline = new BananaPipeline();
-        cam.setPipeline(pipeline);
+	private void initCamera() {
+		cam = CvCam.getCam(hardwareMap, true);
+		pipeline = new BananaPipeline();
+		cam.setPipeline(pipeline);
 
-        cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-            cam.startStreaming(640, 360, OpenCvCameraRotation.UPRIGHT);
-            }
-        });
-    }
+		cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+			@Override
+			public void onOpened() {
+				cam.startStreaming(640, 360, OpenCvCameraRotation.UPRIGHT);
+			}
+		});
+	}
 
-    // 0 - a
-    // 1 -b
-    // 4 - c
-    enum ABC {A, B, C};
+	// 0 - a
+	// 1 -b
+	// 4 - c
+	enum ABC {A, B, C}
 
-    public ABC getRingNum(BananaPipeline pipeline) {
-        if (pipeline.getTargetRect() == null) {
-            return (ABC.A);
-        } else {
-            Rect rect = pipeline.getTargetRect();
-            if (rect.height < rect.width / 2) {
-                return (ABC.B);
-            } else {
-                return (ABC.C);
-            }
-        }
-    }
+	;
 
-
-    // main functions ==============================================================================
-
-    @Override
-    public void runOpMode() {
-
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
-
-        initCamera();
-        robot.init(hardwareMap);
-        game.init(hardwareMap);
-
-        ABC abc = getRingNum(pipeline);
-        telemetry.addData("Rings", abc);
-        telemetry.update();
-
-        game.initLifterPosition();
-        game.setWobbleGrabber(false);
-        game.initWobbleArmPosition();
-
-        // Wait for the game to start (driver presses PLAY)
-        waitForStart();
-        runtime.reset();
-
-        abc = getRingNum(pipeline);// a b c?
-        telemetry.addData("Rings", abc);
-        telemetry.update();
-
-        game.wobbleArmGoTo(1500); //wobble up
-        game.setSuperPosition(true);// fire position
-
-        double heading = robot.getHeading();
-
-        robot.goToLocation(firstPos, 1, heading, 0.1);
-        robot.goToLocation(shootPos, 1.1, heading, 0.01);
-        game.update();
-       // robot.turnTo(20, 0.6);
-
-        while (opModeIsActive() && !game.getSuperState());
-
-        for (int x = 0; x < 3; x++) { // fire ring
-            game.update();
-            sleep(1000);
-            game.update();
-            game.shoot();
-            game.update();
-        }
-        sleep(1000);
-        game.setSuperPosition(false);
-       // robot.turnTo(0, 0.6);
-        telemetry.addData("going to", abc);
-        telemetry.update();
+	public ABC getRingNum(BananaPipeline pipeline) {
+		if (pipeline.getTargetRect() == null) {
+			return (ABC.A);
+		} else {
+			Rect rect = pipeline.getTargetRect();
+			if (rect.height < rect.width / 2) {
+				return (ABC.B);
+			} else {
+				return (ABC.C);
+			}
+		}
+	}
 
 
-        switch (abc){
-            case A: robot.goToLocation(a_pos, 1,heading, 0.05); break;
-            case B: robot.goToLocation(b_pos, 1,heading, 0.05); break;
-            case C: robot.goToLocation(c_pos, 1,heading, 0.05); break;
-        }
+	// main functions ==============================================================================
 
-        //Last current position - tiles: (x: -0.5, y: 4.5)
-        game.wobbleArmGoTo(5778);
-        sleep(1000);
-        game.setWobbleGrabber(true);
-        sleep(250);
+	@Override
+	public void runOpMode() {
 
-        robot.goToLocation(wobbleFirst_pos, 1,heading, 0.1);
-        robot.turnTo(170, 1);
-        robot.drive(0.4, 0, 1, 170, false);
+		telemetry.addData("Status", "Initialized");
+		telemetry.update();
 
-        game.setWobbleGrabber(false);
-        game.wobbleArmGoTo(4000);
+		initCamera();
+		robot.init(hardwareMap);
+		game.init(hardwareMap);
 
-        robot.drive(-0.4, 0, 1, 170, false);
-        robot.turnTo(0, 1);
+		ABC abc = getRingNum(pipeline);
+		telemetry.addData("Rings", abc);
+		telemetry.update();
 
-        switch (abc){
-            case A: robot.goToLocation(a_pos, 1,heading, 0.05); break;
-            case B: robot.goToLocation(b_pos, 1,heading, 0.05); break;
-            case C: robot.goToLocation(c_pos, 1,heading, 0.05); break;
-        }
+		game.initLifterPosition();
+		game.setWobbleGrabber(false);
+		game.initWobbleArmPosition();
 
-        game.wobbleArmGoTo(5778);
-        sleep(250);
-        game.setWobbleGrabber(true);
-        sleep(250);
+		// Wait for the game to start (driver presses PLAY)
+		waitForStart();
+		runtime.reset();
 
-        if (abc == ABC.A) {
-            robot.drive(-0.05, 0.25, 1, heading, true, 0.1);
-        }
+		abc = getRingNum(pipeline);// a b c?
+		telemetry.addData("Rings", abc);
+		telemetry.update();
 
-        game.wobbleArmGoTo(100);
+		game.wobbleArmGoTo(1500); //wobble up
+		game.setSuperPosition(true);// fire position
 
-        robot.goToLocation(parkPos,1,heading, 0.05);
-        game.setWobbleGrabber(false);
-    }
+		double heading = robot.getHeading();
+
+		robot.goToLocation(firstPos, 1, heading, 0.1);
+		robot.goToLocation(shootPos, 1.1, heading, 0.01);
+		game.update();
+		// robot.turnTo(20, 0.6);
+
+		while (opModeIsActive() && !game.getSuperState()) ;
+
+		for (int x = 0; x < 3; x++) { // fire ring
+			game.update();
+			sleep(1000);
+			game.update();
+			game.shoot();
+			game.update();
+		}
+		sleep(1000);
+		game.setSuperPosition(false);
+		// robot.turnTo(0, 0.6);
+		telemetry.addData("going to", abc);
+		telemetry.update();
+
+
+		switch (abc) {
+			case A:
+				robot.goToLocation(a_pos, 1, heading, 0.05);
+				break;
+			case B:
+				robot.goToLocation(b_pos, 1, heading, 0.05);
+				break;
+			case C:
+				robot.goToLocation(c_pos, 1, heading, 0.05);
+				break;
+		}
+
+		//Last current position - tiles: (x: -0.5, y: 4.5)
+		game.wobbleArmGoTo(5778);
+		sleep(1000);
+		game.setWobbleGrabber(true);
+		sleep(250);
+
+		robot.goToLocation(wobbleFirst_pos, 1, heading, 0.1);
+		robot.turnTo(170, 1);
+		robot.drive(0.4, 0, 1, 170, false);
+
+		game.setWobbleGrabber(false);
+		game.wobbleArmGoTo(4000);
+
+		robot.drive(-0.4, 0, 1, 170, false);
+		robot.turnTo(0, 1);
+
+		switch (abc) {
+			case A:
+				robot.goToLocation(a_pos, 1, heading, 0.05);
+				break;
+			case B:
+				robot.goToLocation(b_pos, 1, heading, 0.05);
+				break;
+			case C:
+				robot.goToLocation(c_pos, 1, heading, 0.05);
+				break;
+		}
+
+		game.wobbleArmGoTo(5778);
+		sleep(250);
+		game.setWobbleGrabber(true);
+		sleep(250);
+
+		if (abc == ABC.A) {
+			robot.drive(-0.05, 0.25, 1, heading, true, 0.1);
+		}
+
+		game.wobbleArmGoTo(100);
+
+		robot.goToLocation(parkPos, 1, heading, 0.05);
+		game.setWobbleGrabber(false);
+	}
 }
