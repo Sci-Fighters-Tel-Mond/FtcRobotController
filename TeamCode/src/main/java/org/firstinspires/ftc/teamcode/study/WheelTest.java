@@ -14,85 +14,57 @@ import org.firstinspires.ftc.teamcode.util.Toggle;
 @TeleOp(group = "Cobalt")
 //@Disabled
 public class WheelTest extends LinearOpMode {
-    // Declare OpMode members.
-    volatile private DcMotorEx fl = null;
-    volatile private DcMotorEx fr = null;
-    volatile private DcMotorEx bl = null;
-    volatile private DcMotorEx br = null;
+	private DcMotorEx fl = null;
+	private DcMotorEx fr = null;
+	private DcMotorEx bl = null;
+	private DcMotorEx br = null;
 
 
+	@Override
+	public void runOpMode() {
+		fl = hardwareMap.get(DcMotorEx.class, "fl");
+		fr = hardwareMap.get(DcMotorEx.class, "fr");
+		bl = hardwareMap.get(DcMotorEx.class, "bl");
+		br = hardwareMap.get(DcMotorEx.class, "br");
 
-    public void init(HardwareMap hw) {
-        //region get from hw
-        fl = hw.get(DcMotorEx.class, "fl");
-        fr = hw.get(DcMotorEx.class, "fr");
-        bl = hw.get(DcMotorEx.class, "bl");
-        br = hw.get(DcMotorEx.class, "br");
-        //endregion get from hw
+		fl.setDirection(DcMotorEx.Direction.REVERSE);
+		fr.setDirection(DcMotorEx.Direction.FORWARD);
+		bl.setDirection(DcMotorEx.Direction.REVERSE);
+		br.setDirection(DcMotorEx.Direction.FORWARD);
 
-        //region setDirection
-        fl.setDirection(DcMotorEx.Direction.REVERSE);
-        fr.setDirection(DcMotorEx.Direction.FORWARD);
-        bl.setDirection(DcMotorEx.Direction.REVERSE);
-        br.setDirection(DcMotorEx.Direction.FORWARD);
-        //endregion setDirection
-
-        fl.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        fr.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        bl.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        br.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-
-        boolean useEncoders = true;
-
-        //region setMode
-        if (useEncoders) {
-            fl.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            fr.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            bl.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            br.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        } else {
-            fl.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-            fr.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-            bl.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-            br.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        }
-    }
-        //endregion setMode
-
-    @Override
-    public void runOpMode() {
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
-
-        init();
-
-        waitForStart();
-
-        // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
-
-            boolean back = gamepad1.right_bumper;
-
-            double leftRight = -gamepad1.right_stick_y;
+		fl.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+		fr.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+		bl.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+		br.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
 
+//        fl.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+//        fr.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+//        bl.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+//        br.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
-            if (back) {
-                br.setPower(leftRight);
-                bl.setPower(leftRight);
-            }
+		fl.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+		fr.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+		bl.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+		br.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-            else{
-                fl.setPower(leftRight);
-                fr.setPower(leftRight);
-            }
+		telemetry.addData("Status", "Initialized");
+		telemetry.update();
 
 
-            telemetry.addData("front left:", fl.getCurrentPosition());
-            telemetry.addData("front right:", fr.getCurrentPosition());
-            telemetry.addData("back left:", bl.getCurrentPosition());
-            telemetry.addData("back right:", br.getCurrentPosition());
-            telemetry.update();
-        }
-    }
+		waitForStart();
+		while (opModeIsActive()) {
+			fl.setPower(gamepad1.left_stick_x);
+			fr.setPower(gamepad1.right_stick_x);
+
+			bl.setPower(-gamepad1.left_stick_y);
+			br.setPower(-gamepad1.right_stick_y);
+
+			telemetry.addData("front left:", fl.getCurrentPosition());
+			telemetry.addData("front right:", fr.getCurrentPosition());
+			telemetry.addData("back left:", bl.getCurrentPosition());
+			telemetry.addData("back right:", br.getCurrentPosition());
+			telemetry.update();
+		}
+	}
 }
