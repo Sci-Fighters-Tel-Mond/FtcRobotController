@@ -49,7 +49,6 @@ public class Auto extends LinearOpMode {
 	final double tile = 0.6;
 	BananaPipeline pipeline;
 	OpenCvCamera cam;
-
 	Location startingPosition = new Location(-0.75, 0);
 	Location a_pos = new Location(-1.35, 1.4);
 	Location b_pos = new Location(-0.7, 1.95);
@@ -58,7 +57,6 @@ public class Auto extends LinearOpMode {
 	Location shootPos = new Location(-0.27, 1.4);
 	Location parkPos = new Location(-0.8, 2);
 	Location wobbleFirst_pos = new Location(-2.5 * tile, 2 * tile);
-	Location wobble_pos = new Location(-2.25 * tile, 1.5 * tile);
 
 	private DriveClass robot = new DriveClass(this, DriveClass.ROBOT.COBALT, startingPosition).useEncoders();
 	private GameClass game = new GameClass(this);    // Declare OpMode members.
@@ -172,16 +170,20 @@ public class Auto extends LinearOpMode {
 		game.wobbleArmGoTo(5778);
 		sleep(1000);
 		game.setWobbleGrabber(true);
-		sleep(250);
+		sleep(350);
 
 		robot.goToLocation(wobbleFirst_pos, 1, heading, 0.1);
-		robot.turnTo(170, 1);
-		robot.drive(0.4, 0, 1, 170, false);
+		robot.turnTo(164, 1);
+		robot.drive(0.45, 0, 1, 180, false);
 
+		game.wobbleArmGoTo(5400);
+		sleep(200);
 		game.setWobbleGrabber(false);
+		sleep(700);
 		game.wobbleArmGoTo(4000);
 
-		robot.drive(-0.4, 0, 1, 170, false);
+		robot.drive(-0.44, 0, 1, 170, false);
+		sleep(150);
 		robot.turnTo(0, 1);
 
 		switch (abc) {
@@ -197,9 +199,9 @@ public class Auto extends LinearOpMode {
 		}
 
 		game.wobbleArmGoTo(5778);
-		sleep(250);
+		sleep(400);
 		game.setWobbleGrabber(true);
-		sleep(250);
+		sleep(350);
 
 		if (abc == ABC.A) {
 			robot.drive(-0.05, 0.25, 1, heading, true, 0.1);
