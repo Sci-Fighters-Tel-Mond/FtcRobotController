@@ -63,6 +63,7 @@ public class Auto extends LinearOpMode {
 
 	private ElapsedTime runtime = new ElapsedTime();
 
+
 	final int left = -1;
 	final int right = 1;
 

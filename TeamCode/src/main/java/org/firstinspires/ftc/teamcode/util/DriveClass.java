@@ -322,6 +322,8 @@ public class DriveClass {
 	}
 
 	public void  goToLocation(Location location, double power, double targetHeading, double tolerance){
+
+
 		goTo(location.x, location.y, power, targetHeading, tolerance);
 	}
 
