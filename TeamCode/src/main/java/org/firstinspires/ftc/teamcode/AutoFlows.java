@@ -172,7 +172,7 @@ public class AutoFlows {
         robot.drive(0.45, 0, 1, 180, false);
 
 
-        game.wobbleArmGoTo(6180);
+        game.wobbleArmGoTo(6500);
         opMode.sleep(300);
         game.setWobbleGrabber(false);
         opMode.sleep(700);

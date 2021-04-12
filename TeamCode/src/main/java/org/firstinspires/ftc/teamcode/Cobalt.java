@@ -25,6 +25,9 @@ public class Cobalt extends LinearOpMode {
     private Toggle wobbleBackward = new Toggle();
     private Toggle shootHeading = new Toggle();
     private Toggle ringFire = new Toggle();
+    private Toggle turningToggle = new Toggle();
+
+    private double targetHeading = 0;
 
     @Override
     public void runOpMode() {
@@ -52,6 +55,16 @@ public class Cobalt extends LinearOpMode {
             double x = gamepad1.left_stick_x * boost;
             double turn = gamepad1.right_stick_x * boost;
 
+            turningToggle.update(Math.abs(turn)>0.05);
+
+            if(turningToggle.isReleased()){
+                targetHeading = drive.getHeading();
+            } else if (!turningToggle.isPressed()){
+                double delta = drive.getDeltaHeading(targetHeading);
+                double gain = 0.05;
+                turn = delta * gain;
+            }
+
             boolean armShooter = gamepad1.x && !gamepad1.start; // up armShooter
             boolean grabberOpen = gamepad1.y && !gamepad1.start; // open wobble grabbers.
             boolean grabberClose = gamepad1.b;
@@ -71,6 +84,7 @@ public class Cobalt extends LinearOpMode {
             if (resetOrientation) {
                 drive.resetOrientation(90);
                 drive.resetPosition();
+                targetHeading = drive.getHeading();
             }
 
             if (shootHeading.isClicked()) {
@@ -134,8 +148,8 @@ public class Cobalt extends LinearOpMode {
             telemetry.addData("X Pos",drive.getPosX());
             telemetry.addData("Y Pos", drive.getPosY());
             telemetry.addData("Heading", drive.getHeading());
-
-
+            telemetry.addData("Target", targetHeading);
+            telemetry.addData("Delta", drive.getDeltaHeading(targetHeading));
 
             game.update();
             telemetry.update();
