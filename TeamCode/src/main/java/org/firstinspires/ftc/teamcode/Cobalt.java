@@ -45,6 +45,8 @@ public class Cobalt extends LinearOpMode {
 
         runtime.reset();
 
+        int turningCount = 0;
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
@@ -57,9 +59,19 @@ public class Cobalt extends LinearOpMode {
 
             turningToggle.update(Math.abs(turn)>0.05);
 
-            if(turningToggle.isReleased()){
+            if (turningToggle.isReleased()){
+                turningCount = 100;
+            }
+            if (!turningToggle.isPressed()){
+                turningCount--;
+            }
+
+            if(turningCount == 0){
                 targetHeading = drive.getHeading();
-            } else if (!turningToggle.isPressed()){
+
+            }
+
+            if (! turningToggle.isPressed() && turningCount < 0){
                 double delta = drive.getDeltaHeading(targetHeading);
                 double gain = 0.05;
                 turn = delta * gain;
