@@ -43,10 +43,42 @@ public class Cobalt extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
+        drive.resetOrientation(90); //default blue
+
         runtime.reset();
+
+        int turningCount = 0;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+
+            boolean armShooter = gamepad1.x && !gamepad1.start; // up armShooter
+            boolean grabberOpen = gamepad1.y && !gamepad1.start; // open wobble grabbers.
+            boolean grabberClose = gamepad1.b;
+            boolean stopAll = gamepad1.a;
+
+            boolean intake = gamepad1.dpad_right; // down armShooter
+
+            reverseIntake.update(gamepad1.dpad_left);
+            wobbleForward.update(gamepad1.dpad_up);
+            wobbleBackward.update(gamepad1.dpad_down);
+            shootHeading.update(gamepad1.back);
+            ringFire.update(gamepad1.right_bumper);
+
+
+            boolean resetOrientation = gamepad1.start;
+
+            if (resetOrientation) {
+                if (gamepad1.x){
+                    drive.resetOrientation(90);
+                }
+                if(gamepad1.y){
+                    drive.resetOrientation(-90);
+                }
+                drive.resetPosition();
+                targetHeading = drive.getHeading();
+                continue;
+            }
 
             boolean fieldOriented = !gamepad1.left_bumper;
             double boost = gamepad1.right_trigger * 0.6 + 0.4;
@@ -57,35 +89,25 @@ public class Cobalt extends LinearOpMode {
 
             turningToggle.update(Math.abs(turn)>0.05);
 
-            if(turningToggle.isReleased()){
+            if (turningToggle.isReleased()){
+                turningCount = 100;
+            }
+            if (!turningToggle.isPressed()){
+                turningCount--;
+            }
+
+            if(turningCount == 0){
                 targetHeading = drive.getHeading();
-            } else if (!turningToggle.isPressed()){
+
+            }
+
+            if (! turningToggle.isPressed() && turningCount < 0){
                 double delta = drive.getDeltaHeading(targetHeading);
                 double gain = 0.05;
                 turn = delta * gain;
             }
 
-            boolean armShooter = gamepad1.x && !gamepad1.start; // up armShooter
-            boolean grabberOpen = gamepad1.y && !gamepad1.start; // open wobble grabbers.
-            boolean grabberClose = gamepad1.b;
-            boolean stopAll = gamepad1.a;
-
-            boolean resetOrientation = gamepad1.start;
-
-            boolean intake = gamepad1.dpad_right; // down armShooter
-            reverseIntake.update(gamepad1.dpad_left);
-            wobbleForward.update(gamepad1.dpad_up);
-            wobbleBackward.update(gamepad1.dpad_down);
-            shootHeading.update(gamepad1.back);
-            ringFire.update(gamepad1.right_bumper);
-
             drive.setPowerOriented(y, x, turn, fieldOriented);
-
-            if (resetOrientation) {
-                drive.resetOrientation(90);
-                drive.resetPosition();
-                targetHeading = drive.getHeading();
-            }
 
             if (shootHeading.isClicked()) {
                 drive.turnTo(3, 1);
