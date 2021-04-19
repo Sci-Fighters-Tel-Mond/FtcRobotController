@@ -52,4 +52,6 @@ public class Toggle {
     }
 
     public boolean isReleased() { return changed && !pressed; }
+
+    //THIS CODE IS NICE DON'T LAUGH :(
 }
