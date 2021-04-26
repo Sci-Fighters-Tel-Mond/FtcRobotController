@@ -41,7 +41,7 @@ public class AutoFlows {
 		b_pos = new Location(0.7 * mul, 1.95);
 		c_pos = new Location(1.35 * mul, 2.6);
 		firstPos = new Location(0.27 * mul, 0.73); // -0.25,0.73
-		shootPos = new Location(0.5 * mul, 1.4);
+		shootPos = new Location(0.3 * mul, 1.34);
 		parkPos = new Location(0.8 * mul, 2);
 		wobbleFirst_pos = new Location(2.5 * tile * mul, 2 * tile);
 
