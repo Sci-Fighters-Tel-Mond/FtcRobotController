@@ -90,7 +90,7 @@ public class Cobalt extends LinearOpMode {
             turningToggle.update(Math.abs(turn)>0.05);
 
             if (turningToggle.isReleased()){
-                turningCount = 100;
+                turningCount = 5;
             }
             if (!turningToggle.isPressed()){
                 turningCount--;

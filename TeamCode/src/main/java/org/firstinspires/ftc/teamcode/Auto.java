@@ -177,7 +177,7 @@ public class Auto extends LinearOpMode {
 		robot.turnTo(164, 1);
 		robot.drive(0.45, 0, 1, 180, false);
 
-		game.wobbleArmGoTo(5400);
+		game.wobbleArmGoTo(5600);
 		sleep(200);
 		game.setWobbleGrabber(false);
 		sleep(700);
