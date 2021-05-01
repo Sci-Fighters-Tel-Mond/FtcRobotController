@@ -56,7 +56,6 @@ public class Cobalt extends LinearOpMode {
             boolean grabberOpen = gamepad1.y && !gamepad1.start; // open wobble grabbers.
             boolean grabberClose = gamepad1.b;
             boolean stopAll = gamepad1.a;
-
             boolean intake = gamepad1.dpad_right; // down armShooter
 
             reverseIntake.update(gamepad1.dpad_left);
@@ -90,7 +89,7 @@ public class Cobalt extends LinearOpMode {
             turningToggle.update(Math.abs(turn)>0.05);
 
             if (turningToggle.isReleased()){
-                turningCount = 100;
+                turningCount = 5;
             }
             if (!turningToggle.isPressed()){
                 turningCount--;
@@ -178,3 +177,20 @@ public class Cobalt extends LinearOpMode {
         }
     }
 }
+
+// ;))
+// ;)))
+// ;)))
+// ;)))
+// ;)))
+// ;)))
+// ;)))
+// ;)))
+// ;)))
+// ;)))
+// ;)))
+// ;)))
+// ;)))
+// ;)))
+// ;)))
+// ;)))

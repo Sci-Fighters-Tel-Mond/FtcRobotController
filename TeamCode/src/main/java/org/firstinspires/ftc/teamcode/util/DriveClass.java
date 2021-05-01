@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 
 public class DriveClass {
-	//region DON'T TOUCH
+	//region DON'T TOUH
 	final double tile = 0.6;
 	private boolean useEncoders = false;
 	private boolean useBrake = false;
@@ -29,6 +29,8 @@ public class DriveClass {
 		this.useBrake = true;
 		return this;
 	}
+
+	//POGCHAMP! :)
 
 	//endregion DON'T TOUCH
 
