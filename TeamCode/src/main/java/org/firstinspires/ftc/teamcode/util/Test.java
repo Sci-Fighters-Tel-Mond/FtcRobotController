@@ -1,28 +1,24 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.util;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.teamcode.util.DriveClass;
-import org.firstinspires.ftc.teamcode.util.GameClass;
-import org.firstinspires.ftc.teamcode.util.Location;
-import org.firstinspires.ftc.teamcode.util.Toggle;
 
 @TeleOp(group = "Cobalt")
 //@Disabled
-public class Cobalt extends LinearOpMode {
+public class Test extends LinearOpMode {
     final double tile = 0.6;
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    Location startingPosition = new Location(0*tile,0*tile); //last x = -1.75*tile, y = 0*tile
+    Location startingPosition = new Location(-1.75*tile,0*tile);
     private DriveClass drive = new DriveClass(this, DriveClass.ROBOT.COBALT, startingPosition).useEncoders().useBrake();
     private GameClass game = new GameClass(this);
 
     private Toggle reverseIntake = new Toggle();
-    private Toggle wobbleForward = new Toggle();
-    private Toggle wobbleBackward = new Toggle();
+    private Toggle lifterUp = new Toggle();
+    private Toggle lifterDown = new Toggle();
     private Toggle shootHeading = new Toggle();
     private Toggle ringFire = new Toggle();
     private Toggle turningToggle = new Toggle();
@@ -60,8 +56,8 @@ public class Cobalt extends LinearOpMode {
             boolean intake = gamepad1.dpad_right; // down armShooter
 
             reverseIntake.update(gamepad1.dpad_left);
-            wobbleForward.update(gamepad1.dpad_up);
-            wobbleBackward.update(gamepad1.dpad_down);
+            lifterUp.update(gamepad1.dpad_up);
+            lifterDown.update(gamepad1.dpad_down);
             shootHeading.update(gamepad1.back);
             ringFire.update(gamepad1.right_bumper);
 
@@ -119,21 +115,14 @@ public class Cobalt extends LinearOpMode {
                 game.setRingMover(1);
             }
 
-            if (wobbleBackward.isClicked()) {
-                game.wobbleArmGoTo(2850);
-               // game.setWobbleArm(-0.6);
-            } //else if (wobbleBackward.isReleased()){
-                //game.setWobbleArm(0.0);
-                //game.wobbleArmGoTo(3000);
+            if (lifterDown.isClicked()) {
+                game.lifterMove(-10);
 
-           // }
+            }
 
-            if (wobbleForward.isClicked()) {
-                game.wobbleArmGoTo(6185);
-                //game.setWobbleArm(0.6);
-            }//} else if (wobbleForward.isReleased()) {
-                //game.setWobbleArm(0);
-            //}
+            if (lifterUp.isClicked()) {
+                game.lifterMove(10);
+            }
 
 
             if (grabberOpen) {

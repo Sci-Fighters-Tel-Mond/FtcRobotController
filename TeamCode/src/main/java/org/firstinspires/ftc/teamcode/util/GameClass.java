@@ -34,7 +34,7 @@ public class GameClass {
     private LifterRequest lifterRequest = LifterRequest.STAY;
 
     final private double shooterSpeed = 0.9;
-    final private int lifterUpTargetPosition = 2095;
+    final private int lifterUpTargetPosition = 1800;
     final private int lifterDownTargetPosition = 0;
 
 
@@ -116,13 +116,34 @@ public class GameClass {
         timer.reset();
     }
 
+    public void lifterMove(int goUp) {
+        int lifterCurruntPosition = lifter.getCurrentPosition();
+        if (goUp > 0) {
+            lifter.setTargetPosition(lifterCurruntPosition + goUp);
+            lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lifter.setPower(1);
+
+            //lifterRequest = LifterRequest.UP;
+            opMode.telemetry.addData("lifter going up", goUp);
+        } else {
+            lifter.setTargetPosition(lifterCurruntPosition + goUp);
+            lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lifter.setPower(1);
+
+            //lifterRequest = LifterRequest.DOWN;
+            opMode.telemetry.addData("lifter going down", goUp);
+        }
+        timer.reset();
+    }
+
     public void update() {
         opMode.telemetry.addData("wobble position", getWobbleArmPos());
+
         opMode.telemetry.addData("Lifter pos", lifter.getCurrentPosition());
         opMode.telemetry.addData("shooter!!!!!!!!!!!", shooter.getVelocity());
 
         if (lifterRequest == LifterRequest.UP){
-            if (lifter.getCurrentPosition() > lifterUpTargetPosition - 200 || timer.milliseconds() > 4000 ){
+            if (lifter.getCurrentPosition() > lifterUpTargetPosition  || timer.milliseconds() > 4000 ){
                 lifterRequest = LifterRequest.STAY;
                 superState.set(true);
             }

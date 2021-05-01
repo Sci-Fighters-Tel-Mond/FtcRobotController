@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -44,7 +45,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous(group = "Linear Opmode")
-//@Disabled
+@Disabled
 public class Auto extends LinearOpMode {
 	final double tile = 0.6;
 	BananaPipeline pipeline;
@@ -83,9 +84,7 @@ public class Auto extends LinearOpMode {
 	// 0 - a
 	// 1 -b
 	// 4 - c
-	enum ABC {A, B, C}
-
-	;
+	enum ABC { A, B, C }
 
 	public ABC getRingNum(BananaPipeline pipeline) {
 		if (pipeline.getTargetRect() == null) {
