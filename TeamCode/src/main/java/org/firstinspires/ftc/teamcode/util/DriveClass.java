@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 public class DriveClass {
 	//region DON'T TOUH
@@ -55,7 +56,7 @@ public class DriveClass {
 	public enum ROBOT {
 		SCORPION,
 		COBALT
-	};
+	}
 
 	private ROBOT robot;
 
@@ -132,6 +133,7 @@ public class DriveClass {
 
 		parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
 		parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+		parameters.accelerationIntegrationAlgorithm = new IMU_Integrator(imu, hw);
 
 		imu.initialize(parameters);
 
@@ -149,7 +151,7 @@ public class DriveClass {
 			opMode.telemetry.addData("Gyro", "Gyro/IMU Calibration Failed");
 		}
 
-//		imu.startAccelerationIntegration(new Position(), new Velocity(), 10);
+		imu.startAccelerationIntegration(new Position(), new Velocity(), 5); //
 
 		opMode.telemetry.update();
 
@@ -174,7 +176,7 @@ public class DriveClass {
 
 	public void setPowerOriented(double y, double x, double turn, boolean fieldOriented) {
 		if (fieldOriented != true) {
-			setPower(y , turn, x);  // No field oriented
+			setPower(y, turn, x);  // No field oriented
 		} else {
 			double phiRad = (-getHeading() + angleOffset) / 180 * Math.PI;
 			double forward = y * Math.cos(phiRad) - x * Math.sin(phiRad);
@@ -186,7 +188,6 @@ public class DriveClass {
 		opMode.telemetry.addData("front right:", fr.getCurrentPosition());
 		opMode.telemetry.addData("back left:", bl.getCurrentPosition());
 		opMode.telemetry.addData("back right:", br.getCurrentPosition());
-
 	}
 
 	public void stopPower() {
@@ -323,13 +324,11 @@ public class DriveClass {
 		stopPower();
 	}
 
-	public void  goToLocation(Location location, double power, double targetHeading, double tolerance){
-
-
+	public void goToLocation(Location location, double power, double targetHeading, double tolerance) {
 		goTo(location.x, location.y, power, targetHeading, tolerance);
 	}
 
-	public void goTo(double x, double y, double targetPower, double targetHeading, double tolerance){
+	public void goTo(double x, double y, double targetPower, double targetHeading, double tolerance) {
 		double currentX = getPosX();
 		double currentY = getPosY();
 		double deltaX = x - currentX;
@@ -360,7 +359,7 @@ public class DriveClass {
 		resetPosition();
 		timer.reset();
 
-		while (opMode.opModeIsActive() && (RVf != 0) ||  (RVs != 0)) {
+		while (opMode.opModeIsActive() && (RVf != 0) || (RVs != 0)) {
 
 			if (getForwardDistance() * sf > forward * sf - tolerance) {
 				RVf = 0;
@@ -368,25 +367,25 @@ public class DriveClass {
 			if (getStrafeDistance() * ss > sideward * ss - tolerance) {
 				RVs = 0;
 			}
-			double power = targetPower ;
+			double power = targetPower;
 
 			double deltaForward = forward - getForwardDistance();
-			double deltaStrafe  = sideward - getStrafeDistance();
+			double deltaStrafe = sideward - getStrafeDistance();
 
 			double deltaC = Math.sqrt(deltaStrafe * deltaStrafe + deltaForward * deltaForward);
-			double lengthC = c - deltaC ;
+			double lengthC = c - deltaC;
 
 			double acclGain = 2;
-			double acclPower = lengthC * acclGain +  minPower;
+			double acclPower = lengthC * acclGain + minPower;
 
-			if (acclPower + 0.2 < power ) {
+			if (acclPower + 0.2 < power) {
 				power = acclPower;
 			}
 
 			double breakgain = 0.9;
 			double breakPower = deltaC * breakgain + minPower;
 
-			if (breakPower < power)  {
+			if (breakPower < power) {
 				power = breakPower;
 			}
 
