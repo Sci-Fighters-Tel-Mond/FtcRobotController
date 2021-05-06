@@ -34,7 +34,7 @@ public class GameClass {
     private LifterRequest lifterRequest = LifterRequest.STAY;
 
     final private double shooterSpeed = 0.9;
-    final private int lifterUpTargetPosition = 1800;
+    final private int lifterUpTargetPosition = 1840;
     final private int lifterDownTargetPosition = 0;
 
 

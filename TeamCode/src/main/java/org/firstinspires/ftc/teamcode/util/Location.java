@@ -9,4 +9,9 @@ public class Location {
         this.x = x;
         this.y = y;
     }
+
+    public Location offset(double offset) {
+        return new Location(this.x,this.y + offset);
+    }
+
 }

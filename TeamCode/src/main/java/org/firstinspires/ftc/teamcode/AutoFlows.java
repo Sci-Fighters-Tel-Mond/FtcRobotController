@@ -47,7 +47,6 @@ public class AutoFlows {
 
 		robot = new DriveClass(this.opMode, DriveClass.ROBOT.COBALT, startingPosition).useEncoders();
 		game = new GameClass(this.opMode);    // Declare OpMode members.
-
 	}
 
 	BananaPipeline pipeline;
@@ -111,15 +110,15 @@ public class AutoFlows {
 		game.initWobbleArmPosition();
 
 		Auto.ABC abc = getRingNum(pipeline);
-		this.opMode.telemetry.addData("Rings", abc);
+		this.opMode.telemetry.addData("Rings: ", abc);
 		this.opMode.telemetry.update();
 
-		// Wait for the game to start (driver presses PLAY)\
+		// Wait for the game to start (driver presses PLAY)
 		this.opMode.waitForStart();
 		runtime.reset();
 
 		abc = getRingNum(pipeline);// a b c?
-        this.opMode.telemetry.addData("Rings", abc);
+        this.opMode.telemetry.addData("Rings: ", abc); //finding if it's a , b or c
         this.opMode.telemetry.update();
 
 		game.wobbleArmGoTo(1500); //wobble up
@@ -152,13 +151,13 @@ public class AutoFlows {
 
 		switch (abc) {
 			case A:
-				robot.goToLocation(a_pos, 1, heading, 0.05);
+				robot.goToLocation(a_pos.offset(0.15), 1, heading, 0.05);
 				break;
 			case B:
-				robot.goToLocation(b_pos, 1, heading, 0.05);
+				robot.goToLocation(b_pos.offset(0.15), 1, heading, 0.05);
 				break;
 			case C:
-				robot.goToLocation(c_pos, 1, heading, 0.05);
+				robot.goToLocation(c_pos.offset(0.15), 1, heading, 0.05);
 				break;
 		}
 
