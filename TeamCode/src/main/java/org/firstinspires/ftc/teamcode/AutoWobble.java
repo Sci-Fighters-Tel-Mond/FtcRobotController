@@ -50,7 +50,7 @@ public class AutoWobble extends LinearOpMode {
 	final double tile = 0.6;
 	BananaPipeline pipeline;
 	OpenCvCamera cam;
-	Location startingPosition = new Location(-1.25, 0);
+	Location startingPosition = new Location(-1.20, 0);
 	Location a_pos = new Location(-1.35, 1.4);
 	Location b_pos = new Location(-0.7, 1.95);
 	Location c_pos = new Location(-1.35, 2.6);

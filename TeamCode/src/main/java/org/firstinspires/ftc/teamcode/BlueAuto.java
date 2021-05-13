@@ -46,7 +46,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 @Autonomous(group = "blue fullflow")
 //@Disabled
 public class BlueAuto extends LinearOpMode {
-	AutoFlows auto = new AutoFlows(this, AutoFlows.Alliance.BLUE, AutoFlows.StartLine.INNER);
+	AutoFlows auto = new AutoFlows(this, AutoFlows.Alliance.BLUE, AutoFlows.StartLine.INNER, false);
 	BananaPipeline pipeline;
 
 	private ElapsedTime runtime = new ElapsedTime();
