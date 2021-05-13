@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -43,16 +44,27 @@ import org.opencv.core.Rect;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(group = "blue fullflow")
-//@Disabled
-public class BlueAuto extends LinearOpMode {
-	AutoFlows auto = new AutoFlows(this, AutoFlows.Alliance.BLUE, AutoFlows.StartLine.INNER);
-	BananaPipeline pipeline;
+@Autonomous(group = "Linear Opmode")
+@Disabled
+public class AutoPark extends LinearOpMode {
+	final double tile = 0.6;
+	//Location parkPos = new Location(-0.8, 2);
+	Location startingPosition = new Location(0,0);
+	private DriveClass robot = new DriveClass(this, DriveClass.ROBOT.COBALT, startingPosition).useEncoders();
+	private GameClass game = new GameClass(this);    // Declare OpMode members.
 
-	private ElapsedTime runtime = new ElapsedTime();
 	// main functions ==============================================================================
+
 	@Override
 	public void runOpMode() {
-		auto.fullFlow();
+
+		telemetry.addData("Status", "Initialized");
+		telemetry.update();
+		robot.init(hardwareMap);
+		game.init(hardwareMap);
+		// Wait for the game to start (driver presses PLAY)
+		waitForStart();
+		sleep(135 * 1000); //2:15 minutes
+		robot.drive(2, 0, 1, 0, false);
 	}
 }

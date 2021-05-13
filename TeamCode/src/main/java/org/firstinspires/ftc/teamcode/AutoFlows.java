@@ -27,8 +27,9 @@ public class AutoFlows {
 	Location shootPos;
 	Location parkPos;
 	Location wobbleFirst_pos;
+	double shootingAngle = 0; //default
 
-	public AutoFlows(LinearOpMode opMode, Alliance alliance) {
+	public AutoFlows(LinearOpMode opMode, Alliance alliance, StartLine startline) {
 		this.opMode = opMode;
 
 		if (alliance == Alliance.BLUE) {
@@ -45,6 +46,16 @@ public class AutoFlows {
 		parkPos = new Location(0.8 * mul, 2);
 		wobbleFirst_pos = new Location(2.5 * tile * mul, 2 * tile);
 
+		if(startline == StartLine.OUTTER) {
+			startingPosition = new Location(1.75, 0);
+			firstPos = new Location(1.5 * mul,0.73);
+			shootPos = new Location(1.5 * mul, 1.13);
+			shootingAngle = 15;
+		}
+		if (alliance == Alliance.RED) {
+			shootingAngle -= 30;
+		}
+
 		robot = new DriveClass(this.opMode, DriveClass.ROBOT.COBALT, startingPosition).useEncoders();
 		game = new GameClass(this.opMode);    // Declare OpMode members.
 	}
@@ -53,6 +64,7 @@ public class AutoFlows {
 	OpenCvCamera cam;
 
 	public enum Alliance {BLUE, RED}
+	public enum StartLine {INNER,OUTTER}
 
 	public enum FlowType {WALL, BRIDGE, SHORT, PARK_ONLY}
 
@@ -128,7 +140,7 @@ public class AutoFlows {
 
 		//go shoot
 		robot.goToLocation(firstPos, 1, heading, 0.15);
-		robot.goToLocation(shootPos, 1, 1.25, 0.01);
+		robot.goToLocation(shootPos, 1, shootingAngle, 0.01);
 		game.update();
 		// robot.turnTo(20, 0.6);
 

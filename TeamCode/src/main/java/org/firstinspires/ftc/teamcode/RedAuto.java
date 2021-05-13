@@ -36,26 +36,16 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.util.BananaPipeline;
 
-@Autonomous(group = "blue fullflow")
+@Autonomous(group = "red fullflow")
 //@Disabled
 public class RedAuto extends LinearOpMode {
-	AutoFlows auto = new AutoFlows(this, AutoFlows.Alliance.RED);
+	AutoFlows auto = new AutoFlows(this, AutoFlows.Alliance.RED, AutoFlows.StartLine.INNER);
 	BananaPipeline pipeline;
 
-
-
 	private ElapsedTime runtime = new ElapsedTime();
-
-
-
-
-
 	// main functions ==============================================================================
-
 	@Override
 	public void runOpMode() {
-
-
 
 		auto.fullFlow();
 	}
