@@ -113,10 +113,9 @@ public class Cobalt extends LinearOpMode {
             }
 
             if (ringFire.isClicked()) {
-                game.setRingMover(0);
-                sleep(300);
-                game.setRingMover(1);
+                game.shoot();
             }
+
 
             if (wobbleBackward.isClicked()) {
                 game.wobbleArmGoTo(2850);
@@ -177,20 +176,3 @@ public class Cobalt extends LinearOpMode {
         }
     }
 }
-
-// ;))
-// ;)))
-// ;)))
-// ;)))
-// ;)))
-// ;)))
-// ;)))
-// ;)))
-// ;)))
-// ;)))
-// ;)))
-// ;)))
-// ;)))
-// ;)))
-// ;)))
-// ;)))

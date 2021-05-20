@@ -385,8 +385,6 @@ public class DriveClass {
 			double Vs = RVs * power;
 
 			setPowerOriented(Vf, Vs, correction, fieldOriented);
-
-
 		}
 	}
 

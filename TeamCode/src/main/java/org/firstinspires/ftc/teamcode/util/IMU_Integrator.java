@@ -112,7 +112,6 @@ public class IMU_Integrator implements BNO055IMU.AccelerationIntegrator {
 		return -orientation.firstAngle;
 	}
 
-
 	public void update(Acceleration linearAcceleration) {
 
 		double deltaF = getForwardDistance();
