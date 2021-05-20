@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+import org.opencv.core.Scalar;
 
 public class DriveClass {
 	//region DON'T TOUH
@@ -137,7 +138,7 @@ public class DriveClass {
 
 		imu.initialize(parameters);
 
-		opMode.telemetry.addData("Gyro", "calibrating...");
+		opMode.telemetry.addData("Gyro", "calibrating . . .");
 		opMode.telemetry.update();
 
 		ElapsedTime timer = new ElapsedTime();
@@ -151,7 +152,7 @@ public class DriveClass {
 			opMode.telemetry.addData("Gyro", "Gyro/IMU Calibration Failed");
 		}
 
-		imu.startAccelerationIntegration(new Position(), new Velocity(), 5); //
+		imu.startAccelerationIntegration(new Position(), new Velocity(), 5);
 
 		opMode.telemetry.update();
 
@@ -231,7 +232,7 @@ public class DriveClass {
 	}
 
 	public double getPosY() {
-		return getAbsolutesPosY() + startingPosition.y;
+		return imu.getPosition().y;
 	}
 
 	public double getAbsolutesPosY() {
@@ -260,7 +261,7 @@ public class DriveClass {
 	}
 
 	public double getPosX() {
-		return getAbsolutesPosX() + startingPosition.x;
+		return imu.getPosition().x;
 	}
 
 	public double getAbsolutesPosX() {
@@ -329,15 +330,64 @@ public class DriveClass {
 	}
 
 	public void goTo(double x, double y, double targetPower, double targetHeading, double tolerance) {
+
 		double currentX = getPosX();
 		double currentY = getPosY();
 		double deltaX = x - currentX;
 		double deltaY = y - currentY;
+		double startX = currentX;
+		double startY = currentY;
+
 		opMode.telemetry.addData("goto x", x);
 		opMode.telemetry.addData("goto y", y);
 		opMode.telemetry.update();
 
-		drive(deltaY, deltaX, targetPower, targetHeading, true, tolerance);
+		//drive(deltaY, deltaX, targetPower, targetHeading, true, tolerance);
+
+
+		//double totalDist = Math.sqrt(deltaX*deltaX + deltaY*deltaY);
+		double totalDist = Math.hypot(deltaX, deltaY);
+		double currentDist = 0;
+
+		while (currentDist >= totalDist) {
+			double power = targetPower;
+			currentX = getPosX();
+			currentY = getPosY();
+			deltaX = currentX - startX;
+			deltaY = currentY - startY;
+			currentDist = Math.hypot(deltaY,deltaX);
+			deltaX = x - currentX;
+			deltaY = y - currentY;
+			double leftDist = Math.hypot(deltaY,deltaX);
+
+			//double leftDist = totalDist - currentDist;
+			double minPower = 0.2;
+			double acclGain = 2;
+			double acclPower = currentDist * acclGain + minPower;
+			double RVf = (y  - currentY) / leftDist;
+			double RVs = (x  - currentX) / leftDist;
+
+			if (acclPower + 0.2 < power) {
+				power = acclPower;
+			}
+
+			double breakgain = 0.9;
+			double breakPower = leftDist * breakgain + minPower;
+
+			if (breakPower < power) {
+				power = breakPower;
+			}
+
+			double err = getDeltaHeading(targetHeading);
+			double gain = 0.040;
+			double correction = gain * err;
+			double Vf = RVf * power;
+			double Vs = RVs * power;
+
+			setPowerOriented(Vf, Vs, correction, fieldOriented);
+
+
+		}
 	}
 
 	public void drive(double forward, double sideward, double targetPower, double targetAngle) {
