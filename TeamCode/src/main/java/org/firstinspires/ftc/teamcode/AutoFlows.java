@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.study.Auto;
 import org.firstinspires.ftc.teamcode.util.BananaPipeline;
 import org.firstinspires.ftc.teamcode.util.CvCam;
 import org.firstinspires.ftc.teamcode.util.DriveClass;
@@ -20,30 +20,44 @@ public class AutoFlows {
 	final double tile = 0.6;
 	int mul;
 	Location startingPosition;
+	Location firstPos; // -0.25,0.73
+	Location shootPos;
 	Location a_pos;
 	Location b_pos;
 	Location c_pos;
-	Location firstPos; // -0.25,0.73
-	Location shootPos;
-	Location parkPos;
 	Location wobbleFirst_pos;
+	Location parkPos;
 
-	public AutoFlows(LinearOpMode opMode, Alliance alliance) {
+	double shootingAngle = 0; //default
+	boolean shortened = false;
+	enum ABC { A, B, C }
+
+	public AutoFlows(LinearOpMode opMode, Alliance alliance, StartLine startline, boolean shortened) {
 		this.opMode = opMode;
-
+		this.shortened = shortened;
 		if (alliance == Alliance.BLUE) {
 			mul = blue;
 		} else {
 			mul = red;
 		}
 		startingPosition = new Location(0.75 * mul, 0);
+		firstPos = new Location(0.27 * mul, 0.73); // -0.25,0.73
+		shootPos = new Location(0.20 * mul, 1.13);
 		a_pos = new Location(1.4 * mul, 1.45);
 		b_pos = new Location(0.75 * mul, 2.15);
 		c_pos = new Location(1.4 * mul, 2.65);
-		firstPos = new Location(0.27 * mul, 0.73); // -0.25,0.73
-		shootPos = new Location(0.20 * mul, 1.13);
-		parkPos = new Location(0.8 * mul, 2);
 		wobbleFirst_pos = new Location(2.5 * tile * mul, 2 * tile);
+		parkPos = new Location(0.8 * mul, 2);
+
+		if(startline == StartLine.OUTTER) {
+			startingPosition = new Location(1.20 * mul, 0);
+			firstPos = new Location(1.5 * mul,0.73);
+			shootPos = new Location(1.5 * mul, 1.13);
+			shootingAngle = 15;
+		}
+		if (alliance == Alliance.RED) {
+			shootingAngle -= 30;
+		}
 
 		robot = new DriveClass(this.opMode, DriveClass.ROBOT.COBALT, startingPosition).useEncoders();
 		game = new GameClass(this.opMode);    // Declare OpMode members.
@@ -53,6 +67,7 @@ public class AutoFlows {
 	OpenCvCamera cam;
 
 	public enum Alliance {BLUE, RED}
+	public enum StartLine {INNER,OUTTER}
 
 	public enum FlowType {WALL, BRIDGE, SHORT, PARK_ONLY}
 
@@ -68,15 +83,15 @@ public class AutoFlows {
 	final int blue = -1;
 	final int red = 1;
 
-	public Auto.ABC getRingNum(BananaPipeline pipeline) {
+	public ABC getRingNum(BananaPipeline pipeline) {
 		if (pipeline.getTargetRect() == null) {
-			return (Auto.ABC.A);
+			return (ABC.A);
 		} else {
 			Rect rect = pipeline.getTargetRect();
 			if (rect.height < rect.width / 2) {
-				return (Auto.ABC.B);
+				return (ABC.B);
 			} else {
-				return (Auto.ABC.C);
+				return (ABC.C);
 			}
 		}
 	}
@@ -109,7 +124,7 @@ public class AutoFlows {
 		game.setWobbleGrabber(false);
 		game.initWobbleArmPosition();
 
-		Auto.ABC abc = getRingNum(pipeline);
+		ABC abc = getRingNum(pipeline);
 		this.opMode.telemetry.addData("Rings: ", abc);
 		this.opMode.telemetry.update();
 
@@ -128,7 +143,7 @@ public class AutoFlows {
 
 		//go shoot
 		robot.goToLocation(firstPos, 1, heading, 0.15);
-		robot.goToLocation(shootPos, 1, 1.25, 0.01);
+		robot.goToLocation(shootPos, 1, shootingAngle, 0.01);
 		game.update();
 		// robot.turnTo(20, 0.6);
 
@@ -169,46 +184,47 @@ public class AutoFlows {
 		game.setWobbleGrabber(true);
 		this.opMode.sleep(350);
 
-		// going to pick up the second wobble rod
-		robot.goToLocation(wobbleFirst_pos, 1, heading, 0.1);
-		robot.turnTo(164, 1);
-		robot.drive(0.40, 0, 1, 180, false);
+		if(shortened == false) {
+			// going to pick up the second wobble rod
+			robot.goToLocation(wobbleFirst_pos, 1, heading, 0.1);
+			robot.turnTo(164, 1);
+			robot.drive(0.40, 0, 1, 180, false);
 
-		// picking up the wobble
-		game.wobbleArmGoTo(6500);
-		opMode.sleep(300);
-		game.setWobbleGrabber(false);
-		opMode.sleep(700);
-		game.wobbleArmGoTo(4000);
+			// picking up the wobble
+			game.wobbleArmGoTo(6500);
+			opMode.sleep(300);
+			game.setWobbleGrabber(false);
+			opMode.sleep(700);
+			game.wobbleArmGoTo(4000);
 
-		// going back
-		robot.drive(-0.40, 0, 1, 170, false);
-		opMode.sleep(150);
-		robot.turnTo(0, 1);
+			// going back
+			robot.drive(-0.40, 0, 1, 170, false);
+			opMode.sleep(150);
+			robot.turnTo(0, 1);
 
-		switch (abc) {
-			case A:
-				robot.goToLocation(a_pos, 1, heading, 0.05);
-				break;
-			case B:
-				robot.goToLocation(b_pos, 1, heading, 0.05);
-				break;
-			case C:
-				robot.goToLocation(c_pos, 1, heading, 0.05);
-				break;
+			switch (abc) {
+				case A:
+					robot.goToLocation(a_pos, 1, heading, 0.05);
+					break;
+				case B:
+					robot.goToLocation(b_pos, 1, heading, 0.05);
+					break;
+				case C:
+					robot.goToLocation(c_pos, 1, heading, 0.05);
+					break;
+			}
+
+			game.wobbleArmGoTo(5778);
+			opMode.sleep(400);
+			game.setWobbleGrabber(true);
+			opMode.sleep(350);
+
+			if (abc == ABC.A) {
+				robot.drive(-0.05, 0.25, 1, heading, true, 0.1);
+			}
+
+			game.wobbleArmGoTo(100);
 		}
-
-		game.wobbleArmGoTo(5778);
-		opMode.sleep(400);
-		game.setWobbleGrabber(true);
-		opMode.sleep(350);
-
-		if (abc == Auto.ABC.A) {
-			robot.drive(-0.05, 0.25, 1, heading, true, 0.1);
-		}
-
-		game.wobbleArmGoTo(100);
-
 		robot.goToLocation(parkPos, 1, heading, 0.05);
 		game.setWobbleGrabber(false);
 	}
