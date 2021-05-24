@@ -27,6 +27,7 @@ public class AutoFlows {
 	Location c_pos;
 	Location wobbleFirst_pos;
 	Location parkPos;
+	Alliance alliance;
 
 	double shootingAngle = 0; //default
 	boolean shortened = false;
@@ -35,6 +36,7 @@ public class AutoFlows {
 	public AutoFlows(LinearOpMode opMode, Alliance alliance, StartLine startline, boolean shortened) {
 		this.opMode = opMode;
 		this.shortened = shortened;
+		this.alliance = alliance;
 		if (alliance == Alliance.BLUE) {
 			mul = blue;
 		} else {
@@ -50,13 +52,18 @@ public class AutoFlows {
 		parkPos = new Location(0.8 * mul, 2);
 
 		if(startline == StartLine.OUTTER) {
-			startingPosition = new Location(1.20 * mul, 0);
+			startingPosition = new Location(1.2 * mul, 0);
 			firstPos = new Location(1.5 * mul,0.73);
 			shootPos = new Location(1.5 * mul, 1.13);
-			shootingAngle = 15;
+			shootingAngle = 25.35;
 		}
 		if (alliance == Alliance.RED) {
-			shootingAngle -= 30;
+			shootingAngle = 30;
+			a_pos.x -= 0.2;
+			a_pos.y -= 0.2;
+			b_pos.y -= 0.2;
+			c_pos.y -= 0.2;
+			wobbleFirst_pos.x -= 0.2;
 		}
 
 		robot = new DriveClass(this.opMode, DriveClass.ROBOT.COBALT, startingPosition).useEncoders();
@@ -187,8 +194,18 @@ public class AutoFlows {
 		if(shortened == false) {
 			// going to pick up the second wobble rod
 			robot.goToLocation(wobbleFirst_pos, 1, heading, 0.1);
-			robot.turnTo(164, 1);
-			robot.drive(0.40, 0, 1, 180, false);
+			if (alliance == Alliance.RED){
+				game.wobbleArmGoTo(4000);
+			}
+			int targetAngle = 164;
+			if(alliance == Alliance.RED) {
+				targetAngle = -250;
+			}
+			robot.turnTo(targetAngle, 1);
+			if(alliance == Alliance.BLUE) {
+				targetAngle = 180;
+			}
+			robot.drive(0.40, 0, 1, targetAngle, false);
 
 			// picking up the wobble
 			game.wobbleArmGoTo(6500);
