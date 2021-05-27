@@ -45,7 +45,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous(group = "Linear Opmode")
-@Disabled
+//@Disabled
 public class AutoPark extends LinearOpMode {
 	final double tile = 0.6;
 	//Location parkPos = new Location(-0.8, 2);
