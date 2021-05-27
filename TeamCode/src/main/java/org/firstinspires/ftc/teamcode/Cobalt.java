@@ -16,16 +16,18 @@ public class Cobalt extends LinearOpMode {
 
 	// Declare OpMode members.
 	private ElapsedTime runtime = new ElapsedTime();
-	Location startingPosition = new Location(0*tile,0*tile); //last x = -1.75*tile, y = 0*tile
+	Location startingPosition = new Location(0 * tile, 0 * tile); //last x = -1.75*tile, y = 0*tile
 	private DriveClass drive = new DriveClass(this, DriveClass.ROBOT.COBALT, startingPosition).useEncoders().useBrake();
 	private GameClass game = new GameClass(this);
 
 	private Toggle reverseIntake = new Toggle();
 	private Toggle wobbleForward = new Toggle();
 	private Toggle wobbleBackward = new Toggle();
+	private Toggle wobbleGrabber = new Toggle(false);
 	private Toggle shootHeading = new Toggle();
 	private Toggle ringFire = new Toggle();
 	private Toggle turningToggle = new Toggle();
+	private Toggle wiperToggle = new Toggle(false);
 
 	private double targetHeading = 0;
 
@@ -53,25 +55,25 @@ public class Cobalt extends LinearOpMode {
 		while (opModeIsActive()) {
 
 			boolean armShooter = gamepad1.x && !gamepad1.start; // up armShooter
-			boolean grabberOpen = gamepad1.y && !gamepad1.start; // open wobble grabbers.
-			boolean grabberClose = gamepad1.b;
 			boolean stopAll = gamepad1.a;
 			boolean intake = gamepad1.dpad_right; // down armShooter
 
 			reverseIntake.update(gamepad1.dpad_left);
 			wobbleForward.update(gamepad1.dpad_up);
 			wobbleBackward.update(gamepad1.dpad_down);
+			wobbleGrabber.update(gamepad1.b);
 			shootHeading.update(gamepad1.back);
 			ringFire.update(gamepad1.right_bumper);
+			wiperToggle.update(gamepad1.left_bumper);
 
 
 			boolean resetOrientation = gamepad1.start;
 
 			if (resetOrientation) {
-				if (gamepad1.x){
+				if (gamepad1.x) {
 					drive.resetOrientation(90);
 				}
-				if(gamepad1.y){
+				if (gamepad1.y) {
 					drive.resetOrientation(-90);
 				}
 				drive.resetPosition();
@@ -79,28 +81,28 @@ public class Cobalt extends LinearOpMode {
 				continue;
 			}
 
-			boolean fieldOriented = !gamepad1.left_bumper;
+			boolean fieldOriented = (!gamepad1.y) && (!gamepad1.start);
 			double boost = gamepad1.right_trigger * 0.6 + 0.4;
 
 			double y = -gamepad1.left_stick_y * boost;
 			double x = gamepad1.left_stick_x * boost;
 			double turn = gamepad1.right_stick_x * boost;
 
-			turningToggle.update(Math.abs(turn)>0.05);
+			turningToggle.update(Math.abs(turn) > 0.05);
 
-			if (turningToggle.isReleased()){
+			if (turningToggle.isReleased()) {
 				turningCount = 5;
 			}
-			if (!turningToggle.isPressed()){
+			if (!turningToggle.isPressed()) {
 				turningCount--;
 			}
 
-			if(turningCount == 0){
+			if (turningCount == 0) {
 				targetHeading = drive.getHeading();
 
 			}
 
-			if (! turningToggle.isPressed() && turningCount < 0){
+			if (!turningToggle.isPressed() && turningCount < 0) {
 				double delta = drive.getDeltaHeading(targetHeading);
 				double gain = 0.05;
 				turn = delta * gain;
@@ -135,12 +137,8 @@ public class Cobalt extends LinearOpMode {
 			//}
 
 
-			if (grabberOpen) {
-				game.setWobbleGrabber(true);
-			}
-
-			if (grabberClose) {
-				game.setWobbleGrabber(false);
+			if (wobbleGrabber.isChanged()) {
+				game.setWobbleGrabber(wobbleGrabber.getState());
 			}
 
 			if (armShooter) {
@@ -161,12 +159,17 @@ public class Cobalt extends LinearOpMode {
 				}
 			}
 
+			if (wiperToggle.isPressed()) {
+				game.setWipers(wiperToggle.getState());
+			}
+			telemetry.addData("Wiper changed", wiperToggle.getState());
+
 			if (stopAll) {
 				game.stopAll();
 			}
 
 			game.lifterTest(-gamepad1.right_stick_y);
-			telemetry.addData("X Pos",drive.getPosX());
+			telemetry.addData("X Pos", drive.getPosX());
 			telemetry.addData("Y Pos", drive.getPosY());
 			telemetry.addData("Heading", drive.getHeading());
 			telemetry.addData("Target", targetHeading);

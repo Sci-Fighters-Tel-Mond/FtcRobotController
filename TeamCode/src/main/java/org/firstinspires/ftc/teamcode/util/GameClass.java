@@ -24,6 +24,9 @@ public class GameClass {
 
 	private Servo ringMover = null; // 1 - inside, 0 - outside
 
+	private Servo wiperLeft = null;
+	private Servo wiperRight = null;
+
 	private Toggle superState = new Toggle();// true - shooterPosition
 	private Toggle shooterState = new Toggle();
 	private Toggle intakeState = new Toggle();
@@ -58,6 +61,9 @@ public class GameClass {
 		lifterLimiter = hw.get(DigitalChannel.class, "shooter_limiter");
 
 		ringMover = hw.get(Servo.class, "ring_mover");
+
+		wiperLeft = hw.get(Servo.class, "wiper_left");
+		wiperRight = hw.get(Servo.class, "wiper_right");
 		//endregion get from hw
 
 		//region setDirection
@@ -238,6 +244,7 @@ public class GameClass {
 
 
 	private void setIntake(boolean active) {
+		this.setWipers(active);
 		intakeState.set(active);
 		intake.setPower(active ? 1 : 0);
 	}
@@ -287,6 +294,11 @@ public class GameClass {
 
 	public void setIntakePower(double v) {
 		intake.setPower(v);
+	}
+
+	public void setWipers(boolean open) {
+		this.wiperLeft.setPosition(open ? 1 : 0);
+		this.wiperRight.setPosition(open ? 1 : 0);
 	}
 
 	public void stopAll() {
