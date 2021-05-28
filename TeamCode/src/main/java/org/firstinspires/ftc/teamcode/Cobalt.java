@@ -165,8 +165,8 @@ public class Cobalt extends LinearOpMode {
             }
 
             game.lifterTest(-gamepad1.right_stick_y);
-            telemetry.addData("X Pos",drive.getPosX());
-            telemetry.addData("Y Pos", drive.getPosY());
+            telemetry.addData("Abs Pos","X,Y %2.3f, %2.3f", drive.getAbsolutesPosX(), drive.getAbsolutesPosY());
+            telemetry.addData("Pos", "x,y: %2.3f, %2.3f", drive.getPosX(), drive.getPosY());
             telemetry.addData("Heading", drive.getHeading());
             telemetry.addData("Target", targetHeading);
             telemetry.addData("Delta", drive.getDeltaHeading(targetHeading));

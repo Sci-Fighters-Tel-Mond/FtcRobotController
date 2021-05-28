@@ -54,13 +54,16 @@ public class IMU_Integrator implements BNO055IMU.AccelerationIntegrator {
 	public  double getX() { return xPos; }
 	public  double getY() { return yPos; }
 
-	IMU_Integrator(BNO055IMU imu, HardwareMap hw) {
+	IMU_Integrator(BNO055IMU imu, HardwareMap hw, double forwardTicksPerMeter, double strafeTicksPerMeter) {
 		this.imu = imu;
 		// Constructor
 		fl = hw.get(DcMotorEx.class, "fl");
 		fr = hw.get(DcMotorEx.class, "fr");
 		bl = hw.get(DcMotorEx.class, "bl");
 		br = hw.get(DcMotorEx.class, "br");
+
+		this.forwardTicksPerMeter = forwardTicksPerMeter;
+		this.strafeTicksPerMeter = strafeTicksPerMeter;
 	}
 
 	public double getForwardDistance() {
@@ -118,9 +121,9 @@ public class IMU_Integrator implements BNO055IMU.AccelerationIntegrator {
 		double deltaS = getStrafeDistance();
 		resetPosition();
 
-		double a = getHeading();
-		xPos += deltaS * Math.cos(a) + deltaF * Math.sin(a);
-		yPos += deltaF * Math.cos(a) - deltaS * Math.sin(a);
+		double a = -getHeading() / 180.0 * Math.PI;
+		xPos += deltaS * Math.cos(a) - deltaF * Math.sin(a);
+		yPos += deltaF * Math.cos(a) + deltaS * Math.sin(a);
 
 		position.x = xPos;
 		position.y = yPos;

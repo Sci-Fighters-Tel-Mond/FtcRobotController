@@ -134,7 +134,7 @@ public class DriveClass {
 
 		parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
 		parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-		parameters.accelerationIntegrationAlgorithm = new IMU_Integrator(imu, hw);
+		parameters.accelerationIntegrationAlgorithm = new IMU_Integrator(imu, hw, forwardTicksPerMeter, strafeTicksPerMeter);
 
 		imu.initialize(parameters);
 
@@ -152,7 +152,7 @@ public class DriveClass {
 			opMode.telemetry.addData("Gyro", "Gyro/IMU Calibration Failed");
 		}
 
-		imu.startAccelerationIntegration(new Position(), new Velocity(), 5);
+		imu.startAccelerationIntegration(new Position(), new Velocity(), 2);
 
 		opMode.telemetry.update();
 
@@ -185,10 +185,8 @@ public class DriveClass {
 			setPower(forward, turn, strafe);
 		}
 
-		opMode.telemetry.addData("front left:", fl.getCurrentPosition());
-		opMode.telemetry.addData("front right:", fr.getCurrentPosition());
-		opMode.telemetry.addData("back left:", bl.getCurrentPosition());
-		opMode.telemetry.addData("back right:", br.getCurrentPosition());
+//		opMode.telemetry.addData("Front","left/right: %d, %d", fl.getCurrentPosition(), fr.getCurrentPosition());
+//		opMode.telemetry.addData("Back","left/right: %d, %d", bl.getCurrentPosition(), br.getCurrentPosition());
 	}
 
 	public void stopPower() {
@@ -338,53 +336,69 @@ public class DriveClass {
 		double startX = currentX;
 		double startY = currentY;
 
-		opMode.telemetry.addData("goto x", x);
-		opMode.telemetry.addData("goto y", y);
-		opMode.telemetry.update();
-
-		//drive(deltaY, deltaX, targetPower, targetHeading, true, tolerance);
-
-
 		//double totalDist = Math.sqrt(deltaX*deltaX + deltaY*deltaY);
 		double totalDist = Math.hypot(deltaX, deltaY);
 		double currentDist = 0;
 
-		while (currentDist >= totalDist) {
+		opMode.telemetry.addData("goto x", x);
+		opMode.telemetry.addData("goto y", y);
+		opMode.telemetry.addData("goto delta x", deltaX);
+		opMode.telemetry.addData("goto delta y", deltaY);
+		opMode.telemetry.addData("goto hypocampus total dist", totalDist);
+		opMode.telemetry.update();
+
+		while (currentDist < totalDist - tolerance) { // TODO: theres a NaN here somewhere (the attack of the NaNs)
 			double power = targetPower;
+
 			currentX = getPosX();
 			currentY = getPosY();
 			deltaX = currentX - startX;
 			deltaY = currentY - startY;
-			currentDist = Math.hypot(deltaY,deltaX);
+			currentDist = Math.hypot(deltaY,deltaX); // distance moved from start position.
 			deltaX = x - currentX;
 			deltaY = y - currentY;
-			double leftDist = Math.hypot(deltaY,deltaX);
+			double remainDist = Math.hypot(deltaY,deltaX);  // distance left to target.
 
 			//double leftDist = totalDist - currentDist;
 			double minPower = 0.2;
 			double acclGain = 2;
 			double acclPower = currentDist * acclGain + minPower;
-			double RVf = (y  - currentY) / leftDist;
-			double RVs = (x  - currentX) / leftDist;
+
+			double RVy = deltaY / remainDist;  // y velocity ratio
+			double RVx = deltaX / remainDist;  // x velocity ratio
 
 			if (acclPower + 0.2 < power) {
 				power = acclPower;
 			}
 
 			double breakgain = 0.9;
-			double breakPower = leftDist * breakgain + minPower;
+			double breakPower = remainDist * breakgain + minPower;
 
 			if (breakPower < power) {
 				power = breakPower;
 			}
 
-			double err = getDeltaHeading(targetHeading);
-			double gain = 0.040;
+			double err = getDeltaHeading(targetHeading)/180;
+			double gain = 0.2;
 			double correction = gain * err;
-			double Vf = RVf * power;
-			double Vs = RVs * power;
+			double Vy = RVy * power;
+			double Vx = RVx * power;
 
-			setPowerOriented(Vf, Vs, correction, fieldOriented);
+			//setPowerOriented(Vy, Vx, correction, true);
+			double phiRad = -getHeading() / 180 * Math.PI;
+			double forward = Vy * Math.cos(phiRad) - Vx * Math.sin(phiRad);
+			double strafe  = Vy * Math.sin(phiRad) + Vx * Math.cos(phiRad);
+			setPower(forward, correction, strafe);
+
+			opMode.telemetry.addData("distance","%2.3f, %2.3f", currentDist, remainDist);
+			opMode.telemetry.addData("Abs Pos","X,Y %2.3f, %2.3f", getAbsolutesPosX(), getAbsolutesPosY());
+			opMode.telemetry.addData("> currnt","X,Y: %2.3f, %2.3f", currentX, currentY);
+			opMode.telemetry.addData("goto delta"," x,y: %2.3f, %2.3f", deltaX, deltaY);
+			opMode.telemetry.addData("goto velos","f,s: %2.3f, %2.3f", Vy, Vx);
+			opMode.telemetry.addData("heading ", getHeading());
+			opMode.telemetry.addData("heading error", err);
+			opMode.telemetry.addData("power", power);
+			opMode.telemetry.update();
 		}
 	}
 
