@@ -178,9 +178,6 @@ public class GameClass {
 		}
 
 		if (lifterRequest == LifterRequest.DOWN) {
-			if (didSecondStage == false && getLifterLimiter()) {
-				lifterUpDownSecondStage(false);
-			}
 			if (getLifterLimiter() || timer.milliseconds() > 4000) {
 				lifterRequest = LifterRequest.STAY;
 				setIntake(true);
