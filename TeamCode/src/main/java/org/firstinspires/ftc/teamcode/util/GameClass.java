@@ -35,8 +35,9 @@ public class GameClass {
 
 	private enum LifterRequest {UP, DOWN, STAY}
 
-	;
 	private LifterRequest lifterRequest = LifterRequest.STAY;
+
+	private boolean didSecondStage = false;
 
 	final private double shooterSpeed = 0.9;
 	final private int lifterUpTargetPosition = 1755; // previously 1840
@@ -109,20 +110,33 @@ public class GameClass {
 	}
 
 	public void lifterUpDown(boolean goUp) {
+		lifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+		if (goUp) {
+			lifter.setPower(1);
+			lifterRequest = LifterRequest.UP;
+		} else {
+			lifter.setPower(-1);
+			lifterRequest = LifterRequest.DOWN;
+		}
+
+		didSecondStage = false;
+		timer.reset();
+	}
+
+	public void lifterUpDownSecondStage(boolean goUp) {
 		if (goUp) {
 			lifter.setTargetPosition(lifterUpTargetPosition);
-			lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-			lifter.setPower(1);
-
 			lifterRequest = LifterRequest.UP;
 		} else {
 			lifter.setTargetPosition(lifterDownTargetPosition);
-			lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-			lifter.setPower(1);
-
 			lifterRequest = LifterRequest.DOWN;
-
 		}
+
+		lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+		lifter.setPower(1);
+
+		didSecondStage = true;
 		timer.reset();
 	}
 
@@ -150,9 +164,12 @@ public class GameClass {
 		opMode.telemetry.addData("wobble position", getWobbleArmPos());
 
 		opMode.telemetry.addData("Lifter pos", lifter.getCurrentPosition());
-		opMode.telemetry.addData("shooter!!!!!!!!!!!", shooter.getVelocity());
+		opMode.telemetry.addData("shooter vel", shooter.getVelocity());
 
 		if (lifterRequest == LifterRequest.UP) {
+			if (didSecondStage == false && lifter.getCurrentPosition() > lifterUpTargetPosition - 300) {
+				lifterUpDownSecondStage(true);
+			}
 			if (lifter.getCurrentPosition() > lifterUpTargetPosition || timer.milliseconds() > 4000) {
 				lifterRequest = LifterRequest.STAY;
 				superState.set(true);
@@ -161,7 +178,10 @@ public class GameClass {
 		}
 
 		if (lifterRequest == LifterRequest.DOWN) {
-			if (getLifterLimiter() || (timer.milliseconds() > 4000)) {
+			if (didSecondStage == false && getLifterLimiter()) {
+				lifterUpDownSecondStage(false);
+			}
+			if (getLifterLimiter() || timer.milliseconds() > 4000) {
 				lifterRequest = LifterRequest.STAY;
 				setIntake(true);
 				lifter.setPower(0);
