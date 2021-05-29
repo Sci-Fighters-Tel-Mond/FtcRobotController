@@ -145,6 +145,7 @@ public class AutoFlows {
 
 		game.wobbleArmGoTo(1500); //wobble up
 		game.setSuperPosition(true);// fire position
+		game.lifterUpDownSecondStage(true);
 
 		double heading = robot.getHeading();
 
@@ -166,6 +167,7 @@ public class AutoFlows {
 
 		this.opMode.sleep(1000);
 		game.setSuperPosition(false); //intake
+		game.lifterUpDownSecondStage(false);
 		// robot.turnTo(0, 0.6);
         this.opMode.telemetry.addData("going to", abc);
         this.opMode.telemetry.update();
