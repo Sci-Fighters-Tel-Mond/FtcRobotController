@@ -33,11 +33,13 @@ public class GameClass {
 	private Toggle wobbleGrabberState = new Toggle();
 	private Toggle testLifterToggle = new Toggle();
 
-	private enum LifterRequest {UP, DOWN, STAY};
+	private enum LifterRequest {UP, DOWN, STAY}
+
+	;
 	private LifterRequest lifterRequest = LifterRequest.STAY;
 
 	final private double shooterSpeed = 0.9;
-	final private int lifterUpTargetPosition = 1840;
+	final private int lifterUpTargetPosition = 1755; // previously 1840
 	final private int lifterDownTargetPosition = 0;
 
 
@@ -82,6 +84,8 @@ public class GameClass {
 		lifter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 		ringMover.setPosition(1);
+		setWobbleGrabber(false);
+		setWipers(false);
 	}
 
 	public void setSuperPosition(boolean goUp) {
@@ -99,7 +103,7 @@ public class GameClass {
 		}
 	}
 
-	public boolean getSuperState(){
+	public boolean getSuperState() {
 		update();
 		return superState.getState();
 	}
@@ -148,8 +152,8 @@ public class GameClass {
 		opMode.telemetry.addData("Lifter pos", lifter.getCurrentPosition());
 		opMode.telemetry.addData("shooter!!!!!!!!!!!", shooter.getVelocity());
 
-		if (lifterRequest == LifterRequest.UP){
-			if (lifter.getCurrentPosition() > lifterUpTargetPosition  || timer.milliseconds() > 4000 ){
+		if (lifterRequest == LifterRequest.UP) {
+			if (lifter.getCurrentPosition() > lifterUpTargetPosition || timer.milliseconds() > 4000) {
 				lifterRequest = LifterRequest.STAY;
 				superState.set(true);
 			}
@@ -169,7 +173,7 @@ public class GameClass {
 		opMode.telemetry.addData("Super State", superState.getState());
 	}
 
-	public void lifterTest(double pow) {
+	public void lifterMoveManually(double pow) {
 		testLifterToggle.update(Math.abs(pow) > 0.2);
 		if (testLifterToggle.isClicked()) {
 			lifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -187,11 +191,11 @@ public class GameClass {
 		}
 	}
 
-	public void initWobbleArmPosition(){
+	public void initWobbleArmPosition() {
 		wobbleArm.setPower(-0.6);
 		ElapsedTime time = new ElapsedTime();
-		while (getWobbleArmLimiter() == false){
-			if ( time.milliseconds() > 5000) break;
+		while (getWobbleArmLimiter() == false) {
+			if (time.milliseconds() > 5000) break;
 		}
 		wobbleArm.setPower(0);
 		opMode.sleep(500);
@@ -199,7 +203,7 @@ public class GameClass {
 		wobbleArm.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 	}
 
-	public int getWobbleArmPos(){
+	public int getWobbleArmPos() {
 		return wobbleArm.getCurrentPosition();
 	}
 
@@ -285,7 +289,7 @@ public class GameClass {
 	}
 
 	public void shoot() {
-		if (superState.getState() ) {
+		if (superState.getState()) {
 			setRingMover(0);
 			opMode.sleep(300);
 			setRingMover(1);
@@ -297,7 +301,7 @@ public class GameClass {
 	}
 
 	public void setWipers(boolean open) {
-		this.wiperLeft.setPosition(open ? 1 : 0);
+		this.wiperLeft.setPosition(open ? 0 : 1);
 		this.wiperRight.setPosition(open ? 1 : 0);
 	}
 

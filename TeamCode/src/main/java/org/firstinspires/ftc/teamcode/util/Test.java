@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.util;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(group = "Cobalt")
@@ -155,7 +154,7 @@ public class Test extends LinearOpMode {
                 game.stopAll();
             }
 
-            game.lifterTest(-gamepad1.right_stick_y);
+            game.lifterMoveManually(-gamepad1.right_stick_y);
             telemetry.addData("X Pos",drive.getPosX());
             telemetry.addData("Y Pos", drive.getPosY());
             telemetry.addData("Heading", drive.getHeading());
