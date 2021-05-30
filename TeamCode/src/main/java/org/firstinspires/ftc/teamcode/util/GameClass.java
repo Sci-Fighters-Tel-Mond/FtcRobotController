@@ -5,8 +5,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.RobotLog;
 
 public class GameClass {
 
@@ -39,8 +42,8 @@ public class GameClass {
 
 	private boolean didSecondStage = false;
 
-	final private double shooterSpeed = 0.9;
-	final private int lifterUpTargetPosition = 1755; // previously 1840
+	final private double shooterSpeed = 0.8;
+	final private int lifterUpTargetPosition = 1860; // previously 1840
 	final private int lifterDownTargetPosition = 0;
 
 
@@ -87,6 +90,18 @@ public class GameClass {
 		ringMover.setPosition(1);
 		setWobbleGrabber(false);
 		setWipers(false);
+
+		setShooterPID();
+	}
+
+	private void setShooterPID() {
+		PIDFCoefficients pidf = shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+		RobotLog.d("Shooter PID");
+		RobotLog.d(pidf.toString());
+//		pidf.p = 10;
+//		pidf.i = 3;
+//		shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidf);
+//		RobotLog.d("New Shooter PID", pidf.toString());
 	}
 
 	public double getShooterSpeed(){

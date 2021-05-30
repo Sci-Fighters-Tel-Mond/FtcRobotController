@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.study.Auto;
 import org.firstinspires.ftc.teamcode.util.BananaPipeline;
 import org.firstinspires.ftc.teamcode.util.CvCam;
 import org.firstinspires.ftc.teamcode.util.DriveClass;
@@ -26,7 +25,7 @@ public class AutoFlows {
 	Location b_pos;
 	Location c_pos;
 	Location a_back_Pos;
-	Location wobbleFirst_pos;
+	Location secondWobble_pos1;
 	Location parkPos;
 	Alliance alliance;
 
@@ -50,7 +49,7 @@ public class AutoFlows {
 		b_pos = new Location(0.75 * mul, 2.15);
 		c_pos = new Location(1.4 * mul, 2.65);
 		a_back_Pos = new Location(1.10 * mul, 1.30);
-		wobbleFirst_pos = new Location(2.5 * tile * mul, 2 * tile);
+		secondWobble_pos1 = new Location(2.5 * tile * mul, 2 * tile);
 		parkPos = new Location(0.8 * mul, 2);
 
 		if(startline == StartLine.OUTTER) {
@@ -64,7 +63,7 @@ public class AutoFlows {
 			a_pos.x += 0.1;
 			b_pos.x += 0.2;
 			c_pos.x += 0.1;
-//			wobbleFirst_pos.x -= 0.2;
+			secondWobble_pos1.x -= 0.2;
 		}
 
 		robot = new DriveClass(this.opMode, DriveClass.ROBOT.COBALT, startingPosition).useEncoders();
@@ -200,21 +199,18 @@ public class AutoFlows {
 
 		if(shortened == false) {
 			// going to pick up the second wobble rod
-			robot.goToLocation(wobbleFirst_pos, 1, heading, 0.1);
+			robot.goToLocation(secondWobble_pos1, 1, heading, 0.1);
 			if (alliance == Alliance.RED){
 				game.wobbleArmGoTo(4000);
 			}
-			int targetAngle = 164;
-			if(alliance == Alliance.RED) {
-				targetAngle = -250;
-			}
+
+			int targetAngle = (alliance == Alliance.BLUE) ? 175 : -250;
+
 			robot.turnTo(targetAngle, 1);
-			if(alliance == Alliance.BLUE) {
-				targetAngle = 180;
-			}
+
 			robot.drive(0.40, 0, 1, targetAngle, false);
 
-			// picking up the wobble
+			// picking up the second wobble
 			game.wobbleArmGoTo(6500);
 			opMode.sleep(300);
 			game.setWobbleGrabber(false);
@@ -222,9 +218,9 @@ public class AutoFlows {
 			game.wobbleArmGoTo(4000);
 
 			// going back
-			robot.drive(-0.40, 0, 1, 170, false);
+			robot.drive(-0.40, 0, 1, targetAngle, false);
 			opMode.sleep(150);
-			robot.turnTo(0, 1);
+			robot.turnTo(heading, 1);
 
 			switch (abc) {
 				case A:
@@ -237,7 +233,7 @@ public class AutoFlows {
 					robot.goToLocation(c_pos, 1, heading, 0.05);
 					break;
 			}
-
+			// Putting down the second wobble
 			game.wobbleArmGoTo(5778);
 			opMode.sleep(400);
 			game.setWobbleGrabber(true);

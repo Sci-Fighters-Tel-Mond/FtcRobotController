@@ -54,19 +54,6 @@ public class Cobalt extends LinearOpMode {
 		// run until the end of the match (driver presses STOP)
 		while (opModeIsActive()) {
 
-			boolean armShooter = gamepad1.x && !gamepad1.start; // up armShooter
-			boolean stopAll = gamepad1.a;
-			boolean intake = gamepad1.dpad_right; // down armShooter
-
-			reverseIntake.update(gamepad1.dpad_left);
-			wobbleForward.update(gamepad1.dpad_up);
-			wobbleBackward.update(gamepad1.dpad_down);
-			wobbleGrabber.update(gamepad1.b);
-			shootHeading.update(gamepad1.back);
-			ringFire.update(gamepad1.right_bumper);
-			wiperToggle.update(gamepad1.left_bumper);
-
-
 			boolean resetOrientation = gamepad1.start;
 
 			if (resetOrientation) {
@@ -81,17 +68,29 @@ public class Cobalt extends LinearOpMode {
 				continue;
 			}
 
-			boolean fieldOriented = (!gamepad1.y) && (!gamepad1.start);
+			boolean armShooter = gamepad1.x || gamepad2.x; // up armShooter
+			boolean stopAll = gamepad1.a || gamepad2.a;
+			boolean intake = gamepad1.dpad_right || gamepad2.dpad_right; // down armShooter
+
+			reverseIntake.update(gamepad1.dpad_left || gamepad2.dpad_left);
+			wobbleForward.update(gamepad1.dpad_up || gamepad2.dpad_up);
+			wobbleBackward.update(gamepad1.dpad_down || gamepad2.dpad_down);
+			wobbleGrabber.update(gamepad1.b || gamepad2.b);
+			shootHeading.update(gamepad1.back || gamepad2.back);
+			ringFire.update(gamepad1.right_bumper || gamepad2.right_bumper);
+			wiperToggle.update(gamepad1.left_bumper || gamepad2.left_bumper);
+
+			boolean fieldOriented = !gamepad1.y;
 			double boost = gamepad1.right_trigger * 0.6 + 0.4;
 
 			double y = -gamepad1.left_stick_y * boost;
 			double x = gamepad1.left_stick_x * boost;
 			double turn = gamepad1.right_stick_x * boost;
 
-			turningToggle.update(Math.abs(turn) > 0.05);
+			turningToggle.update(Math.abs(turn) > 0.02);
 
 			if (turningToggle.isReleased()) {
-				turningCount = 5;
+				turningCount = 8;
 			}
 			if (!turningToggle.isPressed()) {
 				turningCount--;
@@ -99,7 +98,6 @@ public class Cobalt extends LinearOpMode {
 
 			if (turningCount == 0) {
 				targetHeading = drive.getHeading();
-
 			}
 
 			if (!turningToggle.isPressed() && turningCount < 0) {
@@ -168,7 +166,7 @@ public class Cobalt extends LinearOpMode {
 				game.stopAll();
 			}
 
-			game.lifterMoveManually(-gamepad1.right_stick_y);
+			game.lifterMoveManually(-gamepad1.right_stick_y-gamepad2.right_stick_y);
 			telemetry.addData("X Pos", drive.getPosX());
 			telemetry.addData("Y Pos", drive.getPosY());
 			telemetry.addData("Heading", drive.getHeading());
