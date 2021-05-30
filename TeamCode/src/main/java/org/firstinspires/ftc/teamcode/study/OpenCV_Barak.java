@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.study;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -18,6 +19,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 
 @TeleOp
+@Disabled
 public class OpenCV_Barak extends LinearOpMode {
     OpenCvInternalCamera phoneCam;
     BananaPipeline pipeline;

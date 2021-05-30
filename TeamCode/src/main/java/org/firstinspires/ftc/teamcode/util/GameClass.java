@@ -89,6 +89,10 @@ public class GameClass {
 		setWipers(false);
 	}
 
+	public double getShooterSpeed(){
+		return shooter.getVelocity();
+	}
+
 	public void setSuperPosition(boolean goUp) {
 		if (goUp) {
 			setIntake(false);
@@ -164,7 +168,7 @@ public class GameClass {
 		opMode.telemetry.addData("wobble position", getWobbleArmPos());
 
 		opMode.telemetry.addData("Lifter pos", lifter.getCurrentPosition());
-		opMode.telemetry.addData("shooter vel", shooter.getVelocity());
+		opMode.telemetry.addData("Shooter vel", shooter.getVelocity());
 
 		if (lifterRequest == LifterRequest.UP) {
 			if (didSecondStage == false && lifter.getCurrentPosition() > lifterUpTargetPosition - 300) {

@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode.study;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -44,7 +45,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
 @Autonomous(group = "Linear Opmode")
-//@Disabled
+@Disabled
 public class OpenCV_Scorpion extends LinearOpMode {
     BananaPipeline pipeline;
     OpenCvInternalCamera phoneCam;

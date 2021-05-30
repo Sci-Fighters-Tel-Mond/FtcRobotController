@@ -25,6 +25,7 @@ public class AutoFlows {
 	Location a_pos;
 	Location b_pos;
 	Location c_pos;
+	Location a_back_Pos;
 	Location wobbleFirst_pos;
 	Location parkPos;
 	Alliance alliance;
@@ -42,12 +43,13 @@ public class AutoFlows {
 		} else {
 			mul = red;
 		}
-		startingPosition = new Location(0.75 * mul, 0);
+		startingPosition = new Location(0.6 * mul, 0);
 		firstPos = new Location(0.27 * mul, 0.73); // -0.25,0.73
-		shootPos = new Location(0.20 * mul, 1.13);
+		shootPos = new Location(0.25 * mul, 1.13);
 		a_pos = new Location(1.4 * mul, 1.45);
 		b_pos = new Location(0.75 * mul, 2.15);
 		c_pos = new Location(1.4 * mul, 2.65);
+		a_back_Pos = new Location(1.10 * mul, 1.30);
 		wobbleFirst_pos = new Location(2.5 * tile * mul, 2 * tile);
 		parkPos = new Location(0.8 * mul, 2);
 
@@ -58,12 +60,11 @@ public class AutoFlows {
 			shootingAngle = 25.35;
 		}
 		if (alliance == Alliance.RED) {
-			shootingAngle = 30;
-			a_pos.x -= 0.2;
-			a_pos.y -= 0.2;
-			b_pos.y -= 0.2;
-			c_pos.y -= 0.2;
-			wobbleFirst_pos.x -= 0.2;
+			shootingAngle = 25;
+			a_pos.x += 0.1;
+			b_pos.x += 0.2;
+			c_pos.x += 0.1;
+//			wobbleFirst_pos.x -= 0.2;
 		}
 
 		robot = new DriveClass(this.opMode, DriveClass.ROBOT.COBALT, startingPosition).useEncoders();
@@ -151,7 +152,8 @@ public class AutoFlows {
 
 		//go shoot
 		robot.goToLocation(firstPos, 1, heading, 0.15);
-		robot.goToLocation(shootPos, 1, shootingAngle, 0.01);
+		robot.goToLocation(shootPos, 1, heading, 0.01);
+		robot.turnTo(shootingAngle, 1);
 		game.update();
 		// robot.turnTo(20, 0.6);
 
@@ -159,7 +161,7 @@ public class AutoFlows {
 
 		for (int x = 0; x < 3; x++) { // fire ring
 			game.update();
-			this.opMode.sleep(1200);
+			this.opMode.sleep(1500);
 			game.update();
 			game.shoot();
 			game.update();
@@ -172,7 +174,7 @@ public class AutoFlows {
         this.opMode.telemetry.addData("going to", abc);
         this.opMode.telemetry.update();
 
-
+		// go to first wobble position
 		switch (abc) {
 			case A:
 				robot.goToLocation(a_pos.offset(0.15), 1, heading, 0.05);
@@ -185,13 +187,16 @@ public class AutoFlows {
 				break;
 		}
 
-
 		//drop #1wobble
 		//Last current position - tiles: (x: -0.5, y: 4.5)
 		game.wobbleArmGoTo(5778);
 		this.opMode.sleep(1000);
 		game.setWobbleGrabber(true);
 		this.opMode.sleep(350);
+
+		if (abc == ABC.A) {
+			robot.goToLocation(a_back_Pos, 1, heading, 0.05);
+		}
 
 		if(shortened == false) {
 			// going to pick up the second wobble rod
@@ -239,7 +244,7 @@ public class AutoFlows {
 			opMode.sleep(350);
 
 			if (abc == ABC.A) {
-				robot.drive(-0.05, 0.25, 1, heading, true, 0.1);
+				robot.goToLocation(a_back_Pos, 1, heading, 0.05);
 			}
 
 			game.wobbleArmGoTo(100);
