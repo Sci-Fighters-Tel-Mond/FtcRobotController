@@ -59,13 +59,24 @@ public class AutoFlows {
 			shootingAngle = 25.35;
 		}
 		if (alliance == Alliance.RED) {
-			shootingAngle = 25;
 			a_pos.x += 0.1;
 			b_pos.x += 0.2;
 			c_pos.x += 0.1;
 			secondWobble_pos1.x -= 0.2;
 		}
-
+		if(alliance == Alliance.RED) {
+			if (startline == StartLine.INNER) {
+				shootingAngle = 25;
+			} else {
+				shootingAngle = 1;
+			}
+		} else {
+			if(startline == StartLine.INNER) {
+				shootingAngle = 0;
+			} else {
+				shootingAngle = -1;
+			}
+		}
 		robot = new DriveClass(this.opMode, DriveClass.ROBOT.COBALT, startingPosition).useEncoders();
 		game = new GameClass(this.opMode);    // Declare OpMode members.
 	}
@@ -135,7 +146,11 @@ public class AutoFlows {
 		this.opMode.telemetry.addData("Rings: ", abc);
 		this.opMode.telemetry.update();
 
+		// ================================================
+		// ================================================
 		// Wait for the game to start (driver presses PLAY)
+		// ================================================
+		// ================================================
 		this.opMode.waitForStart();
 		runtime.reset();
 
@@ -204,7 +219,7 @@ public class AutoFlows {
 				game.wobbleArmGoTo(4000);
 			}
 
-			int targetAngle = (alliance == Alliance.BLUE) ? 175 : -250;
+			int targetAngle = (alliance == Alliance.BLUE) ? 175 : -175;
 
 			robot.turnTo(targetAngle, 1);
 

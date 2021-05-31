@@ -284,7 +284,7 @@ public class GameClass {
 
 
 	private void setIntake(boolean active) {
-		this.setWipers(active);
+		// this.setWipers(active);
 		intakeState.set(active);
 		intake.setPower(active ? 1 : 0);
 	}
