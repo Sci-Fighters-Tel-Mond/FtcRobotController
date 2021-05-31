@@ -135,7 +135,9 @@ public class GameClass {
 			lifter.setPower(1);
 			lifterRequest = LifterRequest.UP;
 		} else {
-			lifter.setPower(-1);
+			if (!getLifterLimiter()) {
+				lifter.setPower(-1);
+			}
 			lifterRequest = LifterRequest.DOWN;
 		}
 
@@ -147,29 +149,32 @@ public class GameClass {
 		if (goUp) {
 			lifter.setTargetPosition(lifterUpTargetPosition);
 			lifterRequest = LifterRequest.UP;
-		} else {
+
+			lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+			lifter.setPower(1);
+		} else if (!getLifterLimiter()) {
 			lifter.setTargetPosition(lifterDownTargetPosition);
 			lifterRequest = LifterRequest.DOWN;
-		}
 
-		lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-		lifter.setPower(1);
+			lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+			lifter.setPower(1);
+		}
 
 		didSecondStage = true;
 		timer.reset();
 	}
 
 	public void lifterMove(int goUp) {
-		int lifterCurruntPosition = lifter.getCurrentPosition();
+		int lifterCurrentPosition = lifter.getCurrentPosition();
 		if (goUp > 0) {
-			lifter.setTargetPosition(lifterCurruntPosition + goUp);
+			lifter.setTargetPosition(lifterCurrentPosition + goUp);
 			lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 			lifter.setPower(1);
 
 			//lifterRequest = LifterRequest.UP;
 			opMode.telemetry.addData("lifter going up", goUp);
 		} else {
-			lifter.setTargetPosition(lifterCurruntPosition + goUp);
+			lifter.setTargetPosition(lifterCurrentPosition + goUp);
 			lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 			lifter.setPower(1);
 
