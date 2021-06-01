@@ -70,9 +70,9 @@ public class Cobalt extends LinearOpMode {
 
 			boolean armShooter = gamepad1.x || gamepad2.x; // up armShooter
 			boolean stopAll = gamepad1.a || gamepad2.a;
-			boolean intake = gamepad1.dpad_right || gamepad2.dpad_right; // down armShooter
+			boolean intake = gamepad1.dpad_right; // down armShooter, // gamepad2 isn't required
 
-			reverseIntake.update(gamepad1.dpad_left || gamepad2.dpad_left);
+			reverseIntake.update(gamepad1.dpad_left); // gamepad2 isn't required
 			wobbleForward.update(gamepad1.dpad_up || gamepad2.dpad_up);
 			wobbleBackward.update(gamepad1.dpad_down || gamepad2.dpad_down);
 			wobbleGrabber.update(gamepad1.b || gamepad2.b);
