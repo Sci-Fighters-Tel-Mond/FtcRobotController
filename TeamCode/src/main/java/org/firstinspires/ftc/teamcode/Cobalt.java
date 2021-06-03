@@ -75,7 +75,7 @@ public class Cobalt extends LinearOpMode {
 			reverseIntake.update(gamepad1.dpad_left); // gamepad2 isn't required
 			wobbleForward.update(gamepad1.dpad_up || gamepad2.dpad_up);
 			wobbleBackward.update(gamepad1.dpad_down || gamepad2.dpad_down);
-			wobbleGrabber.update(gamepad1.b || gamepad2.b);
+			wobbleGrabber.update(gamepad1.b ); // || gamepad2.b);
 			shootHeading.update(gamepad1.back || gamepad2.back);
 			ringFire.update(gamepad1.right_bumper || gamepad2.right_bumper);
 			wiperToggle.update(gamepad1.left_bumper || gamepad2.left_bumper);
@@ -166,7 +166,7 @@ public class Cobalt extends LinearOpMode {
 				game.stopAll();
 			}
 
-			game.lifterMoveManually(-gamepad1.right_stick_y-gamepad2.right_stick_y);
+			game.lifterMoveManually(/*-gamepad1.right_stick_y*/-gamepad2.right_stick_y);
 			telemetry.addData("X Pos", drive.getPosX());
 			telemetry.addData("Y Pos", drive.getPosY());
 			telemetry.addData("Heading", drive.getHeading());

@@ -43,7 +43,7 @@ public class GameClass {
 	private boolean didSecondStage = false;
 
 	final private double shooterSpeed = 0.9;
-	final private int lifterUpTargetPosition = 1790; // previously 1840
+	final private int lifterUpTargetPosition = 1800; // previously 1840
 	final private int lifterDownTargetPosition = 0;
 
 	private ElapsedTime timer = new ElapsedTime();
@@ -223,11 +223,12 @@ public class GameClass {
 			if ((curTicks > 2800 && pow > 0) || (getLifterLimiter() && pow < 0)) {
 				pow = 0; //isn't necessary anymore
 			}
-			/*lifter.setPower(pow);
+			lifter.setPower(pow);
 			opMode.telemetry.addData("TEST Lifter Power", pow);
 		} else if (testLifterToggle.isReleased()) {
 			opMode.telemetry.addData("TEST Lifter Power", pow);
-			lifter.setPower(0);*/
+			lifter.setPower(0);
+			
 		}
 	}
 
