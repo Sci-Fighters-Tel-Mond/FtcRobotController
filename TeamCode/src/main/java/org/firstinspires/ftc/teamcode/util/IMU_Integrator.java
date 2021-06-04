@@ -3,10 +3,8 @@ package org.firstinspires.ftc.teamcode.util;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.NavUtil;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
@@ -51,6 +49,15 @@ public class IMU_Integrator implements BNO055IMU.AccelerationIntegrator {
 		return this.acceleration;
 	}
 
+	private class FS {
+		public double f = 0;
+		public double s = 0;
+		FS(double f, double s) {
+			this.f = f;
+			this.s = s;
+		}
+	}
+
 	public  double getX() { return xPos; }
 	public  double getY() { return yPos; }
 
@@ -66,36 +73,30 @@ public class IMU_Integrator implements BNO055IMU.AccelerationIntegrator {
 		this.strafeTicksPerMeter = strafeTicksPerMeter;
 	}
 
-	public double getForwardDistance() {
-		double fl_tick = fl.getCurrentPosition() - fl_startPos;
-		double fr_tick = fr.getCurrentPosition() - fr_startPos;
-		double bl_tick = bl.getCurrentPosition() - bl_startPos;
-		double br_tick = br.getCurrentPosition() - br_startPos;
-		double fl_dist = fl_tick / forwardTicksPerMeter;
-		double fr_dist = fr_tick / forwardTicksPerMeter;
-		double bl_dist = bl_tick / forwardTicksPerMeter;
-		double br_dist = br_tick / forwardTicksPerMeter;
-		return (bl_dist + br_dist + fr_dist + fl_dist) / 4;
-	}
+	public FS getDeltaDistance() {
+		int fl_tick = fl.getCurrentPosition();
+		int fr_tick = fr.getCurrentPosition();
+		int bl_tick = bl.getCurrentPosition();
+		int br_tick = br.getCurrentPosition();
 
-	public double getStrafeDistance() {
-		double fl_tick = fl.getCurrentPosition() - fl_startPos;
-		double fr_tick = fr.getCurrentPosition() - fr_startPos;
-		double bl_tick = bl.getCurrentPosition() - bl_startPos;
-		double br_tick = br.getCurrentPosition() - br_startPos;
+		double fl_dist = fl_tick - fl_startPos;
+		double fr_dist = fr_tick - fr_startPos;
+		double bl_dist = bl_tick - bl_startPos;
+		double br_dist = br_tick - br_startPos;
 
-		double flDist = fl_tick / strafeTicksPerMeter;
-		double frDist = fr_tick / strafeTicksPerMeter;
-		double blDist = bl_tick / strafeTicksPerMeter;
-		double brDist = br_tick / strafeTicksPerMeter;
-		return (-blDist + brDist - frDist + flDist) / 4;
+
+		double f = ( bl_dist + br_dist + fr_dist + fl_dist) / forwardTicksPerMeter / 4;
+		double s = (-bl_dist + br_dist - fr_dist + fl_dist) / strafeTicksPerMeter / 4;
+
+		fl_startPos = fl_tick;
+		fr_startPos = fr_tick;
+		bl_startPos = bl_tick;
+		br_startPos = br_tick;
+
+		return new FS(f,s);
 	}
 
 	public void resetPosition() {
-		fl_startPos = fl.getCurrentPosition();
-		fr_startPos = fr.getCurrentPosition();
-		bl_startPos = bl.getCurrentPosition();
-		br_startPos = br.getCurrentPosition();
 	}
 
 	public void initialize(BNO055IMU.Parameters parameters, Position initialPosition, Velocity initialVelocity) {
@@ -117,13 +118,11 @@ public class IMU_Integrator implements BNO055IMU.AccelerationIntegrator {
 
 	public void update(Acceleration linearAcceleration) {
 
-		double deltaF = getForwardDistance();
-		double deltaS = getStrafeDistance();
-		resetPosition();
+		FS delta = getDeltaDistance();
 
 		double a = -getHeading() / 180.0 * Math.PI;
-		xPos += deltaS * Math.cos(a) - deltaF * Math.sin(a);
-		yPos += deltaF * Math.cos(a) + deltaS * Math.sin(a);
+		xPos += delta.s * Math.cos(a) - delta.f * Math.sin(a);
+		yPos += delta.f * Math.cos(a) + delta.s * Math.sin(a);
 
 		position.x = xPos;
 		position.y = yPos;

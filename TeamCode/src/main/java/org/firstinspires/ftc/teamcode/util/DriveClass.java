@@ -374,7 +374,7 @@ public class DriveClass {
 			double breakgain = 0.9;
 			double breakPower = remainDist * breakgain + minPower;
 
-			if (breakPower < power) {
+			if (breakPower < power && tolerance > 0.05) {
 				power = breakPower;
 			}
 
@@ -400,6 +400,7 @@ public class DriveClass {
 			opMode.telemetry.addData("power", power);
 			opMode.telemetry.update();
 		}
+		setPower(0,0,0);
 	}
 
 	public void drive(double forward, double sideward, double targetPower, double targetAngle) {
