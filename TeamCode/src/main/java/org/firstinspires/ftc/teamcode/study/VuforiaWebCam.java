@@ -87,7 +87,6 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 
 @TeleOp(group ="Concept")
 @Disabled
-//@Disabled
 public class VuforiaWebCam extends LinearOpMode {
 
     // IMPORTANT: If you are using pa USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;

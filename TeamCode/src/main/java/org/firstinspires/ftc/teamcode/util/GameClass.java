@@ -5,8 +5,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.RobotLog;
 
 public class GameClass {
 
@@ -33,13 +36,15 @@ public class GameClass {
 	private Toggle wobbleGrabberState = new Toggle();
 	private Toggle testLifterToggle = new Toggle();
 
-	private enum LifterRequest {UP, DOWN, STAY};
+	private enum LifterRequest {UP, DOWN, STAY}
+
 	private LifterRequest lifterRequest = LifterRequest.STAY;
 
-	final private double shooterSpeed = 0.9;
-	final private int lifterUpTargetPosition = 1840;
-	final private int lifterDownTargetPosition = 0;
+	private boolean didSecondStage = false;
 
+	final private double shooterSpeed = 0.9;
+	final private int lifterUpTargetPosition = 1800; // previously 1840
+	final private int lifterDownTargetPosition = 0;
 
 	private ElapsedTime timer = new ElapsedTime();
 
@@ -82,6 +87,24 @@ public class GameClass {
 		lifter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 		ringMover.setPosition(1);
+		setWobbleGrabber(false);
+		setWipers(false);
+
+		setShooterPID();
+	}
+
+	private void setShooterPID() {
+		PIDFCoefficients pidf = shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+		RobotLog.d("Shooter PID");
+		RobotLog.d(pidf.toString());
+//		pidf.p = 10;
+//		pidf.i = 3;
+//		shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidf);
+//		RobotLog.d("New Shooter PID", pidf.toString());
+	}
+
+	public double getShooterSpeed(){
+		return shooter.getVelocity();
 	}
 
 	public void setSuperPosition(boolean goUp) {
@@ -99,40 +122,58 @@ public class GameClass {
 		}
 	}
 
-	public boolean getSuperState(){
+	public boolean getSuperState() {
 		update();
 		return superState.getState();
 	}
 
 	public void lifterUpDown(boolean goUp) {
-		if (goUp) {
-			lifter.setTargetPosition(lifterUpTargetPosition);
-			lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-			lifter.setPower(1);
+		lifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+		if (goUp) {
+			lifter.setPower(1);
 			lifterRequest = LifterRequest.UP;
 		} else {
-			lifter.setTargetPosition(lifterDownTargetPosition);
+			if (!getLifterLimiter()) {
+				lifter.setPower(-1);
+			}
+			lifterRequest = LifterRequest.DOWN;
+		}
+
+		didSecondStage = false;
+		timer.reset();
+	}
+
+	public void lifterUpDownSecondStage(boolean goUp) {
+		if (goUp) {
+			lifter.setTargetPosition(lifterUpTargetPosition);
+			lifterRequest = LifterRequest.UP;
+
 			lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 			lifter.setPower(1);
-
+		} else if (!getLifterLimiter()) {
+			lifter.setTargetPosition(lifterDownTargetPosition);
 			lifterRequest = LifterRequest.DOWN;
 
+			lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+			lifter.setPower(1);
 		}
+
+		didSecondStage = true;
 		timer.reset();
 	}
 
 	public void lifterMove(int goUp) {
-		int lifterCurruntPosition = lifter.getCurrentPosition();
+		int lifterCurrentPosition = lifter.getCurrentPosition();
 		if (goUp > 0) {
-			lifter.setTargetPosition(lifterCurruntPosition + goUp);
+			lifter.setTargetPosition(lifterCurrentPosition + goUp);
 			lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 			lifter.setPower(1);
 
 			//lifterRequest = LifterRequest.UP;
 			opMode.telemetry.addData("lifter going up", goUp);
 		} else {
-			lifter.setTargetPosition(lifterCurruntPosition + goUp);
+			lifter.setTargetPosition(lifterCurrentPosition + goUp);
 			lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 			lifter.setPower(1);
 
@@ -146,10 +187,13 @@ public class GameClass {
 		opMode.telemetry.addData("wobble position", getWobbleArmPos());
 
 		opMode.telemetry.addData("Lifter pos", lifter.getCurrentPosition());
-		opMode.telemetry.addData("shooter!!!!!!!!!!!", shooter.getVelocity());
+		opMode.telemetry.addData("Shooter vel", shooter.getVelocity());
 
-		if (lifterRequest == LifterRequest.UP){
-			if (lifter.getCurrentPosition() > lifterUpTargetPosition  || timer.milliseconds() > 4000 ){
+		if (lifterRequest == LifterRequest.UP) {
+			if (didSecondStage == false && lifter.getCurrentPosition() > lifterUpTargetPosition - 300) {
+				lifterUpDownSecondStage(true);
+			}
+			if (lifter.getCurrentPosition() > lifterUpTargetPosition || timer.milliseconds() > 4000) {
 				lifterRequest = LifterRequest.STAY;
 				superState.set(true);
 			}
@@ -157,7 +201,7 @@ public class GameClass {
 		}
 
 		if (lifterRequest == LifterRequest.DOWN) {
-			if (getLifterLimiter() || (timer.milliseconds() > 4000)) {
+			if (getLifterLimiter() || timer.milliseconds() > 4000) {
 				lifterRequest = LifterRequest.STAY;
 				setIntake(true);
 				lifter.setPower(0);
@@ -169,7 +213,7 @@ public class GameClass {
 		opMode.telemetry.addData("Super State", superState.getState());
 	}
 
-	public void lifterTest(double pow) {
+	public void lifterMoveManually(double pow) {
 		testLifterToggle.update(Math.abs(pow) > 0.2);
 		if (testLifterToggle.isClicked()) {
 			lifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -177,21 +221,22 @@ public class GameClass {
 		if (testLifterToggle.isPressed()) {
 			int curTicks = lifter.getCurrentPosition();
 			if ((curTicks > 2800 && pow > 0) || (getLifterLimiter() && pow < 0)) {
-				pow = 0;
+				pow = 0; //isn't necessary anymore
 			}
 			lifter.setPower(pow);
 			opMode.telemetry.addData("TEST Lifter Power", pow);
 		} else if (testLifterToggle.isReleased()) {
 			opMode.telemetry.addData("TEST Lifter Power", pow);
 			lifter.setPower(0);
+			
 		}
 	}
 
-	public void initWobbleArmPosition(){
+	public void initWobbleArmPosition() {
 		wobbleArm.setPower(-0.6);
 		ElapsedTime time = new ElapsedTime();
-		while (getWobbleArmLimiter() == false){
-			if ( time.milliseconds() > 5000) break;
+		while (getWobbleArmLimiter() == false) {
+			if (time.milliseconds() > 5000) break;
 		}
 		wobbleArm.setPower(0);
 		opMode.sleep(500);
@@ -199,7 +244,7 @@ public class GameClass {
 		wobbleArm.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 	}
 
-	public int getWobbleArmPos(){
+	public int getWobbleArmPos() {
 		return wobbleArm.getCurrentPosition();
 	}
 
@@ -244,7 +289,7 @@ public class GameClass {
 
 
 	private void setIntake(boolean active) {
-		this.setWipers(active);
+		// this.setWipers(active);
 		intakeState.set(active);
 		intake.setPower(active ? 1 : 0);
 	}
@@ -285,7 +330,7 @@ public class GameClass {
 	}
 
 	public void shoot() {
-		if (superState.getState() ) {
+		if (superState.getState()) {
 			setRingMover(0);
 			opMode.sleep(300);
 			setRingMover(1);
@@ -297,7 +342,7 @@ public class GameClass {
 	}
 
 	public void setWipers(boolean open) {
-		this.wiperLeft.setPosition(open ? 1 : 0);
+		this.wiperLeft.setPosition(open ? 0 : 1);
 		this.wiperRight.setPosition(open ? 1 : 0);
 	}
 
