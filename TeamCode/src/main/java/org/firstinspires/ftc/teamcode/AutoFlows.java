@@ -31,6 +31,7 @@ public class AutoFlows {
 
     double shootingAngle = 0; //default
     boolean shortened = false;
+    int lifterPos = 1800;
 
     enum ABC {A, B, C}
 
@@ -56,8 +57,9 @@ public class AutoFlows {
         if (startline == StartLine.OUTTER) {
             startingPosition = new Location(1.2 * mul, 0);
             firstPos = new Location(1.5 * mul, 0.73);
-            shootPos = new Location(1.5 * mul, 1.13);
-            shootingAngle = 25.35;
+            shootPos = new Location(2.1 * mul, 1.65);
+            shootingAngle = 27.75;
+            lifterPos = 1808;
         }
         if (alliance == Alliance.RED) {
             a_pos.x += 0.1;
@@ -162,7 +164,7 @@ public class AutoFlows {
 
         game.wobbleArmGoTo(1500); //wobble up
         game.setSuperPosition(true);// fire position
-        game.lifterUpDownSecondStage(true);
+        game.lifterUpDownSecondStage(true, lifterPos);
 
         double heading = robot.getHeading();
 
@@ -185,7 +187,7 @@ public class AutoFlows {
 
         this.opMode.sleep(1000);
         game.setSuperPosition(false); //intake
-        game.lifterUpDownSecondStage(false);
+        game.lifterUpDownSecondStage(false, 0);
         // robot.turnTo(0, 0.6);
         this.opMode.telemetry.addData("going to", abc);
         this.opMode.telemetry.update();

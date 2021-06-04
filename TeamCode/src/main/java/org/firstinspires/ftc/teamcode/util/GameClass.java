@@ -30,9 +30,9 @@ public class GameClass {
 	private Servo wiperLeft = null;
 	private Servo wiperRight = null;
 
-	private Toggle superState = new Toggle();// true - shooterPosition
 	private Toggle shooterState = new Toggle();
 	private Toggle intakeState = new Toggle();
+	private Toggle superState = new Toggle();// true - shooterPosition
 	private Toggle wobbleGrabberState = new Toggle();
 	private Toggle testLifterToggle = new Toggle();
 
@@ -144,9 +144,9 @@ public class GameClass {
 		timer.reset();
 	}
 
-	public void lifterUpDownSecondStage(boolean goUp) {
+	public void lifterUpDownSecondStage(boolean goUp, int lifterPosition) {
 		if (goUp) {
-			lifter.setTargetPosition(lifterUpTargetPosition);
+			lifter.setTargetPosition(lifterPosition);
 			lifterRequest = LifterRequest.UP;
 
 			lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -191,7 +191,7 @@ public class GameClass {
 
 		if (lifterRequest == LifterRequest.UP) {
 			if (didSecondStage == false && lifter.getCurrentPosition() > lifterUpTargetPosition - 300) {
-				lifterUpDownSecondStage(true);
+				lifterUpDownSecondStage(true, lifterUpTargetPosition);
 			}
 			if (lifter.getCurrentPosition() > lifterUpTargetPosition || timer.milliseconds() > 4000) {
 				lifterRequest = LifterRequest.STAY;
