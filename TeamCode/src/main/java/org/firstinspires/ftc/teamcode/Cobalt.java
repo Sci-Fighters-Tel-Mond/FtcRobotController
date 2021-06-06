@@ -28,6 +28,8 @@ public class Cobalt extends LinearOpMode {
 	private Toggle ringFire = new Toggle();
 	private Toggle turningToggle = new Toggle();
 	private Toggle wiperToggle = new Toggle(false);
+	private Toggle lifterUp = new Toggle();
+	private Toggle lifterDown = new Toggle();
 
 	private double targetHeading = 0;
 
@@ -73,12 +75,14 @@ public class Cobalt extends LinearOpMode {
 			boolean intake = gamepad1.dpad_right; // down armShooter, // gamepad2 isn't required
 
 			reverseIntake.update(gamepad1.dpad_left); // gamepad2 isn't required
-			wobbleForward.update(gamepad1.dpad_up || gamepad2.dpad_up);
-			wobbleBackward.update(gamepad1.dpad_down || gamepad2.dpad_down);
-			wobbleGrabber.update(gamepad1.b ); // || gamepad2.b);
+			wobbleForward.update(gamepad1.dpad_up);
+			wobbleBackward.update(gamepad1.dpad_down);
+			wobbleGrabber.update(gamepad1.b);
 			shootHeading.update(gamepad1.back || gamepad2.back);
 			ringFire.update(gamepad1.right_bumper || gamepad2.right_bumper);
 			wiperToggle.update(gamepad1.left_bumper || gamepad2.left_bumper);
+			lifterDown.update(gamepad2.dpad_down);
+			lifterUp.update(gamepad2.dpad_up);
 
 			boolean fieldOriented = !gamepad1.y;
 			double boost = gamepad1.right_trigger * 0.6 + 0.4;
@@ -166,7 +170,15 @@ public class Cobalt extends LinearOpMode {
 				game.stopAll();
 			}
 
-			game.lifterMoveManually(/*-gamepad1.right_stick_y*/-gamepad2.right_stick_y/4);
+			if(lifterUp.isClicked()) {
+				game.setLifterTargetPosition(game.getLifterTargetPosition() + 10);
+			}
+
+			if(lifterDown.isClicked()) {
+				game.setLifterTargetPosition(game.getLifterTargetPosition() - 10);
+			}
+
+			game.lifterMoveManually(-gamepad2.right_stick_y/4);
 
 			telemetry.addData("X Pos", drive.getPosX());
 			telemetry.addData("Y Pos", drive.getPosY());

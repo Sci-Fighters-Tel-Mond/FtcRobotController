@@ -93,12 +93,19 @@ public class GameClass {
 		setShooterPID();
 	}
 
-	public double getLifterPosition() {
+	public int getLifterPosition() {
 		return lifter.getCurrentPosition();
+	}
+
+	public int getLifterTargetPosition() {
+		return lifterUpTargetPosition;
 	}
 
 	public void setLifterTargetPosition(int value) {
 		lifterUpTargetPosition = value;
+		if(superState.getState() == true && didSecondStage) {
+			lifter.setTargetPosition(lifterUpTargetPosition);
+		}
 	}
 
 	private void setShooterPID() {
@@ -216,8 +223,9 @@ public class GameClass {
 			if (getLifterLimiter() || timer.milliseconds() > 4000) {
 				lifterRequest = LifterRequest.STAY;
 				setIntake(true);
-				lifter.setPower(0);
 				superState.set(false);
+				lifter.setPower(0);
+				lifter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 			}
 			opMode.telemetry.addData("Lifter GO Down", timer.milliseconds());
 		}
