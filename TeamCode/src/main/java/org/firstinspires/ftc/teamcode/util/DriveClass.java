@@ -172,7 +172,7 @@ public class DriveClass {
 		br.setPower(forward - turn + strafe);
 	}
 
-	public void setPowerOriented(double y, double x, double turn, boolean fieldOriented) {
+	public void  setPowerOriented(double y, double x, double turn, boolean fieldOriented) {
 		if (fieldOriented != true) {
 			setPower(y , turn, x);  // No field oriented
 		} else {
@@ -307,7 +307,7 @@ public class DriveClass {
 		while ((delta * s > 0) && opMode.opModeIsActive()) {
 
 			delta = getDeltaHeading(targetAngle);
-			double gain = 0.04;
+			double gain = 0.02;
 			double power = gain * delta * targetPower;
 			if (Math.abs(power) < 0.1)
 				power = 0.1 * Math.signum(power);

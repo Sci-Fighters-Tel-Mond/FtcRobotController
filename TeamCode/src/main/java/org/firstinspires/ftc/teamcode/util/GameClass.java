@@ -30,9 +30,9 @@ public class GameClass {
 	private Servo wiperLeft = null;
 	private Servo wiperRight = null;
 
+	private Toggle superState = new Toggle();// true - shooterPosition
 	private Toggle shooterState = new Toggle();
 	private Toggle intakeState = new Toggle();
-	private Toggle superState = new Toggle();// true - shooterPosition
 	private Toggle wobbleGrabberState = new Toggle();
 	private Toggle testLifterToggle = new Toggle();
 
@@ -43,7 +43,7 @@ public class GameClass {
 	private boolean didSecondStage = false;
 
 	final private double shooterSpeed = 0.9;
-	final private int lifterUpTargetPosition = 1800; // previously 1840
+	/*final*/ private int lifterUpTargetPosition = 1800; // previously 1840
 	final private int lifterDownTargetPosition = 0;
 
 	private ElapsedTime timer = new ElapsedTime();
@@ -93,6 +93,14 @@ public class GameClass {
 		setShooterPID();
 	}
 
+	public double getLifterPosition() {
+		return lifter.getCurrentPosition();
+	}
+
+	public void setLifterTargetPosition(int value) {
+		lifterUpTargetPosition = value;
+	}
+
 	private void setShooterPID() {
 		PIDFCoefficients pidf = shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
 		RobotLog.d("Shooter PID");
@@ -134,7 +142,9 @@ public class GameClass {
 			lifter.setPower(1);
 			lifterRequest = LifterRequest.UP;
 		} else {
-			if (!getLifterLimiter()) {
+			if (getLifterLimiter()) {
+				lifter.setPower(0);
+			} else {
 				lifter.setPower(-1);
 			}
 			lifterRequest = LifterRequest.DOWN;
@@ -144,9 +154,9 @@ public class GameClass {
 		timer.reset();
 	}
 
-	public void lifterUpDownSecondStage(boolean goUp, int lifterPosition) {
+	public void lifterUpDownSecondStage(boolean goUp) {
 		if (goUp) {
-			lifter.setTargetPosition(lifterPosition);
+			lifter.setTargetPosition(lifterUpTargetPosition);
 			lifterRequest = LifterRequest.UP;
 
 			lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -157,6 +167,8 @@ public class GameClass {
 
 			lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 			lifter.setPower(1);
+		} else {
+			lifter.setPower(0);
 		}
 
 		didSecondStage = true;
@@ -191,7 +203,7 @@ public class GameClass {
 
 		if (lifterRequest == LifterRequest.UP) {
 			if (didSecondStage == false && lifter.getCurrentPosition() > lifterUpTargetPosition - 300) {
-				lifterUpDownSecondStage(true, lifterUpTargetPosition);
+				lifterUpDownSecondStage(true);
 			}
 			if (lifter.getCurrentPosition() > lifterUpTargetPosition || timer.milliseconds() > 4000) {
 				lifterRequest = LifterRequest.STAY;
@@ -228,7 +240,7 @@ public class GameClass {
 		} else if (testLifterToggle.isReleased()) {
 			opMode.telemetry.addData("TEST Lifter Power", pow);
 			lifter.setPower(0);
-			
+
 		}
 	}
 

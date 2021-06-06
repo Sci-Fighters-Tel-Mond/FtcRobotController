@@ -31,7 +31,6 @@ public class AutoFlows {
 
     double shootingAngle = 0; //default
     boolean shortened = false;
-    int lifterPos = 1800;
 
     enum ABC {A, B, C}
 
@@ -47,37 +46,36 @@ public class AutoFlows {
         startingPosition = new Location(0.6 * mul, 0);
         firstPos = new Location(0.27 * mul, 0.73); // -0.25,0.73
         shootPos = new Location(0.25 * mul, 1.2); //previous - x: 0.25 * mul, y: 1.13
-        a_pos = new Location(1.4 * mul, 1.45);
-        b_pos = new Location(0.75 * mul, 2.15);
-        c_pos = new Location(1.4 * mul, 2.65);
+        a_pos = new Location(1.4 * mul, 1.35);
+        b_pos = new Location(0.75 * mul, 2.00); //previous - x: 0.75 * mul, y 2.15
+        c_pos = new Location(1.4 * mul, 2.55);
         a_back_Pos = new Location(1.10 * mul, 1.30);
         secondWobble_pos1 = new Location(2.5 * tile * mul, 2 * tile);
         parkPos = new Location(0.5 * mul, 2);
 
         if (startline == StartLine.OUTTER) {
             startingPosition = new Location(1.2 * mul, 0);
-            firstPos = new Location(1.5 * mul, 0.73);
-            shootPos = new Location(2.1 * mul, 1.65);
-            shootingAngle = 27.75;
-            lifterPos = 1808;
+            firstPos = new Location(1.45 * mul, 0.73);
+            shootPos = new Location(1.45 * mul, 1.13);
+            shootingAngle = 25.35;
         }
         if (alliance == Alliance.RED) {
-            a_pos.x += 0.1;
+            a_pos.x += 0.15;
             b_pos.x += 0.2;
-            c_pos.x += 0.1;
+            c_pos.x += 0.15;
             secondWobble_pos1.x -= 0.2;
         }
         if (alliance == Alliance.RED) {
             if (startline == StartLine.INNER) {
-                shootingAngle = 26;
+                shootingAngle = 30; //RED INNER - previously 26
             } else {
-                shootingAngle = 1;
+                shootingAngle = 4; //RED OUTTER
             }
         } else {
             if (startline == StartLine.INNER) {
-                shootingAngle = 2;
+                shootingAngle = 2; //BLUE INNER
             } else {
-                shootingAngle = -1;
+                shootingAngle = 29; //BLUE OUTTER
             }
         }
         robot = new DriveClass(this.opMode, DriveClass.ROBOT.COBALT, startingPosition).useEncoders();
@@ -148,6 +146,7 @@ public class AutoFlows {
 
         ABC abc = getRingNum(pipeline);
         this.opMode.telemetry.addData("Rings: ", abc);
+        this.opMode.telemetry.addData("lifterPosition: ", game.getLifterPosition());
         this.opMode.telemetry.update();
 
         // ================================================
@@ -164,7 +163,7 @@ public class AutoFlows {
 
         game.wobbleArmGoTo(1500); //wobble up
         game.setSuperPosition(true);// fire position
-        game.lifterUpDownSecondStage(true, lifterPos);
+        game.lifterUpDownSecondStage(true);
 
         double heading = robot.getHeading();
 
@@ -187,7 +186,7 @@ public class AutoFlows {
 
         this.opMode.sleep(1000);
         game.setSuperPosition(false); //intake
-        game.lifterUpDownSecondStage(false, 0);
+        game.lifterUpDownSecondStage(false);
         // robot.turnTo(0, 0.6);
         this.opMode.telemetry.addData("going to", abc);
         this.opMode.telemetry.update();

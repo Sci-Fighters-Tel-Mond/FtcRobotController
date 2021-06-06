@@ -62,9 +62,13 @@ public class AutoPark extends LinearOpMode {
 		telemetry.update();
 		robot.init(hardwareMap);
 		game.init(hardwareMap);
+		game.initLifterPosition();
+		game.setWobbleGrabber(false);
+		game.initWobbleArmPosition();
+
 		// Wait for the game to start (driver presses PLAY)
 		waitForStart();
-		sleep(135 * 1000); //2:15 minutes
+		sleep(25 * 1000); //2:15 minutes
 		robot.drive(2, 0, 1, 0, false);
 	}
 }
