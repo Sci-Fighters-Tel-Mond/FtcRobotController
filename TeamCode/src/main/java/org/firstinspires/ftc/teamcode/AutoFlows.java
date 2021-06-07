@@ -143,7 +143,7 @@ public class AutoFlows {
         game.initLifterPosition();
         game.setWobbleGrabber(false);
         game.initWobbleArmPosition();
-        game.setLifterTargetPosition(1800-40);
+        game.setLifterTargetPosition(1800-20);
 
         ABC abc = getRingNum(pipeline);
         this.opMode.telemetry.addData("Rings: ", abc);

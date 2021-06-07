@@ -89,7 +89,7 @@ public class GameClass {
 		setWobbleGrabber(false);
 		setWipers(false);
 
-		// setShooterPID();
+		 setShooterPID();
 	}
 
 	public int getLifterPosition() {
@@ -108,23 +108,32 @@ public class GameClass {
 	}
 
 	private void setShooterPID() {
-		PIDFCoefficients pidf_pos = shooter.getPIDFCoefficients(DcMotorEx.RunMode.RUN_TO_POSITION);
-		RobotLog.d("Shooter PID Position");
-		RobotLog.d(pidf_pos.toString());
-		pidf_pos.p = 20;	// 10
-		pidf_pos.i = 0.5;	// 0.05
-		shooter.setPIDFCoefficients(DcMotorEx.RunMode.RUN_TO_POSITION, pidf_pos);
+//		PIDFCoefficients lifter_pidf_pos = lifter.getPIDFCoefficients(DcMotorEx.RunMode.RUN_TO_POSITION);
+//		RobotLog.d("Lifter PID Position");
+//		RobotLog.d(lifter_pidf_pos.toString());
+//		lifter_pidf_pos.p = 20;	// 10
+//		lifter_pidf_pos.i = 0.1;	// 0.05
+//		lifter.setPIDFCoefficients(DcMotorEx.RunMode.RUN_TO_POSITION, lifter_pidf_pos);
+//
+//		PIDFCoefficients lifter_pidf_vel = lifter.getPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER);
+//		RobotLog.d("Lifter PID Velocity");
+//		RobotLog.d(lifter_pidf_vel.toString());
+//		lifter_pidf_vel.p = 20;	// 10
+//		lifter_pidf_vel.i = 6;		// 3
+//		lifter_pidf_vel.f = 0.5;	// 0
+//		shooter.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, lifter_pidf_vel);
+//		RobotLog.d("New Shooter PID: %s", lifter_pidf_pos.toString());
 
 		// TODO: shooter.setPositionPIDFCoefficients();
 
-		PIDFCoefficients pidf_vel = shooter.getPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER);
+		PIDFCoefficients shooter_pidf_vel = shooter.getPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER);
 		RobotLog.d("Shooter PID Velocity");
-		RobotLog.d(pidf_vel.toString());
-		pidf_vel.p = 0;	// 10
-		pidf_vel.i = 0;		// 3
-		pidf_vel.f = 1;	// 0
-		shooter.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidf_vel);
-		RobotLog.d("New Shooter PID: %s", pidf_vel.toString());
+		RobotLog.d(shooter_pidf_vel.toString());
+		shooter_pidf_vel.p = 40;	// 10
+		shooter_pidf_vel.i = 3;		// 3
+		shooter_pidf_vel.f = 0.5;	// 0
+		shooter.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, shooter_pidf_vel);
+		RobotLog.d("New Shooter PID: %s", shooter_pidf_vel.toString());
 	}
 
 	public double getShooterSpeed(){
