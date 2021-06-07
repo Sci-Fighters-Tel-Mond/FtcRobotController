@@ -89,7 +89,7 @@ public class GameClass {
 		setWobbleGrabber(false);
 		setWipers(false);
 
-		setShooterPID();
+		// setShooterPID();
 	}
 
 	public int getLifterPosition() {
@@ -108,13 +108,23 @@ public class GameClass {
 	}
 
 	private void setShooterPID() {
-		PIDFCoefficients pidf = shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
-		RobotLog.d("Shooter PID");
-		RobotLog.d(pidf.toString());
-//		pidf.p = 10;
-//		pidf.i = 3;
-//		shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidf);
-//		RobotLog.d("New Shooter PID", pidf.toString());
+		PIDFCoefficients pidf_pos = shooter.getPIDFCoefficients(DcMotorEx.RunMode.RUN_TO_POSITION);
+		RobotLog.d("Shooter PID Position");
+		RobotLog.d(pidf_pos.toString());
+		pidf_pos.p = 20;	// 10
+		pidf_pos.i = 0.5;	// 0.05
+		shooter.setPIDFCoefficients(DcMotorEx.RunMode.RUN_TO_POSITION, pidf_pos);
+
+		// TODO: shooter.setPositionPIDFCoefficients();
+
+		PIDFCoefficients pidf_vel = shooter.getPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER);
+		RobotLog.d("Shooter PID Velocity");
+		RobotLog.d(pidf_vel.toString());
+		pidf_vel.p = 0;	// 10
+		pidf_vel.i = 0;		// 3
+		pidf_vel.f = 1;	// 0
+		shooter.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidf_vel);
+		RobotLog.d("New Shooter PID: %s", pidf_vel.toString());
 	}
 
 	public double getShooterSpeed(){
@@ -254,7 +264,6 @@ public class GameClass {
 		} else if (testLifterToggle.isReleased()) {
 			opMode.telemetry.addData("TEST Lifter Power", pow);
 			lifter.setPower(0);
-
 		}
 	}
 

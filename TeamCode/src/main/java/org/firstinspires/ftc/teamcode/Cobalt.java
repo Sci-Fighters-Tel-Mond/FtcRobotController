@@ -13,9 +13,8 @@ import org.firstinspires.ftc.teamcode.util.Toggle;
 //@Disabled
 public class Cobalt extends LinearOpMode {
 	final double tile = 0.6;
-	final int lifterTarget = 1800;
-	final int powerShotTarget = 1760;
-	final int lifterUpPosition = 1800;
+	final int lifterPosition_PowerShot = 1760;
+	final int lifterPosition_Goal = 1800-60;
 	// Declare OpMode members.
 	private ElapsedTime runtime = new ElapsedTime();
 	Location startingPosition = new Location(0 * tile, 0 * tile); //last x = -1.75*tile, y = 0*tile
@@ -147,10 +146,8 @@ public class Cobalt extends LinearOpMode {
 			}
 
 			if (armShooter) {
-				game.setLifterTargetPosition(lifterUpPosition);
+				game.setLifterTargetPosition(lifterPosition_Goal);
 				game.setSuperPosition(true);
-				telemetry.addData("X ", "IS PRESSED");
-
 			}
 
 			if (intake) {
@@ -183,7 +180,7 @@ public class Cobalt extends LinearOpMode {
 			}
 
 			if(powerShot.isClicked()) {
-				game.setLifterTargetPosition(powerShotTarget);
+				game.setLifterTargetPosition(lifterPosition_PowerShot);
 				game.setSuperPosition(true);
 			}
 
