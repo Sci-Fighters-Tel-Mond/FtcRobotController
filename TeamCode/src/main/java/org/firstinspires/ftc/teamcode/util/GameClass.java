@@ -131,6 +131,7 @@ public class GameClass {
 		RobotLog.d(shooter_pidf_vel.toString());
 		shooter_pidf_vel.p = 40;	// 10
 		shooter_pidf_vel.i = 3;		// 3
+		shooter_pidf_vel.d = 0.1;	// 0
 		shooter_pidf_vel.f = 0.5;	// 0
 		shooter.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, shooter_pidf_vel);
 		RobotLog.d("New Shooter PID: %s", shooter_pidf_vel.toString());

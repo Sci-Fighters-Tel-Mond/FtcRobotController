@@ -113,8 +113,10 @@ public class Cobalt extends LinearOpMode {
 
 			if (!turningToggle.isPressed() && turningCount < 0) {
 				double delta = drive.getDeltaHeading(targetHeading);
-				double gain = 0.05;
-				turn = delta * gain;
+				if (Math.abs(delta) > 1) {
+					double gain = 0.05;
+					turn = delta * gain;
+				}
 			}
 
 			drive.setPowerOriented(y, x, turn, fieldOriented);
