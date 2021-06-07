@@ -153,25 +153,28 @@ public class GameClass {
 
 	public void lifterUpDown(boolean goUp) {
 		timer.reset();
-		lifterUpDownSecondStage(goUp);
-//		TODO:
-//		lifterSecondStage = false;
-//
-//		lifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//
-//		if (goUp) {
-//			lifter.setPower(0.8);
-//			lifterRequest = LifterRequest.UP;
-//		} else {
-//			if (!getLifterLimiter()) {
-//				lifter.setPower(-0.8);
-//			} else {
-//				lifter.setPower(0);
-//				lifter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//			}
-//			lifterRequest = LifterRequest.DOWN;
-//		}
-//
+//		lifterUpDownSecondStage(goUp);
+
+
+		lifterSecondStage = false;
+
+		if (getLifterLimiter()) {
+			lifter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+		}
+		lifter.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+		if (goUp) {
+			lifter.setPower(0.7);
+			lifterRequest = LifterRequest.UP;
+		} else {
+			if (!getLifterLimiter()) {
+				lifter.setPower(-0.7);
+			} else {
+				lifter.setPower(0);
+				lifter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+			}
+			lifterRequest = LifterRequest.DOWN;
+		}
 	}
 
 	public void lifterUpDownSecondStage(boolean goUp) {
@@ -180,8 +183,7 @@ public class GameClass {
 		if (goUp) {
 			lifter.setTargetPosition(lifterUpTargetPosition);
 			lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-			lifterRequest = LifterRequest.UP;
-			lifter.setPower(1.0);
+			lifter.setPower(0.8);
 
 			lifterRequest = LifterRequest.UP;
 		} else {
@@ -189,7 +191,7 @@ public class GameClass {
 				lifter.setTargetPosition(lifterDownTargetPosition);
 				lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 				lifterRequest = LifterRequest.DOWN;
-				lifter.setPower(1.0);
+				lifter.setPower(0.8);
 			} else {
 				lifter.setPower(0);
 				lifter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -225,7 +227,7 @@ public class GameClass {
 		opMode.telemetry.addData("Shooter vel", shooter.getVelocity());
 
 		if (lifterRequest == LifterRequest.UP) {
-			if (lifterSecondStage == false && lifter.getCurrentPosition() > lifterUpTargetPosition - 150) {
+			if (lifterSecondStage == false && lifter.getCurrentPosition() > lifterUpTargetPosition - 500) {
 				lifterUpDownSecondStage(true);
 			}
 			if (lifter.getCurrentPosition() > lifterUpTargetPosition || timer.milliseconds() > 5000) {

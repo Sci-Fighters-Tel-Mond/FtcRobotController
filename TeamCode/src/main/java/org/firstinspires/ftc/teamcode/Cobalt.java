@@ -14,12 +14,15 @@ import org.firstinspires.ftc.teamcode.util.Toggle;
 public class Cobalt extends LinearOpMode {
 	final double tile = 0.6;
 	final int lifterPosition_PowerShot = 1760;
-	final int lifterPosition_Goal = 1800-60;
+	final int lifterPosition_Goal = 1800-40;
 	// Declare OpMode members.
 	private ElapsedTime runtime = new ElapsedTime();
 	Location startingPosition = new Location(0 * tile, 0 * tile); //last x = -1.75*tile, y = 0*tile
 	private DriveClass drive = new DriveClass(this, DriveClass.ROBOT.COBALT, startingPosition).useEncoders().useBrake();
 	private GameClass game = new GameClass(this);
+
+	private Toggle armShooter = new Toggle();
+	private Toggle intake = new Toggle();
 
 	private Toggle reverseIntake = new Toggle();
 	private Toggle wobbleForward = new Toggle();
@@ -72,9 +75,11 @@ public class Cobalt extends LinearOpMode {
 				continue;
 			}
 
-			boolean armShooter = gamepad1.x || gamepad2.x; // up armShooter
+
 			boolean stopAll = gamepad1.a || gamepad2.a;
-			boolean intake = gamepad1.dpad_right; // down armShooter, // gamepad2 isn't required
+
+			armShooter.update(gamepad1.x || gamepad2.x); // up armShooter
+			intake.update(gamepad1.dpad_right); // down armShooter, // gamepad2 isn't required
 
 			reverseIntake.update(gamepad1.dpad_left); // gamepad2 isn't required
 			wobbleForward.update(gamepad1.dpad_up);
@@ -145,12 +150,12 @@ public class Cobalt extends LinearOpMode {
 				game.setWobbleGrabber(wobbleGrabber.getState());
 			}
 
-			if (armShooter) {
+			if (armShooter.isClicked()) {
 				game.setLifterTargetPosition(lifterPosition_Goal);
 				game.setSuperPosition(true);
 			}
 
-			if (intake) {
+			if (intake.isClicked()) {
 				game.setSuperPosition(false);
 			}
 
