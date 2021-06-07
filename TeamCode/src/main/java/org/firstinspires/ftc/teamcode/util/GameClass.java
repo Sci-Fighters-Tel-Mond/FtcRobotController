@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -40,7 +39,7 @@ public class GameClass {
 
 	private LifterRequest lifterRequest = LifterRequest.STAY;
 
-	private boolean didSecondStage = false;
+	private boolean lifterSecondStage = false;
 
 	final private double shooterSpeed = 0.9;
 	/*final*/ private int lifterUpTargetPosition = 1800; // previously 1840
@@ -103,7 +102,7 @@ public class GameClass {
 
 	public void setLifterTargetPosition(int value) {
 		lifterUpTargetPosition = value;
-		if(superState.getState() == true && didSecondStage) {
+		if(superState.getState() == true && lifterSecondStage) {
 			lifter.setTargetPosition(lifterUpTargetPosition);
 		}
 	}
@@ -143,42 +142,44 @@ public class GameClass {
 	}
 
 	public void lifterUpDown(boolean goUp) {
+		lifterSecondStage = false;
+
 		lifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 		if (goUp) {
-			lifter.setPower(1);
+			lifter.setPower(0.8);
 			lifterRequest = LifterRequest.UP;
 		} else {
-			if (getLifterLimiter()) {
-				lifter.setPower(0);
+			if (!getLifterLimiter()) {
+				lifter.setPower(-0.8);
 			} else {
-				lifter.setPower(-1);
+				lifter.setPower(0);
+				lifter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 			}
 			lifterRequest = LifterRequest.DOWN;
 		}
 
-		didSecondStage = false;
 		timer.reset();
 	}
 
 	public void lifterUpDownSecondStage(boolean goUp) {
+		lifterSecondStage = true;
+
 		if (goUp) {
 			lifter.setTargetPosition(lifterUpTargetPosition);
-			lifterRequest = LifterRequest.UP;
-
 			lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-			lifter.setPower(1);
+			lifterRequest = LifterRequest.UP;
+			lifter.setPower(0.8);
 		} else if (!getLifterLimiter()) {
 			lifter.setTargetPosition(lifterDownTargetPosition);
-			lifterRequest = LifterRequest.DOWN;
-
 			lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-			lifter.setPower(1);
+			lifterRequest = LifterRequest.DOWN;
+			lifter.setPower(0.8);
 		} else {
 			lifter.setPower(0);
+			lifter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		}
 
-		didSecondStage = true;
 		timer.reset();
 	}
 
@@ -209,7 +210,7 @@ public class GameClass {
 		opMode.telemetry.addData("Shooter vel", shooter.getVelocity());
 
 		if (lifterRequest == LifterRequest.UP) {
-			if (didSecondStage == false && lifter.getCurrentPosition() > lifterUpTargetPosition - 300) {
+			if (lifterSecondStage == false && lifter.getCurrentPosition() > lifterUpTargetPosition - 150) {
 				lifterUpDownSecondStage(true);
 			}
 			if (lifter.getCurrentPosition() > lifterUpTargetPosition || timer.milliseconds() > 4000) {
