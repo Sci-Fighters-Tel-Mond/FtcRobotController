@@ -13,7 +13,9 @@ import org.firstinspires.ftc.teamcode.util.Toggle;
 //@Disabled
 public class Cobalt extends LinearOpMode {
 	final double tile = 0.6;
-
+	final int lifterTarget = 1800;
+	final int powerShotTarget = 1760;
+	final int lifterUpPosition = 1800;
 	// Declare OpMode members.
 	private ElapsedTime runtime = new ElapsedTime();
 	Location startingPosition = new Location(0 * tile, 0 * tile); //last x = -1.75*tile, y = 0*tile
@@ -30,6 +32,7 @@ public class Cobalt extends LinearOpMode {
 	private Toggle wiperToggle = new Toggle(false);
 	private Toggle lifterUp = new Toggle();
 	private Toggle lifterDown = new Toggle();
+	private Toggle powerShot = new Toggle();
 
 	private double targetHeading = 0;
 
@@ -83,7 +86,7 @@ public class Cobalt extends LinearOpMode {
 			wiperToggle.update(gamepad1.left_bumper || gamepad2.left_bumper);
 			lifterDown.update(gamepad2.dpad_down);
 			lifterUp.update(gamepad2.dpad_up);
-
+			powerShot.update(gamepad2.y); //TODO: check powerShot toggle
 			boolean fieldOriented = !gamepad1.y;
 			double boost = gamepad1.right_trigger * 0.6 + 0.4;
 
@@ -144,6 +147,7 @@ public class Cobalt extends LinearOpMode {
 			}
 
 			if (armShooter) {
+				game.setLifterTargetPosition(lifterUpPosition);
 				game.setSuperPosition(true);
 				telemetry.addData("X ", "IS PRESSED");
 
@@ -176,6 +180,11 @@ public class Cobalt extends LinearOpMode {
 
 			if(lifterDown.isClicked()) {
 				game.setLifterTargetPosition(game.getLifterTargetPosition() - 10);
+			}
+
+			if(powerShot.isClicked()) {
+				game.setLifterTargetPosition(powerShotTarget);
+				game.setSuperPosition(true);
 			}
 
 			game.lifterMoveManually(-gamepad2.right_stick_y/4);

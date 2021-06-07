@@ -142,24 +142,26 @@ public class GameClass {
 	}
 
 	public void lifterUpDown(boolean goUp) {
-		lifterSecondStage = false;
-
-		lifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-		if (goUp) {
-			lifter.setPower(0.8);
-			lifterRequest = LifterRequest.UP;
-		} else {
-			if (!getLifterLimiter()) {
-				lifter.setPower(-0.8);
-			} else {
-				lifter.setPower(0);
-				lifter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-			}
-			lifterRequest = LifterRequest.DOWN;
-		}
-
 		timer.reset();
+		lifterUpDownSecondStage(goUp);
+//		TODO:
+//		lifterSecondStage = false;
+//
+//		lifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//
+//		if (goUp) {
+//			lifter.setPower(0.8);
+//			lifterRequest = LifterRequest.UP;
+//		} else {
+//			if (!getLifterLimiter()) {
+//				lifter.setPower(-0.8);
+//			} else {
+//				lifter.setPower(0);
+//				lifter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//			}
+//			lifterRequest = LifterRequest.DOWN;
+//		}
+//
 	}
 
 	public void lifterUpDownSecondStage(boolean goUp) {
@@ -169,18 +171,22 @@ public class GameClass {
 			lifter.setTargetPosition(lifterUpTargetPosition);
 			lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 			lifterRequest = LifterRequest.UP;
-			lifter.setPower(0.8);
-		} else if (!getLifterLimiter()) {
-			lifter.setTargetPosition(lifterDownTargetPosition);
-			lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-			lifterRequest = LifterRequest.DOWN;
-			lifter.setPower(0.8);
-		} else {
-			lifter.setPower(0);
-			lifter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		}
+			lifter.setPower(1.0);
 
-		timer.reset();
+			lifterRequest = LifterRequest.UP;
+		} else {
+			if (!getLifterLimiter()) {
+				lifter.setTargetPosition(lifterDownTargetPosition);
+				lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+				lifterRequest = LifterRequest.DOWN;
+				lifter.setPower(1.0);
+			} else {
+				lifter.setPower(0);
+				lifter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+			}
+
+			lifterRequest = LifterRequest.DOWN;
+		}
 	}
 
 	public void lifterMove(int goUp) {
@@ -200,7 +206,6 @@ public class GameClass {
 			//lifterRequest = LifterRequest.DOWN;
 			opMode.telemetry.addData("lifter going down", goUp);
 		}
-		timer.reset();
 	}
 
 	public void update() {
@@ -213,7 +218,7 @@ public class GameClass {
 			if (lifterSecondStage == false && lifter.getCurrentPosition() > lifterUpTargetPosition - 150) {
 				lifterUpDownSecondStage(true);
 			}
-			if (lifter.getCurrentPosition() > lifterUpTargetPosition || timer.milliseconds() > 4000) {
+			if (lifter.getCurrentPosition() > lifterUpTargetPosition || timer.milliseconds() > 5000) {
 				lifterRequest = LifterRequest.STAY;
 				superState.set(true);
 			}
