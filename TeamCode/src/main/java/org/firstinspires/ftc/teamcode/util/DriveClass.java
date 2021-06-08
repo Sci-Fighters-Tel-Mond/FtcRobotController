@@ -379,7 +379,7 @@ public class DriveClass {
 			double acclGain = 2;
 			double acclPower = lengthC * acclGain +  minPower;
 
-			if (acclPower + 0.2 < power ) {
+			if (acclPower + minPower < power ) {
 				power = acclPower;
 			}
 
@@ -389,6 +389,8 @@ public class DriveClass {
 			if (breakPower < power)  {
 				power = breakPower;
 			}
+
+			power = Math.max(power, minPower);
 
 			double err = getDeltaHeading(targetAngle);
 			double gain = 0.040;

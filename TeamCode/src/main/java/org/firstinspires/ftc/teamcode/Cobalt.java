@@ -13,8 +13,15 @@ import org.firstinspires.ftc.teamcode.util.Toggle;
 //@Disabled
 public class Cobalt extends LinearOpMode {
 	final double tile = 0.6;
-	final int lifterPosition_PowerShot = 1760;
-	final int lifterPosition_Goal = 1800;
+
+	int lifterPosition_PowerShot;
+	int lifterPosition_Goal;
+	int lifterPosition_aShooter;
+
+	int targetHeading_PowerShot;
+	int targetHeading_Goal;
+	int targetHeading_aShooter;
+
 	// Declare OpMode members.
 	private ElapsedTime runtime = new ElapsedTime();
 	Location startingPosition = new Location(0 * tile, 0 * tile); //last x = -1.75*tile, y = 0*tile
@@ -23,6 +30,8 @@ public class Cobalt extends LinearOpMode {
 
 	private Toggle armShooter = new Toggle();
 	private Toggle intake = new Toggle();
+
+	private Toggle aShooter = new Toggle();
 
 	private Toggle reverseIntake = new Toggle();
 	private Toggle wobbleForward = new Toggle();
@@ -38,6 +47,39 @@ public class Cobalt extends LinearOpMode {
 
 	private double targetHeading = 0;
 
+	enum Team {
+		BLUE,
+		RED
+	}
+
+	private Team team = Team.BLUE;
+
+	void setPositionsAndHeadings(Team team) {
+		this.team = team;
+
+		if (team == Team.BLUE) {
+			drive.resetOrientation(90);
+
+			lifterPosition_PowerShot = 1760;
+			lifterPosition_Goal = 1800;
+			lifterPosition_aShooter = 1800;
+
+			targetHeading_PowerShot = 0;
+			targetHeading_Goal = 0;
+			targetHeading_aShooter = 0;
+		} else if (team == Team.RED) {
+			drive.resetOrientation(-90);
+
+			lifterPosition_PowerShot = 1760;
+			lifterPosition_Goal = 1800;
+			lifterPosition_aShooter = 1800;
+
+			targetHeading_PowerShot = 0;
+			targetHeading_Goal = 0;
+			targetHeading_aShooter = 0;
+		}
+	}
+
 	@Override
 	public void runOpMode() {
 		telemetry.addData("Status", "Initialized");
@@ -48,6 +90,8 @@ public class Cobalt extends LinearOpMode {
 
 		game.initLifterPosition();
 		game.initWobbleArmPosition();
+
+		setPositionsAndHeadings(Team.BLUE);
 
 		// Wait for the game to start (driver presses PLAY)
 		waitForStart();
@@ -65,10 +109,10 @@ public class Cobalt extends LinearOpMode {
 
 			if (resetOrientation) {
 				if (gamepad1.x) {
-					drive.resetOrientation(90);
+					setPositionsAndHeadings(Team.BLUE);
 				}
 				if (gamepad1.y) {
-					drive.resetOrientation(-90);
+					setPositionsAndHeadings(Team.RED);
 				}
 				drive.resetPosition();
 				targetHeading = drive.getHeading();
@@ -76,10 +120,12 @@ public class Cobalt extends LinearOpMode {
 			}
 
 
-			boolean stopAll = gamepad1.a || gamepad2.a;
+//			boolean stopAll = gamepad1.a || gamepad2.a;
 
 			armShooter.update(gamepad1.x || gamepad2.x); // up armShooter
 			intake.update(gamepad1.dpad_right); // down armShooter, // gamepad2 isn't required
+
+			aShooter.update(gamepad1.a || gamepad2.a);
 
 			reverseIntake.update(gamepad1.dpad_left); // gamepad2 isn't required
 			wobbleForward.update(gamepad1.dpad_up);
@@ -90,8 +136,8 @@ public class Cobalt extends LinearOpMode {
 			wiperToggle.update(gamepad1.left_bumper || gamepad2.left_bumper);
 			lifterDown.update(gamepad2.dpad_down);
 			lifterUp.update(gamepad2.dpad_up);
-			powerShot.update(gamepad2.y); //TODO: check powerShot toggle
-			boolean fieldOriented = !gamepad1.y;
+			powerShot.update(gamepad1.y || gamepad2.y); //TODO: check powerShot toggle
+//			boolean fieldOriented = !gamepad1.y;
 			double boost = gamepad1.right_trigger * 0.6 + 0.4;
 
 			double y = -gamepad1.left_stick_y * boost;
@@ -113,13 +159,14 @@ public class Cobalt extends LinearOpMode {
 
 			if (!turningToggle.isPressed() && turningCount < 0) {
 				double delta = drive.getDeltaHeading(targetHeading);
-				if (Math.abs(delta) > 1) {
-					double gain = 0.05;
+				if (Math.abs(delta) > 0.5) {
+					double gain = 0.03;
 					turn = delta * gain;
 				}
 			}
 
-			drive.setPowerOriented(y, x, turn, fieldOriented);
+//			drive.setPowerOriented(y, x, turn, fieldOriented);
+			drive.setPowerOriented(y, x, turn, true);
 
 			if (shootHeading.isClicked()) {
 				drive.turnTo(3, 1);
@@ -152,10 +199,6 @@ public class Cobalt extends LinearOpMode {
 				game.setWobbleGrabber(wobbleGrabber.getState());
 			}
 
-			if (armShooter.isClicked()) {
-				game.setLifterTargetPosition(lifterPosition_Goal);
-				game.setSuperPosition(true);
-			}
 
 			if (intake.isClicked()) {
 				game.setSuperPosition(false);
@@ -174,9 +217,9 @@ public class Cobalt extends LinearOpMode {
 			}
 			telemetry.addData("Wiper changed", wiperToggle.getState());
 
-			if (stopAll) {
-				game.stopAll();
-			}
+//			if (stopAll) {
+//				game.stopAll();
+//			}
 
 			if(lifterUp.isClicked()) {
 				game.setLifterTargetPosition(game.getLifterTargetPosition() + 10);
@@ -186,8 +229,21 @@ public class Cobalt extends LinearOpMode {
 				game.setLifterTargetPosition(game.getLifterTargetPosition() - 10);
 			}
 
-			if(powerShot.isClicked()) {
+			if (aShooter.isClicked()) { // a
+				game.setLifterTargetPosition(lifterPosition_aShooter);
+				targetHeading = targetHeading_aShooter;
+				game.setSuperPosition(true);
+			}
+
+			if (armShooter.isClicked()) { // x
+				game.setLifterTargetPosition(lifterPosition_Goal);
+				targetHeading = targetHeading_Goal;
+				game.setSuperPosition(true);
+			}
+
+			if(powerShot.isClicked()) { // y
 				game.setLifterTargetPosition(lifterPosition_PowerShot);
+				targetHeading = targetHeading_PowerShot;
 				game.setSuperPosition(true);
 			}
 
