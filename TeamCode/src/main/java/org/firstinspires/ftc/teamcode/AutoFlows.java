@@ -14,6 +14,10 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 public class AutoFlows {
+
+    public enum Alliance {BLUE, RED}
+    public enum StartLine {INNER, OUTTER}
+
     private LinearOpMode opMode; // First I declared it as OpMode now its LinearOpMode
 
     final double tile = 0.6;
@@ -27,17 +31,35 @@ public class AutoFlows {
     Location a_back_Pos;
     Location secondWobble_pos1;
     Location parkPos;
+    Location parkPosShort;
+
     Alliance alliance;
+    StartLine startLine;
 
     double shootingAngle = 0; //default
     boolean shortened = false;
 
     enum ABC {A, B, C}
 
+    BananaPipeline pipeline;
+    OpenCvCamera cam;
+
+    private DriveClass robot;
+    private GameClass game;
+
+    public HardwareMap hardwareMap = null;
+
+    private ElapsedTime runtime = new ElapsedTime();
+
+    final int blue = -1;
+    final int red = 1;
+
     public AutoFlows(LinearOpMode opMode, Alliance alliance, StartLine startline, boolean shortened) {
         this.opMode = opMode;
         this.shortened = shortened;
         this.alliance = alliance;
+        this.startLine = startline;
+
         if (alliance == Alliance.BLUE) {
             mul = blue;
         } else {
@@ -52,11 +74,12 @@ public class AutoFlows {
         a_back_Pos = new Location(1.10 * mul, 1.30);
         secondWobble_pos1 = new Location(2.5 * tile * mul, 2 * tile);
         parkPos = new Location(0.5 * mul, 2);
+        //parkPosShort = new Location(9 * mul, 2);
 
         if (startline == StartLine.OUTTER) {
             startingPosition = new Location(1.2 * mul, 0);
-            firstPos = new Location(1.45 * mul, 0.73);
-            shootPos = new Location(1.45 * mul, 1.13);
+            firstPos = new Location(1.20 * mul, 0.73);
+            shootPos = new Location(1.30 * mul, 1.13);
             shootingAngle = 25.35;
         }
         if (alliance == Alliance.RED) {
@@ -78,30 +101,13 @@ public class AutoFlows {
                 shootingAngle = 29; //BLUE OUTTER
             }
         }
+        if (startline == StartLine.OUTTER){
+            parkPos = new Location(1.4 * mul, 1.55);
+        }
         robot = new DriveClass(this.opMode, DriveClass.ROBOT.COBALT, startingPosition).useEncoders();
         game = new GameClass(this.opMode);    // Declare OpMode members.
     }
 
-    BananaPipeline pipeline;
-    OpenCvCamera cam;
-
-    public enum Alliance {BLUE, RED}
-
-    public enum StartLine {INNER, OUTTER}
-
-    public enum FlowType {WALL, BRIDGE, SHORT, PARK_ONLY}
-
-
-    private DriveClass robot;
-    private GameClass game;
-
-    public HardwareMap hardwareMap = null;
-
-
-    private ElapsedTime runtime = new ElapsedTime();
-
-    final int blue = -1;
-    final int red = 1;
 
     public ABC getRingNum(BananaPipeline pipeline) {
         if (pipeline.getTargetRect() == null) {
@@ -115,7 +121,6 @@ public class AutoFlows {
             }
         }
     }
-
 
     private void initCamera() {
         cam = CvCam.getCam(this.opMode.hardwareMap, true);
@@ -212,7 +217,7 @@ public class AutoFlows {
         game.setWobbleGrabber(true);
         this.opMode.sleep(350);
 
-        if (abc == ABC.A) {
+        if (abc == ABC.A && startLine == StartLine.INNER) {
             robot.goToLocation(a_back_Pos, 1, heading, 0.05);
         }
 

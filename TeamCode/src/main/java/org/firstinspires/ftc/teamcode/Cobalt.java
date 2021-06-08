@@ -60,22 +60,32 @@ public class Cobalt extends LinearOpMode {
 		if (team == Team.BLUE) {
 			drive.resetOrientation(90);
 
-			lifterPosition_PowerShot = 1760;
+			// X  BULE
 			lifterPosition_Goal = 1800;
-			lifterPosition_aShooter = 1800;
+			targetHeading_Goal = 2;
 
-			targetHeading_PowerShot = 0;
-			targetHeading_Goal = 0;
-			targetHeading_aShooter = 0;
+			// Y BLUE
+			lifterPosition_PowerShot = 1700;
+			targetHeading_PowerShot = 32;
+
+			// A BLUE
+			lifterPosition_aShooter = 1800;
+			targetHeading_aShooter = 33;
+
 		} else if (team == Team.RED) {
 			drive.resetOrientation(-90);
 
-			lifterPosition_PowerShot = 1760;
+			// X RED
 			lifterPosition_Goal = 1800;
-			lifterPosition_aShooter = 1800;
-
-			targetHeading_PowerShot = 0;
 			targetHeading_Goal = 0;
+
+			// Y RED
+			lifterPosition_PowerShot = 1700;
+			targetHeading_PowerShot = 32;
+
+
+			// A RED
+			lifterPosition_aShooter = 1800;
 			targetHeading_aShooter = 0;
 		}
 	}
