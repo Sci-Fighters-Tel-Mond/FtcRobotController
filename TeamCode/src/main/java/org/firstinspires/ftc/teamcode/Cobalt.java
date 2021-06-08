@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.util.Toggle;
 public class Cobalt extends LinearOpMode {
 	final double tile = 0.6;
 	final int lifterPosition_PowerShot = 1760;
-	final int lifterPosition_Goal = 1800-20;
+	final int lifterPosition_Goal = 1800;
 	// Declare OpMode members.
 	private ElapsedTime runtime = new ElapsedTime();
 	Location startingPosition = new Location(0 * tile, 0 * tile); //last x = -1.75*tile, y = 0*tile

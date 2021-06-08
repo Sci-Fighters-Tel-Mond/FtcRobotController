@@ -130,9 +130,9 @@ public class GameClass {
 		RobotLog.d("Shooter PID Velocity");
 		RobotLog.d(shooter_pidf_vel.toString());
 		shooter_pidf_vel.p = 40;	// 10
-		shooter_pidf_vel.i = 3;		// 3
+		shooter_pidf_vel.i = 2;		// 3
 		shooter_pidf_vel.d = 0.1;	// 0
-		shooter_pidf_vel.f = 0.5;	// 0
+		shooter_pidf_vel.f = 0;	// 0
 		shooter.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, shooter_pidf_vel);
 		RobotLog.d("New Shooter PID: %s", shooter_pidf_vel.toString());
 	}
@@ -168,9 +168,9 @@ public class GameClass {
 
 		lifterSecondStage = false;
 
-		if (getLifterLimiter()) {
-			lifter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-		}
+//		if (getLifterLimiter()) {
+//			lifter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+//		}
 		lifter.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
 		if (goUp) {
@@ -178,10 +178,10 @@ public class GameClass {
 			lifterRequest = LifterRequest.UP;
 		} else {
 			if (!getLifterLimiter()) {
-				lifter.setPower(-0.7);
+				lifter.setPower(-0.3);
 			} else {
 				lifter.setPower(0);
-				lifter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+//				lifter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 			}
 			lifterRequest = LifterRequest.DOWN;
 		}
@@ -253,7 +253,7 @@ public class GameClass {
 				setIntake(true);
 				superState.set(false);
 				lifter.setPower(0);
-				lifter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+//				lifter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 			}
 			opMode.telemetry.addData("Lifter GO Down", timer.milliseconds());
 		}
@@ -303,17 +303,16 @@ public class GameClass {
 
 	public void initLifterPosition() {
 		if (getLifterLimiter() == false) {
-			lifter.setPower(-1);
+			lifter.setPower(-0.3);
 			ElapsedTime timer = new ElapsedTime();
 			while (getLifterLimiter() == false) {
 				if (timer.milliseconds() > 4000) break;
 			}
 			lifter.setPower(0);
-			opMode.sleep(1000);
-
+			opMode.sleep(500);
 		}
-		lifter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-		lifter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+		lifter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER); // on INIT reset the encoders.
+		//lifter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
 		superState.set(false);
 	}
