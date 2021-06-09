@@ -84,7 +84,7 @@ public class Cobalt extends LinearOpMode {
 
 			// Y RED
 			lifterPosition_PowerShot = 1700;
-			targetHeading_PowerShot = -5;   // left power shoot
+			targetHeading_PowerShot = -3;   // left power shoot
 
 
 			// A RED
@@ -176,8 +176,8 @@ public class Cobalt extends LinearOpMode {
 
 			if (!turningToggle.isPressed() && turningCount < 0) {
 				double delta = drive.getDeltaHeading(targetHeading);
-				if (Math.abs(delta) > 0.2) {
-					double gain = 0.02;
+				if (Math.abs(delta) > 0.1) {
+					double gain = 0.018;
 					turn = delta * gain;
 				}
 			}

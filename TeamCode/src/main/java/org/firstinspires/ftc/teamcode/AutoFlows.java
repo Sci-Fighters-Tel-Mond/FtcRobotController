@@ -17,6 +17,7 @@ public class AutoFlows {
 
     public enum Alliance {BLUE, RED}
     public enum StartLine {INNER, OUTTER}
+    public enum ModeType {MINI, SHORT, LONG}
 
     private LinearOpMode opMode; // First I declared it as OpMode now its LinearOpMode
 
@@ -32,12 +33,13 @@ public class AutoFlows {
     Location secondWobble_pos1;
     Location parkPos;
     Location parkPosShort;
-    int sleepfor;
+
+    int sleepFor;
     Alliance alliance;
     StartLine startLine;
+    ModeType modeType;
 
     double shootingAngle = 0; //default
-    boolean shortened = false;
 
     enum ABC {A, B, C}
 
@@ -54,12 +56,12 @@ public class AutoFlows {
     final int blue = -1;
     final int red = 1;
 
-    public AutoFlows(LinearOpMode opMode, Alliance alliance, StartLine startline, boolean shortened, int sleepfor) {
+    public AutoFlows(LinearOpMode opMode, Alliance alliance, StartLine startline, ModeType modeType, int sleepfor) {
         this.opMode = opMode;
-        this.shortened = shortened;
+        this.modeType = modeType;
         this.alliance = alliance;
         this.startLine = startline;
-        this.sleepfor = sleepfor;
+        this.sleepFor = sleepfor;
         if (alliance == Alliance.BLUE) {
             mul = blue;
         } else {
@@ -102,7 +104,7 @@ public class AutoFlows {
             }
         }
         if (startline == StartLine.OUTTER){
-            parkPos = new Location(1.5 * mul, 1.6);
+            parkPos = new Location(1.57 * mul, 1.53); //Previously x: 1.5, y: 1.6
         }
         robot = new DriveClass(this.opMode, DriveClass.ROBOT.COBALT, startingPosition).useEncoders();
         game = new GameClass(this.opMode);    // Declare OpMode members.
@@ -163,7 +165,7 @@ public class AutoFlows {
         this.opMode.waitForStart();
         runtime.reset();
         game.setWipers(false);
-        this.opMode.sleep(1000 * sleepfor);
+        this.opMode.sleep(1000 * sleepFor);
         abc = getRingNum(pipeline);// a b c?
         this.opMode.telemetry.addData("Rings: ", abc); //finding if it's a , b or c
         this.opMode.telemetry.update();
@@ -194,6 +196,13 @@ public class AutoFlows {
         this.opMode.sleep(1000);
         game.setSuperPosition(false); //intake
         game.lifterUpDownSecondStage(false);
+
+        if (modeType == ModeType.MINI) {
+            robot.goToLocation(parkPos, 1, heading, 0.05);
+            return;
+        }
+
+
         // robot.turnTo(0, 0.6);
         this.opMode.telemetry.addData("going to", abc);
         this.opMode.telemetry.update();
@@ -222,7 +231,7 @@ public class AutoFlows {
             robot.goToLocation(a_back_Pos, 1, heading, 0.05);
         }
 
-        if (shortened == false) {
+        if (modeType == ModeType.LONG) {
             // going to pick up the second wobble rod
             robot.goToLocation(secondWobble_pos1, 1, heading, 0.1);
             if (alliance == Alliance.RED) {

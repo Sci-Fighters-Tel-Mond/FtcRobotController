@@ -38,8 +38,8 @@ import org.firstinspires.ftc.teamcode.util.BananaPipeline;
 
 @Autonomous(group = "blue fullflow")
 //@Disabled
-public class Blue_INNER_Short extends LinearOpMode {
-	AutoFlows auto = new AutoFlows(this, AutoFlows.Alliance.BLUE, AutoFlows.StartLine.INNER, AutoFlows.ModeType.SHORT,0);
+public class Blue_INNER_MINI_Sleep extends LinearOpMode {
+	AutoFlows auto = new AutoFlows(this, AutoFlows.Alliance.BLUE, AutoFlows.StartLine.INNER, AutoFlows.ModeType.MINI,15);
 	BananaPipeline pipeline;
 
 	private ElapsedTime runtime = new ElapsedTime();
