@@ -92,7 +92,7 @@ public class AutoFlows {
             if (startline == StartLine.INNER) {
                 shootingAngle = 30; //RED INNER - previously 26
             } else {
-                shootingAngle = 4; //RED OUTTER
+                shootingAngle = 8; //RED OUTTER
             }
         } else {
             if (startline == StartLine.INNER) {
@@ -102,7 +102,7 @@ public class AutoFlows {
             }
         }
         if (startline == StartLine.OUTTER){
-            parkPos = new Location(1.4 * mul, 1.55);
+            parkPos = new Location(1.5 * mul, 1.6);
         }
         robot = new DriveClass(this.opMode, DriveClass.ROBOT.COBALT, startingPosition).useEncoders();
         game = new GameClass(this.opMode);    // Declare OpMode members.

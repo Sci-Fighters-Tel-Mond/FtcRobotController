@@ -42,7 +42,7 @@ public class GameClass {
 	private boolean lifterSecondStage = false;
 
 	final private double shooterSpeed = 0.9;
-	/*final*/ private int lifterUpTargetPosition = 1800; // previously 1840
+	private int lifterUpTargetPosition = 1800; // previously 1840
 	final private int lifterDownTargetPosition = 0;
 
 	private ElapsedTime timer = new ElapsedTime();
@@ -165,19 +165,21 @@ public class GameClass {
 		timer.reset();
 //		lifterUpDownSecondStage(goUp);
 
-
 		lifterSecondStage = false;
 
 //		if (getLifterLimiter()) {
 //			lifter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 //		}
-		lifter.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
 		if (goUp) {
-			lifter.setPower(0.7);
+			lifter.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+			if (Math.abs(lifterUpTargetPosition - lifter.getCurrentPosition()) > 10) {
+				lifter.setPower(0.85);
+			}
 			lifterRequest = LifterRequest.UP;
 		} else {
 			if (!getLifterLimiter()) {
+				lifter.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 				lifter.setPower(-0.3);
 			} else {
 				lifter.setPower(0);
