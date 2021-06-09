@@ -35,18 +35,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.util.BananaPipeline;
-import org.firstinspires.ftc.teamcode.util.CvCam;
-import org.firstinspires.ftc.teamcode.util.DriveClass;
-import org.firstinspires.ftc.teamcode.util.GameClass;
-import org.firstinspires.ftc.teamcode.util.Location;
-import org.opencv.core.Rect;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous(group = "blue fullflow")
 //@Disabled
-public class BlueAuto extends LinearOpMode {
-	AutoFlows auto = new AutoFlows(this, AutoFlows.Alliance.BLUE, AutoFlows.StartLine.INNER, false);
+public class Blue_INNER_Short extends LinearOpMode {
+	AutoFlows auto = new AutoFlows(this, AutoFlows.Alliance.BLUE, AutoFlows.StartLine.INNER, true);
 	BananaPipeline pipeline;
 
 	private ElapsedTime runtime = new ElapsedTime();

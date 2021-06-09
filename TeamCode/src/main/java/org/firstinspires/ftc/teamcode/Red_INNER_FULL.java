@@ -38,7 +38,7 @@ import org.firstinspires.ftc.teamcode.util.BananaPipeline;
 
 @Autonomous(group = "red fullflow")
 //@Disabled
-public class RedAuto extends LinearOpMode {
+public class Red_INNER_FULL extends LinearOpMode {
 	AutoFlows auto = new AutoFlows(this, AutoFlows.Alliance.RED, AutoFlows.StartLine.INNER, false);
 	BananaPipeline pipeline;
 
