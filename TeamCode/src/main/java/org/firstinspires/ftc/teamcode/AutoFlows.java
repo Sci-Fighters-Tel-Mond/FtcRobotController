@@ -68,10 +68,10 @@ public class AutoFlows {
         startingPosition = new Location(0.6 * mul, 0);
         firstPos = new Location(0.27 * mul, 0.73); // -0.25,0.73
         shootPos = new Location(0.25 * mul, 1.2); //previous - x: 0.25 * mul, y: 1.13
-        a_pos = new Location(1.4 * mul, 1.35);
-        b_pos = new Location(0.75 * mul, 2.00); //previous - x: 0.75 * mul, y 2.15
-        c_pos = new Location(1.4 * mul, 2.55);
-        a_back_Pos = new Location(1.10 * mul, 1.30);
+        a_pos = new Location(1.4 * mul, 1.40);
+        b_pos = new Location(0.75 * mul, 2.10); //previous - x: 0.75 * mul, y 2.15
+        c_pos = new Location(1.4 * mul, 2.60);
+        a_back_Pos = new Location(1.30 * mul, 1.30);
         secondWobble_pos1 = new Location(2.5 * tile * mul, 2 * tile);
         parkPos = new Location(0.5 * mul, 2);
         //parkPosShort = new Location(9 * mul, 2);
@@ -96,7 +96,7 @@ public class AutoFlows {
             }
         } else {
             if (startline == StartLine.INNER) {
-                shootingAngle = 2; //BLUE INNER
+                shootingAngle = 3; //BLUE INNER
             } else {
                 shootingAngle = 29; //BLUE OUTTER
             }
@@ -148,7 +148,7 @@ public class AutoFlows {
         game.initLifterPosition();
         game.setWobbleGrabber(false);
         game.initWobbleArmPosition();
-        game.setLifterTargetPosition(1800-20);
+        game.setLifterTargetPosition(1800);
 
         ABC abc = getRingNum(pipeline);
         this.opMode.telemetry.addData("Rings: ", abc);
@@ -162,6 +162,7 @@ public class AutoFlows {
         // ================================================
         this.opMode.waitForStart();
         runtime.reset();
+        game.setWipers(false);
 
         abc = getRingNum(pipeline);// a b c?
         this.opMode.telemetry.addData("Rings: ", abc); //finding if it's a , b or c
@@ -200,13 +201,13 @@ public class AutoFlows {
         // go to first wobble position
         switch (abc) {
             case A:
-                robot.goToLocation(a_pos.offset(0.15), 1, heading, 0.05);
+                robot.goToLocation(a_pos.offset(0.20), 1, heading, 0.05);
                 break;
             case B:
-                robot.goToLocation(b_pos.offset(0.15), 1, heading, 0.05);
+                robot.goToLocation(b_pos.offset(0.20), 1, heading, 0.05);
                 break;
             case C:
-                robot.goToLocation(c_pos.offset(0.15), 1, heading, 0.05);
+                robot.goToLocation(c_pos.offset(0.20), 1, heading, 0.05);
                 break;
         }
 
@@ -234,7 +235,8 @@ public class AutoFlows {
 
 			game.wobbleArmGoTo(6500);
 
-			robot.drive(0.45, 0, 1, targetAngle, false);
+			double distToWobble = 0.37;
+			robot.drive(distToWobble, 0, 1, targetAngle, false);
 
             // picking up the second wobble
             opMode.sleep(300);
@@ -243,7 +245,7 @@ public class AutoFlows {
             game.wobbleArmGoTo(4000);
 
             // going back
-            robot.drive(-0.45, 0, 1, targetAngle, false);
+            robot.drive(-distToWobble, 0, 1, targetAngle, false);
             opMode.sleep(150);
             robot.turnTo(heading, 1);
 
@@ -268,7 +270,7 @@ public class AutoFlows {
                 robot.goToLocation(a_back_Pos, 1, heading, 0.05);
             }
 
-            game.wobbleArmGoTo(100);
+            //game.wobbleArmGoTo(100);
         }
         robot.goToLocation(parkPos, 1, heading, 0.05);
         game.setWobbleGrabber(false);

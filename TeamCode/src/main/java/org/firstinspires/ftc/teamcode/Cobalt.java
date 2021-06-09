@@ -79,7 +79,7 @@ public class Cobalt extends LinearOpMode {
 			drive.resetOrientation(-90);
 
 			// X RED
-			lifterPosition_Goal = 1800;
+			lifterPosition_Goal = 1820;
 			targetHeading_Goal = 4;
 
 			// Y RED
@@ -88,8 +88,8 @@ public class Cobalt extends LinearOpMode {
 
 
 			// A RED
-			lifterPosition_aShooter = 1800;
-			targetHeading_aShooter = 27;
+			lifterPosition_aShooter = 1820;
+			targetHeading_aShooter = 35;
 		}
 	}
 

@@ -87,9 +87,8 @@ public class GameClass {
 
 		ringMover.setPosition(1);
 		setWobbleGrabber(false);
-		setWipers(false);
 
-		 setShooterPID();
+		setShooterPID();
 	}
 
 	public int getLifterPosition() {
@@ -172,8 +171,8 @@ public class GameClass {
 //		}
 
 		if (goUp) {
-			lifter.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 			if (Math.abs(lifterUpTargetPosition - lifter.getCurrentPosition()) > 10) {
+				lifter.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 				lifter.setPower(0.85);
 			}
 			lifterRequest = LifterRequest.UP;
