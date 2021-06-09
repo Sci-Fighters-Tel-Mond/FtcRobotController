@@ -304,10 +304,10 @@ public class GameClass {
 
 	public void initLifterPosition() {
 		if (getLifterLimiter() == false) {
-			lifter.setPower(-0.3);
+			lifter.setPower(-0.15);
 			ElapsedTime timer = new ElapsedTime();
 			while (getLifterLimiter() == false) {
-				if (timer.milliseconds() > 4000) break;
+				if (timer.milliseconds() > 5000) break;
 			}
 			lifter.setPower(0);
 			opMode.sleep(500);

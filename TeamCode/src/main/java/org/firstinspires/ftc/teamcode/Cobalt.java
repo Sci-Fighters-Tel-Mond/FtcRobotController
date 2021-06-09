@@ -63,8 +63,8 @@ public class Cobalt extends LinearOpMode {
 		if (team == Team.BLUE) {
 			drive.resetOrientation(90);
 
-			// X  BULE
-			lifterPosition_Goal = 1800;
+			// X  BLUE
+			lifterPosition_Goal = 1815;
 			targetHeading_Goal = 2;
 
 			// Y BLUE
@@ -72,8 +72,8 @@ public class Cobalt extends LinearOpMode {
 			targetHeading_PowerShot = 32;   // left power shoot
 
 			// A BLUE
-			lifterPosition_aShooter = 1800;
-			targetHeading_aShooter = 30;
+			lifterPosition_aShooter = 1840;
+			targetHeading_aShooter = 31;
 
 		} else if (team == Team.RED) {
 			drive.resetOrientation(-90);
@@ -271,7 +271,7 @@ public class Cobalt extends LinearOpMode {
 
 			if (armShooter.isClicked()) { // x
 				game.setLifterTargetPosition(lifterPosition_Goal);
-				targetHeading = targetHeading_Goal;
+				//targetHeading = targetHeading_Goal;
 				game.setSuperPosition(true);
 			}
 

@@ -32,7 +32,7 @@ public class AutoFlows {
     Location secondWobble_pos1;
     Location parkPos;
     Location parkPosShort;
-
+    int sleepfor;
     Alliance alliance;
     StartLine startLine;
 
@@ -54,12 +54,12 @@ public class AutoFlows {
     final int blue = -1;
     final int red = 1;
 
-    public AutoFlows(LinearOpMode opMode, Alliance alliance, StartLine startline, boolean shortened) {
+    public AutoFlows(LinearOpMode opMode, Alliance alliance, StartLine startline, boolean shortened, int sleepfor) {
         this.opMode = opMode;
         this.shortened = shortened;
         this.alliance = alliance;
         this.startLine = startline;
-
+        this.sleepfor = sleepfor;
         if (alliance == Alliance.BLUE) {
             mul = blue;
         } else {
@@ -163,7 +163,7 @@ public class AutoFlows {
         this.opMode.waitForStart();
         runtime.reset();
         game.setWipers(false);
-
+        this.opMode.sleep(1000 * sleepfor);
         abc = getRingNum(pipeline);// a b c?
         this.opMode.telemetry.addData("Rings: ", abc); //finding if it's a , b or c
         this.opMode.telemetry.update();
